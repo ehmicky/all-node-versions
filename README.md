@@ -30,6 +30,8 @@ npm install all-node-versions
 # See also
 
 - [`nve`](https://github.com/ehmicky/nve): Run a specific Node.js version
+- [`normalize-node-version`](https://github.com/ehmicky/normalize-node-versions):
+  Normalize and validate Node.js versions
 
 # Support
 
