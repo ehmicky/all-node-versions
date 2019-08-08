@@ -27,6 +27,12 @@ const versions = await allNodeVersions()
 npm install all-node-versions
 ```
 
+# Usage
+
+## allNodeVersions()
+
+_Returns_: `Promise<string[]>`
+
 # See also
 
 - [`nve`](https://github.com/ehmicky/nve): Run a specific Node.js version
