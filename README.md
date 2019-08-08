@@ -36,6 +36,7 @@ _Returns_: `Promise<string[]>`
 # See also
 
 - [`nve`](https://github.com/ehmicky/nve): Run a specific Node.js version
+- [`download-node`](https://github.com/ehmicky/download-node): Download Node.js
 - [`normalize-node-version`](https://github.com/ehmicky/normalize-node-versions):
   Normalize and validate Node.js versions
 
