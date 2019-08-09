@@ -48,6 +48,8 @@ NODE_MIRROR="https://npm.taobao.org/mirrors/node" get-node [VERSION] [OUTPUT_DIR
 - [`get-node`](https://github.com/ehmicky/get-node): Download Node.js
 - [`normalize-node-version`](https://github.com/ehmicky/normalize-node-versions):
   Normalize and validate Node.js versions
+- [`fetch-node-website`](https://github.com/ehmicky/fetch-node-website): Fetch
+  releases on nodejs.org
 
 # Support
 
