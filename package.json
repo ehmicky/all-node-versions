@@ -1,6 +1,6 @@
 {
   "name": "all-node-versions",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "main": "build/src/main.js",
   "files": [
     "build/src",
