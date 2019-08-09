@@ -1,9 +1,9 @@
-import { fetchUrl } from './fetch.js'
+import fetchNodeWebsite from 'fetch-node-website'
 
 // Fetch all available Node versions by making a HTTP request to Node website
 // Versions are already sorted from newest to oldest
 const allNodeVersions = async function() {
-  const response = await fetchUrl(INDEX_PATH)
+  const response = await fetchNodeWebsite(INDEX_PATH)
   const index = await response.json()
   const versions = index.map(getVersionField)
   return versions
