@@ -33,6 +33,15 @@ npm install all-node-versions
 
 _Returns_: `Promise<string[]>`
 
+## Node.js mirror
+
+The list is downloaded from `https://nodejs.org/dist`. You can specify a mirror
+website using the environment variable `NODE_MIRROR`.
+
+```bash
+NODE_MIRROR="https://npm.taobao.org/mirrors/node" get-node [VERSION] [OUTPUT_DIRECTORY]
+```
+
 # See also
 
 - [`nve`](https://github.com/ehmicky/nve): Run a specific Node.js version

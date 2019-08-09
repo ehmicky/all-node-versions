@@ -1,7 +1,12 @@
+import { env } from 'process'
+
 import fetch from 'cross-fetch'
 
 // Make a HTTP GET request
-export const fetchUrl = async function(url) {
+export const fetchUrl = async function(path) {
+  const urlBase = getUrlBase()
+  const url = `${urlBase}/${path}`
+
   const response = await performFetch(url)
 
   if (!response.ok) {
@@ -10,6 +15,16 @@ export const fetchUrl = async function(url) {
 
   return response
 }
+
+const getUrlBase = function() {
+  if (env.NODE_MIRROR !== undefined && env.NODE_MIRROR !== '') {
+    return env.NODE_MIRROR
+  }
+
+  return URL_BASE
+}
+
+const URL_BASE = 'https://nodejs.org/dist'
 
 const performFetch = async function(url) {
   try {
