@@ -2,7 +2,7 @@
 
 ## Features
 
-- Retry downloading the Node.js binaries on network errors.
+- Retry downloading the Node.js index file on network errors.
 
 # 1.0.1
 
