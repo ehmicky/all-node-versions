@@ -9,7 +9,13 @@ List all available Node.js versions.
 
 Sorted from the latest Node.js version to the oldest one.
 
-# Example
+# Install
+
+```bash
+npm install all-node-versions
+```
+
+# Usage (Node.js)
 
 <!-- Remove 'eslint-skip' once estree supports top-level await -->
 <!-- eslint-skip -->
@@ -21,17 +27,16 @@ const versions = await allNodeVersions()
 // ['12.8.0', '12.7.0', ..., '0.1.15', '0.1.14']
 ```
 
-# Install
+# Usage (CLI)
 
-```bash
-npm install all-node-versions
 ```
-
-# Usage
-
-## allNodeVersions()
-
-_Returns_: `Promise<string[]>`
+$ all-node-versions
+12.10.0
+12.9.1
+...
+0.1.15
+0.1.14
+```
 
 ## Node.js mirror
 

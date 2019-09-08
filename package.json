@@ -10,6 +10,9 @@
   "scripts": {
     "test": "gulp test"
   },
+  "bin": {
+    "all-node-versions": "./build/src/bin.js"
+  },
   "husky": {
     "hooks": {
       "pre-push": "gulp check --full"
@@ -57,9 +60,12 @@
   "devDependencies": {
     "@ehmicky/dev-tasks": "^0.30.40",
     "ava": "^2.3.0",
+    "execa": "^2.0.4",
+    "get-bin-path": "^3.0.0",
     "gulp": "^4.0.2",
     "husky": "^3.0.5",
-    "semver": "^6.3.0"
+    "semver": "^6.3.0",
+    "test-each": "^1.7.2"
   },
   "engines": {
     "node": ">=8.12.0"

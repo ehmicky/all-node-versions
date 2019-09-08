@@ -1,3 +1,9 @@
+# 2.1.0
+
+## Features
+
+- Add CLI
+
 # 2.0.0
 
 ## Features
