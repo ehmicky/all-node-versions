@@ -9,7 +9,9 @@ const runCli = async function() {
     const versions = await allNodeVersions()
     console.log(versions.join('\n'))
   } catch (error) {
+    // istanbul ignore next This can only happen when there is a network error
     console.error(error.message)
+    // istanbul ignore next
     exit(1)
   }
 }
