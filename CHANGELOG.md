@@ -1,3 +1,9 @@
+# 2.3.0
+
+## Features
+
+- Add `--help` and `--version` CLI flags
+
 # 2.2.0
 
 ## Features
