@@ -6,9 +6,9 @@ import { each } from 'test-each'
 
 import allNodeVersions from '../src/main.js'
 
-const allNodeVersionsCli = async function() {
+const allNodeVersionsCli = async function(args = '') {
   const binPath = await getBinPath()
-  const { stdout } = await execa(binPath)
+  const { stdout } = await execa.command(`${binPath} ${args}`)
   const versions = stdout.split('\n')
   return versions
 }
@@ -37,4 +37,8 @@ each([allNodeVersions, allNodeVersionsCli], ({ title }, getVersions) => {
       versions.every((version, index) => version === sortedVersions[index]),
     )
   })
+})
+
+test(`Invalid argument | CLI`, async t => {
+  await t.throwsAsync(allNodeVersionsCli('--invalid'))
 })
