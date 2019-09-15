@@ -42,3 +42,12 @@ each([allNodeVersions, allNodeVersionsCli], ({ title }, getVersions) => {
 test(`Invalid argument | CLI`, async t => {
   await t.throwsAsync(allNodeVersionsCli('--invalid'))
 })
+
+test(`--mirror | CLI`, async t => {
+  const versions = await allNodeVersionsCli(`--mirror=${MIRROR_URL}`)
+
+  t.true(Array.isArray(versions))
+  t.true(versions.every(isVersion))
+})
+
+const MIRROR_URL = 'https://npm.taobao.org/mirrors/node'
