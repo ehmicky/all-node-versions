@@ -11,7 +11,7 @@
     "test": "gulp test"
   },
   "bin": {
-    "all-node-versions": "./build/src/bin.js"
+    "all-node-versions": "./build/src/bin/main.js"
   },
   "husky": {
     "hooks": {

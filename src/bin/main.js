@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { exit } from 'process'
 
-import allNodeVersions from './main.js'
+import allNodeVersions from '../main.js'
 
 // Prints all available Node versions on the console
 const runCli = async function() {
