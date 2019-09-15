@@ -2,6 +2,7 @@
 
 ## Features
 
+- Add [`mirror` option](https://github.com/ehmicky/all-node-versions#mirror)
 - Add `--help` and `--version` CLI flags
 
 # 2.2.0

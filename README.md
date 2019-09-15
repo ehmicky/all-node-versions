@@ -27,6 +27,21 @@ const versions = await allNodeVersions()
 // ['12.8.0', '12.7.0', ..., '0.1.15', '0.1.14']
 ```
 
+## allNodeVersions(options?)
+
+`options`: `object`<br>_Returns_: `Promise<string[]>`
+
+### options
+
+#### mirror
+
+_Type_: `string`<br>_Default_: `https://nodejs.org/dist`
+
+Base URL. Can be customized (for example `https://npm.taobao.org/mirrors/node`).
+
+The following environment variables can also be used: `NODE_MIRROR`,
+`NVM_NODEJS_ORG_MIRROR`, `N_NODE_MIRROR` or `NODIST_NODE_MIRROR`.
+
 # Usage (CLI)
 
 ```
@@ -36,15 +51,6 @@ $ all-node-versions
 ...
 0.1.15
 0.1.14
-```
-
-## Node.js mirror
-
-The list is downloaded from `https://nodejs.org/dist`. You can specify a mirror
-website using the environment variable `NODE_MIRROR`.
-
-```bash
-NODE_MIRROR="https://npm.taobao.org/mirrors/node" get-node [VERSION] [OUTPUT_DIRECTORY]
 ```
 
 # See also
