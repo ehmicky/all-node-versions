@@ -1,3 +1,9 @@
+# 2.3.1
+
+## Dependencies
+
+- Upgrade `fetch-node-website`
+
 # 2.3.0
 
 ## Features
