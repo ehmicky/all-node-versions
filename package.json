@@ -54,7 +54,7 @@
   },
   "dependencies": {
     "core-js": "^3.2.1",
-    "fetch-node-website": "^2.1.0",
+    "fetch-node-website": "^2.2.0",
     "get-stream": "^5.1.0",
     "yargs": "^14.0.0"
   },
