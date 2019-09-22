@@ -1,3 +1,9 @@
+# 2.3.2
+
+## Bugs
+
+- Fix `CTRL-C` not working
+
 # 2.3.1
 
 ## Dependencies
