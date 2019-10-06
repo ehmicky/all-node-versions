@@ -1,3 +1,17 @@
+# 3.0.0
+
+## Breaking changes
+
+- Change the
+  [`progress` option](https://github.com/ehmicky/all-node-versions/blob/master/README.md#progress)
+  default value from `true` to `false`. That option displays a loading spinner.
+
+## Features
+
+- Add
+  [`--no-progress` CLI flag](https://github.com/ehmicky/all-node-versions/blob/master/README.md#usage-cli)
+  to hide the loading spinner.
+
 # 2.3.3
 
 ## Internal

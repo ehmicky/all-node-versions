@@ -10,6 +10,11 @@ export const defineCli = function() {
 }
 
 const CONFIG = {
+  progress: {
+    boolean: true,
+    describe: `Show a loading spinner.
+Default: true`,
+  },
   mirror: {
     alias: 'm',
     string: true,

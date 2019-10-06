@@ -6,11 +6,16 @@ import { each } from 'test-each'
 
 import allNodeVersions from '../src/main.js'
 
-const allNodeVersionsCli = async function(args = '') {
-  const binPath = await getBinPath()
-  const { stdout } = await execa.command(`${binPath} ${args}`)
+const getVersionsCli = async function(args) {
+  const { stdout } = await allNodeVersionsCli(args)
   const versions = stdout.split('\n')
   return versions
+}
+
+const allNodeVersionsCli = async function(args = '') {
+  const binPath = await getBinPath()
+  const { stdout, stderr } = await execa.command(`${binPath} ${args}`)
+  return { stdout, stderr }
 }
 
 const isVersion = function(version) {
@@ -19,7 +24,7 @@ const isVersion = function(version) {
 
 const VERSION_REGEXP = /^\d+\.\d+\.\d+$/u
 
-each([allNodeVersions, allNodeVersionsCli], ({ title }, getVersions) => {
+each([allNodeVersions, getVersionsCli], ({ title }, getVersions) => {
   test(`Success | ${title}`, async t => {
     const versions = await getVersions()
 
@@ -44,10 +49,25 @@ test(`Invalid argument | CLI`, async t => {
 })
 
 test(`--mirror | CLI`, async t => {
-  const versions = await allNodeVersionsCli(`--mirror=${MIRROR_URL}`)
+  const versions = await getVersionsCli(`--mirror=${MIRROR_URL}`)
 
   t.true(Array.isArray(versions))
   t.true(versions.every(isVersion))
 })
 
 const MIRROR_URL = 'https://npm.taobao.org/mirrors/node'
+
+each(
+  [
+    { args: '--no-progress', called: false },
+    { args: '--progress', called: true },
+    { called: true },
+  ],
+  ({ title }, { args, called }) => {
+    test.serial(`--progress | CLI ${title}`, async t => {
+      const { stderr } = await allNodeVersionsCli(args)
+
+      t.is(stderr.trim() !== '', called)
+    })
+  },
+)
