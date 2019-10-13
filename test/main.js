@@ -57,17 +57,8 @@ test(`--mirror | CLI`, async t => {
 
 const MIRROR_URL = 'https://npm.taobao.org/mirrors/node'
 
-each(
-  [
-    { args: '--no-progress', called: false },
-    { args: '--progress', called: true },
-    { called: true },
-  ],
-  ({ title }, { args, called }) => {
-    test.serial(`--progress | CLI ${title}`, async t => {
-      const { stderr } = await allNodeVersionsCli(args)
+test.serial(`Progress bar | CLI`, async t => {
+  const { stderr } = await allNodeVersionsCli()
 
-      t.is(stderr.trim() !== '', called)
-    })
-  },
-)
+  t.is(stderr.trim(), '')
+})

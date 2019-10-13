@@ -1,3 +1,9 @@
+# 4.0.0
+
+## Breaking changes
+
+- Remove the `progress` option and CLI flag.
+
 # 3.0.0
 
 ## Breaking changes

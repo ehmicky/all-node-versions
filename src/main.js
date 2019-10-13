@@ -4,7 +4,10 @@ import getStream from 'get-stream'
 // Fetch all available Node versions by making a HTTP request to Node website
 // Versions are already sorted from newest to oldest
 const allNodeVersions = async function(opts) {
-  const response = await fetchNodeWebsite(INDEX_PATH, opts)
+  const response = await fetchNodeWebsite(INDEX_PATH, {
+    ...opts,
+    progress: false,
+  })
   const content = await getStream(response)
   const index = JSON.parse(content)
   const versions = index.map(getVersionField)

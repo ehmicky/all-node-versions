@@ -11,7 +11,7 @@ const runCli = async function() {
   try {
     const yargs = defineCli()
     const opts = parseOpts(yargs)
-    const versions = await allNodeVersions({ progress: true, ...opts })
+    const versions = await allNodeVersions(opts)
     console.log(versions.join('\n'))
   } catch (error) {
     // istanbul ignore next This can only happen when there is a network error

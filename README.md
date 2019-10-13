@@ -42,12 +42,6 @@ Base URL. Can be customized (for example `https://npm.taobao.org/mirrors/node`).
 The following environment variables can also be used: `NODE_MIRROR`,
 `NVM_NODEJS_ORG_MIRROR`, `N_NODE_MIRROR` or `NODIST_NODE_MIRROR`.
 
-#### progress
-
-_Type_: `boolean`<br>_Default_: `false`
-
-Whether to show a progress spinner.
-
 # Usage (CLI)
 
 ```
@@ -59,8 +53,6 @@ $ all-node-versions
 0.1.14
 
 $ all-node-versions --mirror=https://npm.taobao.org/mirrors/node
-
-$ all-node-versions --no-progress
 ```
 
 # See also
