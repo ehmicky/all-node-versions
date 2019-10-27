@@ -1,3 +1,9 @@
+# 4.0.4
+
+## Bug fixes
+
+- Fix progress bar jitter.
+
 # 4.0.3
 
 ## Internal
