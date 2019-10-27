@@ -1,3 +1,9 @@
+# 4.0.3
+
+## Internal
+
+- Improve the appearance of the progress bar (which is not used at the moment)
+
 # 4.0.2
 
 ## Bug fixes
