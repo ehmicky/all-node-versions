@@ -1,3 +1,9 @@
+# 4.0.2
+
+## Bug fixes
+
+- Fix a bug on non-interactive terminals
+
 # 4.0.1
 
 ## Internal
