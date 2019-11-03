@@ -15,7 +15,7 @@ Sorted from the latest Node.js version to the oldest one.
 npm install all-node-versions
 ```
 
-# Usage (Node.js)
+# Usage
 
 <!-- Remove 'eslint-skip' once estree supports top-level await -->
 <!-- eslint-skip -->
@@ -41,19 +41,6 @@ Base URL. Can be customized (for example `https://npm.taobao.org/mirrors/node`).
 
 The following environment variables can also be used: `NODE_MIRROR`,
 `NVM_NODEJS_ORG_MIRROR`, `N_NODE_MIRROR` or `NODIST_NODE_MIRROR`.
-
-# Usage (CLI)
-
-```
-$ all-node-versions
-12.10.0
-12.9.1
-...
-0.1.15
-0.1.14
-
-$ all-node-versions --mirror=https://npm.taobao.org/mirrors/node
-```
 
 # See also
 

@@ -1,3 +1,9 @@
+# 5.0.0
+
+## Breaking changes
+
+- Remove CLI.
+
 # 4.1.0
 
 ## Dependencies

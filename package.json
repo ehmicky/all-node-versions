@@ -10,9 +10,6 @@
   "scripts": {
     "test": "gulp test"
   },
-  "bin": {
-    "all-node-versions": "./build/src/bin/main.js"
-  },
   "husky": {
     "hooks": {
       "pre-push": "gulp check --full"
@@ -55,19 +52,14 @@
   "dependencies": {
     "core-js": "^3.3.6",
     "fetch-node-website": "^4.0.0",
-    "filter-obj": "^2.0.1",
-    "get-stream": "^5.1.0",
-    "yargs": "^14.2.0"
+    "get-stream": "^5.1.0"
   },
   "devDependencies": {
     "@ehmicky/dev-tasks": "^0.30.52",
     "ava": "^2.4.0",
-    "execa": "^3.2.0",
-    "get-bin-path": "^4.0.0",
     "gulp": "^4.0.2",
     "husky": "^3.0.9",
-    "semver": "^6.3.0",
-    "test-each": "^1.8.0"
+    "semver": "^6.3.0"
   },
   "engines": {
     "node": ">=8.12.0"
