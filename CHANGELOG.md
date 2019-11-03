@@ -1,3 +1,9 @@
+# 5.0.1
+
+## Dependencies
+
+- Upgrade `fetch-node-website` to `4.1.0`
+
 # 5.0.0
 
 ## Breaking changes
