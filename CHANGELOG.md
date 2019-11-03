@@ -1,3 +1,9 @@
+# 4.1.0
+
+## Dependencies
+
+- Upgrade `fetch-node-website` to `4.0.0`
+
 # 4.0.4
 
 ## Bug fixes
