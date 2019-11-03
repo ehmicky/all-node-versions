@@ -57,7 +57,9 @@ $ all-node-versions --mirror=https://npm.taobao.org/mirrors/node
 
 # See also
 
-- [`nve`](https://github.com/ehmicky/nve): Run a specific Node.js version
+- [`nve`](https://github.com/ehmicky/nve): Run a specific Node.js version (CLI)
+- [`nvexeca`](https://github.com/ehmicky/nve): Run a specific Node.js version
+  (programmatic)
 - [`get-node`](https://github.com/ehmicky/get-node): Download Node.js
 - [`normalize-node-version`](https://github.com/ehmicky/normalize-node-version):
   Normalize and validate Node.js versions
