@@ -29,13 +29,15 @@ const versions = await allNodeVersions()
 
 ## allNodeVersions(options?)
 
-`options`: `object`<br>_Returns_: `Promise<string[]>`
+`options`: `object`\
+_Returns_: `Promise<string[]>`
 
 ### options
 
 #### mirror
 
-_Type_: `string`<br>_Default_: `https://nodejs.org/dist`
+_Type_: `string`\
+_Default_: `https://nodejs.org/dist`
 
 Base URL. Can be customized (for example `https://npm.taobao.org/mirrors/node`).
 
