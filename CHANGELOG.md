@@ -1,3 +1,9 @@
+# 5.0.2
+
+## Bug fixes
+
+- Fix crash when Node.js binary URL is invalid
+
 # 5.0.1
 
 ## Dependencies
