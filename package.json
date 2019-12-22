@@ -50,7 +50,7 @@
     "test": "test"
   },
   "dependencies": {
-    "core-js": "^3.6.0",
+    "core-js": "^3.6.1",
     "fetch-node-website": "^5.0.0",
     "get-stream": "^5.1.0"
   },
