@@ -47,7 +47,8 @@ The following environment variables can also be used: `NODE_MIRROR`,
 
 #### fetch
 
-_Type_: `boolean`
+_Type_: `boolean`\
+_Default_: `undefined`
 
 The list of available Node.js versions is cached for one hour by default. If the
 `fetch` option is:
