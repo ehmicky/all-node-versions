@@ -12,12 +12,12 @@ export const getOpts = function (opts = {}) {
 
 const DEFAULT_OPTS = {}
 
-const EXAMPLE_OPTS = () => ({
+const EXAMPLE_OPTS = {
   ...DEFAULT_OPTS,
   fetch: true,
   // Passed to `fetch-node-website`
   mirror: 'https://nodejs.org/dist',
-})
+}
 
 const isDefined = function (key, value) {
   return value !== undefined
