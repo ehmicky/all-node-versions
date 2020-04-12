@@ -1,3 +1,15 @@
+# 8.0.0
+
+## Breaking changes
+
+- The [return value](/README.md#return-value) is now an object instead of an
+  array
+
+## Features
+
+- Add information about [major releases](/README.md#majors) including latest
+  version and LTS name
+
 # 7.0.1
 
 ## Dependencies
