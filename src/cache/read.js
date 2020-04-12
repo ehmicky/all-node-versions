@@ -25,7 +25,7 @@ export const readCachedVersions = async function (fetch) {
     return
   }
 
-  const { versions, age } = getCacheFileContent(cacheFile)
+  const { versions, age } = await getCacheFileContent(cacheFile)
 
   if (isOldCache(age, fetch)) {
     return
