@@ -7,7 +7,8 @@
 
 List all available Node.js versions.
 
-Sorted from the latest Node.js version to the oldest one.
+Sorted from the most to the least recent. Includes major release and LTS
+information.
 
 # Install
 
@@ -23,14 +24,67 @@ npm install all-node-versions
 ```js
 const allNodeVersions = require('all-node-versions')
 
-const versions = await allNodeVersions(options)
-// ['12.8.0', '12.7.0', ..., '0.1.15', '0.1.14']
+const { versions, majors } = await allNodeVersions(options)
+
+console.log(versions)
+// ['13.13.0', '13.12.0', ..., '0.1.15', '0.1.14']
+
+console.log(majors)
+// [
+//   { major: 13, latest: '13.13.0' },
+//   { major: 12, latest: '12.16.2', lts: 'erbium' },
+//   { major: 11, latest: '11.15.0' },
+//   { major: 10, latest: '10.20.1', lts: 'dubnium' },
+//   { major: 9, latest: '9.11.2' },
+//   { major: 8, latest: '8.17.0', lts: 'carbon' },
+//   { major: 7, latest: '7.10.1' },
+//   { major: 6, latest: '6.17.1', lts: 'boron' },
+//   { major: 5, latest: '5.12.0' },
+//   { major: 4, latest: '4.9.1', lts: 'argon' },
+//   { major: 0, latest: '0.12.18' }
+// ]
 ```
 
 ## allNodeVersions(options?)
 
 `options`: `object`\
-_Returns_: `Promise<string[]>`
+_Returns_: `Promise<object>`
+
+### Return value
+
+The return value resolves to an object with the following properties.
+
+#### versions
+
+_Type_: `string[]`
+
+List of available Node.js versions sorted from the most to the least recent.
+Each version is a `major.minor.patch` string.
+
+#### majors
+
+_Type_: `object[]`
+
+List of Node.js major releases sorted from the most to the least recent. Each
+major release has the following properties.
+
+##### major
+
+_Type_: `number`
+
+Major version number. `0` for old releases `0.*.*`.
+
+##### latest
+
+_Type_: `string`
+
+Latest version for that major release, as a `major.minor.patch` string.
+
+##### lts
+
+_Type_: `string?`
+
+LTS name, lowercased. `undefined` if the major release is not LTS.
 
 ### options
 
