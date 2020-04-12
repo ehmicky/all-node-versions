@@ -1,5 +1,3 @@
-import { promises as fs } from 'fs'
-
 import test from 'ava'
 import { each } from 'test-each'
 
@@ -7,8 +5,9 @@ import allNodeVersions from '../src/main.js'
 
 import {
   setTestCache,
-  writeCacheFile,
   unsetTestCache,
+  writeCacheFile,
+  removeCacheFile,
 } from './helpers/cache.js'
 
 // Offline cache is used both when offline or when `mirror` is invalid.
@@ -33,13 +32,12 @@ each(
       setTestCache()
 
       try {
-        const cacheFile = await writeCacheFile(oldCacheFile)
+        await writeCacheFile(oldCacheFile)
 
         const [version] = await allNodeVersions({ fetch })
         t.is(version === 'cached', result)
-
-        await fs.unlink(cacheFile)
       } finally {
+        await removeCacheFile()
         unsetTestCache()
       }
     })
@@ -53,6 +51,7 @@ test.serial('No cache file', async (t) => {
     const [version] = await allNodeVersions({ fetch: false })
     t.not(version, 'cached')
   } finally {
+    await removeCacheFile()
     unsetTestCache()
   }
 })
@@ -68,12 +67,11 @@ each(
       setTestCache()
 
       try {
-        const cacheFile = await writeCacheFile()
+        await writeCacheFile()
 
         await allNodeVersions({ fetch: false })
-
-        await fs.unlink(cacheFile)
       } finally {
+        await removeCacheFile()
         unsetTestCache()
       }
 
@@ -87,7 +85,7 @@ test.serial(`Offline | fetch: true`, async (t) => {
   setTestCache()
 
   try {
-    const cacheFile = await writeCacheFile()
+    await writeCacheFile()
 
     await allNodeVersions({ fetch: false })
     const [versionAgain] = await allNodeVersions({
@@ -95,9 +93,8 @@ test.serial(`Offline | fetch: true`, async (t) => {
       mirror: INVALID_MIRROR,
     })
     t.is(versionAgain, 'cached')
-
-    await fs.unlink(cacheFile)
   } finally {
+    await removeCacheFile()
     unsetTestCache()
   }
 })

@@ -16,8 +16,7 @@ export const unsetTestCache = function () {
 }
 
 export const writeCacheFile = async function (oldCacheFile = false) {
-  const cacheDir = await globalCacheDir(CACHE_DIR)
-  const cacheFile = `${cacheDir}/${env.TEST_CACHE_FILENAME}`
+  const cacheFile = await getCacheFile()
   const lastUpdate = oldCacheFile ? 0 : Date.now()
   const versions = ['cached']
   const cacheContent = { lastUpdate, versions }
@@ -25,6 +24,17 @@ export const writeCacheFile = async function (oldCacheFile = false) {
 
   await fs.writeFile(cacheFile, cacheFileContent)
 
+  return cacheFile
+}
+
+export const removeCacheFile = async function () {
+  const cacheFile = await getCacheFile()
+  await fs.unlink(cacheFile)
+}
+
+const getCacheFile = async function () {
+  const cacheDir = await globalCacheDir(CACHE_DIR)
+  const cacheFile = `${cacheDir}/${env.TEST_CACHE_FILENAME}`
   return cacheFile
 }
 
