@@ -39,7 +39,8 @@ _Returns_: `Promise<string[]>`
 _Type_: `string`\
 _Default_: `https://nodejs.org/dist`
 
-Base URL. Can be customized (for example `https://npm.taobao.org/mirrors/node`).
+Base URL to fetch the list of available Node.js versions. Can be customized (for
+example `https://npm.taobao.org/mirrors/node`).
 
 The following environment variables can also be used: `NODE_MIRROR`,
 `NVM_NODEJS_ORG_MIRROR`, `N_NODE_MIRROR` or `NODIST_NODE_MIRROR`.
