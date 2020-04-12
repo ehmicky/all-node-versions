@@ -1,3 +1,9 @@
+# 7.0.1
+
+## Dependencies
+
+- Fix removing `core-js`
+
 # 7.0.0
 
 ## Features
@@ -5,6 +11,10 @@
 - Cache the list of available Node.js versions for one hour
 - Add [`fetch` option](README.md#fetch) to configure this caching
 - Works offline, providing it has been previously cached
+
+## Dependencies
+
+- Remove `core-js`
 
 # 6.0.1
 
