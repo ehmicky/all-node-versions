@@ -70,8 +70,7 @@ each(
       try {
         const cacheFile = await writeCacheFile()
 
-        const [version] = await allNodeVersions({ fetch: false })
-        t.is(version, 'cached')
+        await allNodeVersions({ fetch: false })
 
         await fs.unlink(cacheFile)
       } finally {
@@ -90,9 +89,7 @@ test.serial(`Offline | fetch: true`, async (t) => {
   try {
     const cacheFile = await writeCacheFile()
 
-    const [version] = await allNodeVersions({ fetch: false })
-    t.is(version, 'cached')
-
+    await allNodeVersions({ fetch: false })
     const [versionAgain] = await allNodeVersions({
       fetch: true,
       mirror: INVALID_MIRROR,
