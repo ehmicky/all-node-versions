@@ -22,9 +22,10 @@ const INVALID_MIRROR = 'http://invalid-mirror.com'
 //    the other tests
 each(
   [
-    { result: false },
-    { result: false, fetch: false },
-    { result: true, fetch: true },
+    { result: true },
+    { result: true, fetch: false },
+    { result: false, fetch: true },
+    { result: false, oldCacheFile: true },
     { result: true, fetch: false, oldCacheFile: true },
   ],
   ({ title }, { result, fetch, oldCacheFile }) => {
@@ -56,7 +57,34 @@ test.serial('No cache file', async (t) => {
   }
 })
 
-test.serial('Twice in same process', async (t) => {
+each(
+  [
+    { result: true },
+    { result: true, fetch: false },
+    { result: false, fetch: true },
+  ],
+  ({ title }, { result, fetch }) => {
+    test.serial(`Twice in same process | ${title}`, async (t) => {
+      setTestCache()
+
+      try {
+        const cacheFile = await writeCacheFile()
+
+        const [version] = await allNodeVersions({ fetch: false })
+        t.is(version, 'cached')
+
+        await fs.unlink(cacheFile)
+      } finally {
+        unsetTestCache()
+      }
+
+      const versionsAgain = await allNodeVersions({ fetch })
+      t.is(versionsAgain[0] === 'cached', result)
+    })
+  },
+)
+
+test.serial(`Offline | fetch: true`, async (t) => {
   setTestCache()
 
   try {
@@ -65,36 +93,16 @@ test.serial('Twice in same process', async (t) => {
     const [version] = await allNodeVersions({ fetch: false })
     t.is(version, 'cached')
 
+    const [versionAgain] = await allNodeVersions({
+      fetch: true,
+      mirror: INVALID_MIRROR,
+    })
+    t.is(versionAgain, 'cached')
+
     await fs.unlink(cacheFile)
   } finally {
     unsetTestCache()
   }
-
-  const versionsAgain = await allNodeVersions()
-  t.is(versionsAgain[0], 'cached')
-})
-
-each([true, undefined, false], ({ title }, fetch) => {
-  test.serial(`Offline | fetch: ${title}`, async (t) => {
-    setTestCache()
-
-    try {
-      const cacheFile = await writeCacheFile()
-
-      const [version] = await allNodeVersions({ fetch: false })
-      t.is(version, 'cached')
-
-      await fs.unlink(cacheFile)
-    } finally {
-      unsetTestCache()
-    }
-
-    const [versionAgain] = await allNodeVersions({
-      fetch,
-      mirror: INVALID_MIRROR,
-    })
-    t.is(versionAgain, 'cached')
-  })
 })
 
 test.serial(`Offline | no cache`, async (t) => {
