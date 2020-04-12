@@ -1,18 +1,13 @@
 import test from 'ava'
 import { each } from 'test-each'
 
-import allNodeVersions from '../src/main.js'
-
 import {
   setTestCache,
   unsetTestCache,
   writeCacheFile,
   removeCacheFile,
 } from './helpers/cache.js'
-
-// Offline cache is used both when offline or when `mirror` is invalid.
-// We only test the later case since it's simpler to test.
-const INVALID_MIRROR = 'http://invalid-mirror.com'
+import { getLatestVersion } from './helpers/main.js'
 
 // This uses a global environment variable to manipulate the cache file.
 // Since this is global we:
@@ -34,8 +29,8 @@ each(
       try {
         await writeCacheFile(oldCacheFile)
 
-        const [version] = await allNodeVersions({ fetch })
-        t.is(version === 'cached', result)
+        const latestVersion = await getLatestVersion({ fetch })
+        t.is(latestVersion === 'cached', result)
       } finally {
         await removeCacheFile()
         unsetTestCache()
@@ -48,8 +43,8 @@ test.serial('No cache file', async (t) => {
   setTestCache()
 
   try {
-    const [version] = await allNodeVersions({ fetch: false })
-    t.not(version, 'cached')
+    const latestVersion = await getLatestVersion({ fetch: false })
+    t.not(latestVersion, 'cached')
   } finally {
     await removeCacheFile()
     unsetTestCache()
@@ -69,44 +64,14 @@ each(
       try {
         await writeCacheFile()
 
-        await allNodeVersions({ fetch: false })
+        await getLatestVersion({ fetch: false })
       } finally {
         await removeCacheFile()
         unsetTestCache()
       }
 
-      const versionsAgain = await allNodeVersions({ fetch })
-      t.is(versionsAgain[0] === 'cached', result)
+      const latestVersion = await getLatestVersion({ fetch })
+      t.is(latestVersion === 'cached', result)
     })
   },
 )
-
-test.serial(`Offline | fetch: true`, async (t) => {
-  setTestCache()
-
-  try {
-    await writeCacheFile()
-
-    await allNodeVersions({ fetch: false })
-    const [versionAgain] = await allNodeVersions({
-      fetch: true,
-      mirror: INVALID_MIRROR,
-    })
-    t.is(versionAgain, 'cached')
-  } finally {
-    await removeCacheFile()
-    unsetTestCache()
-  }
-})
-
-test.serial(`Offline | no cache`, async (t) => {
-  setTestCache()
-
-  try {
-    await t.throwsAsync(
-      allNodeVersions({ fetch: false, mirror: INVALID_MIRROR }),
-    )
-  } finally {
-    unsetTestCache()
-  }
-})

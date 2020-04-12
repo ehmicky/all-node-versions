@@ -25,13 +25,13 @@ export const readCachedVersions = async function (fetch) {
     return
   }
 
-  const { versions, age } = await getCacheFileContent(cacheFile)
+  const { versionsInfo, age } = await getCacheFileContent(cacheFile)
 
   if (isOldCache(age, fetch)) {
     return
   }
 
-  return versions
+  return versionsInfo
 }
 
 const isOldCache = function (age, fetch) {
@@ -42,7 +42,7 @@ const isOldCache = function (age, fetch) {
 const MAX_AGE_MS = 36e5
 
 // Persist the cached versions
-export const writeCachedVersions = async function (versions) {
+export const writeCachedVersions = async function (versionsInfo) {
   const cacheFile = await getCacheFile()
-  await setCacheFileContent(cacheFile, versions)
+  await setCacheFileContent(cacheFile, versionsInfo)
 }

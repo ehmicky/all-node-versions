@@ -17,15 +17,15 @@ const CACHE_FILENAME = 'versions.json'
 // Retrieve cache file's content
 export const getCacheFileContent = async function (cacheFile) {
   const cacheFileContent = await fs.readFile(cacheFile, 'utf8')
-  const { lastUpdate, versions } = JSON.parse(cacheFileContent)
+  const { lastUpdate, ...versionsInfo } = JSON.parse(cacheFileContent)
   const age = Date.now() - lastUpdate
-  return { versions, age }
+  return { versionsInfo, age }
 }
 
 // Persist cache file's content
-export const setCacheFileContent = async function (cacheFile, versions) {
+export const setCacheFileContent = async function (cacheFile, versionsInfo) {
   const lastUpdate = Date.now()
-  const cacheContent = { lastUpdate, versions }
+  const cacheContent = { lastUpdate, ...versionsInfo }
   const cacheFileContent = `${JSON.stringify(cacheContent, null, 2)}\n`
 
   try {

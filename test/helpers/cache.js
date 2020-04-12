@@ -18,8 +18,11 @@ export const unsetTestCache = function () {
 export const writeCacheFile = async function (oldCacheFile = false) {
   const cacheFile = await getCacheFile()
   const lastUpdate = oldCacheFile ? 0 : Date.now()
-  const versions = ['cached']
-  const cacheContent = { lastUpdate, versions }
+  const versionsInfo = {
+    versions: ['cached'],
+    majors: [{ major: 1, latest: 'cached' }],
+  }
+  const cacheContent = { lastUpdate, ...versionsInfo }
   const cacheFileContent = JSON.stringify(cacheContent, null, 2)
 
   await fs.writeFile(cacheFile, cacheFileContent)
