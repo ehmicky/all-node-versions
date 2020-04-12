@@ -50,7 +50,6 @@
     "test": "test"
   },
   "dependencies": {
-    "core-js": "^3.6.5",
     "fetch-node-website": "^5.0.1",
     "filter-obj": "^2.0.1",
     "get-stream": "^5.1.0",
