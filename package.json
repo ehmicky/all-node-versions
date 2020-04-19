@@ -65,7 +65,7 @@
     "gulp": "^4.0.2",
     "husky": "^4.2.5",
     "is-plain-obj": "^2.1.0",
-    "test-each": "^2.0.0"
+    "test-each": "^2.0.1"
   },
   "engines": {
     "node": ">=10.17.0"
