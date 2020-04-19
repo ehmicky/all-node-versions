@@ -14,7 +14,7 @@ import {
 //   - `false`: we use the cache even if it is old
 //   - `true`: we do not use the cache
 // In all three cases, we update the cache on any successful HTTP request.
-export const readCachedVersions = async function (fetch) {
+export const readFsCache = async function (fetch) {
   if (fetch === true) {
     return
   }

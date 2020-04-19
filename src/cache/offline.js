@@ -1,4 +1,4 @@
-import { readCachedVersions } from './read.js'
+import { readFsCache } from './read.js'
 
 // When offline, we try to reuse cached versions if any is available.
 // We do this even if `fetch` option is `true`.
@@ -7,7 +7,7 @@ export const handleOfflineError = async function (error) {
     throw error
   }
 
-  const cachedVersions = await readCachedVersions(false)
+  const cachedVersions = await readFsCache(false)
 
   if (cachedVersions === undefined) {
     throw error
