@@ -1,10 +1,6 @@
 import pathExists from 'path-exists'
 
-import {
-  getCacheFile,
-  getCacheFileContent,
-  setCacheFileContent,
-} from './file.js'
+import { getCacheFileContent, setCacheFileContent } from './file.js'
 
 // Cache the return value on the filesystem.
 // It has a TTL of one hour.
@@ -13,18 +9,16 @@ import {
 //   - `false`: we use the cache even if it is old
 //   - `true`: we do not use the cache
 // In all three cases, we update the cache on any successful function call.
-export const readFsCache = async function (fetch) {
+export const readFsCache = async function (cachePath, fetch) {
   if (fetch === true) {
     return
   }
 
-  const cacheFile = getCacheFile()
-
-  if (!(await pathExists(cacheFile))) {
+  if (!(await pathExists(cachePath))) {
     return
   }
 
-  const { versionsInfo, age } = await getCacheFileContent(cacheFile)
+  const { versionsInfo, age } = await getCacheFileContent(cachePath)
 
   if (isOldCache(age, fetch)) {
     return
@@ -41,7 +35,6 @@ const isOldCache = function (age, fetch) {
 const MAX_AGE_MS = 36e5
 
 // Persist the file cache
-export const writeFsCache = async function (versionsInfo) {
-  const cacheFile = getCacheFile()
-  await setCacheFileContent(cacheFile, versionsInfo)
+export const writeFsCache = async function (cachePath, versionsInfo) {
+  await setCacheFileContent(cachePath, versionsInfo)
 }

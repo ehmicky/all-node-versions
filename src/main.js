@@ -1,3 +1,7 @@
+import { env } from 'process'
+
+import getCacheDir from 'cachedir'
+
 import { moizeFs } from './cache/moize.js'
 import { fetchIndex } from './fetch.js'
 import { normalizeIndex } from './normalize.js'
@@ -17,7 +21,17 @@ const getIndex = async function (fetchNodeOpts) {
   return versionsInfo
 }
 
-const cGetIndex = moizeFs(getIndex)
+// The cache is persisted to `GLOBAL_CACHE_DIR/nve/versions.json`.
+const getCachePath = function () {
+  const cacheDir = getCacheDir(CACHE_DIR)
+  const cacheFilename = env.TEST_CACHE_FILENAME || CACHE_FILENAME
+  return `${cacheDir}/${cacheFilename}`
+}
+
+const CACHE_DIR = 'nve'
+const CACHE_FILENAME = 'versions.json'
+
+const cGetIndex = moizeFs(getIndex, getCachePath)
 
 // We do not use `export default` because Babel transpiles it in a way that
 // requires CommonJS users to `require(...).default` instead of `require(...)`.
