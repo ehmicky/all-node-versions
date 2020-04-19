@@ -11,27 +11,25 @@ export const moizeFs = function (func) {
   const state = {}
 
   return function moizedFsFunction(...args) {
-    return getAllVersions(func, args, state)
+    return processMoized(func, args, state)
   }
 }
 
-const getAllVersions = async function (func, args, state) {
+const processMoized = async function (func, args, state) {
   const { fetch, args: argsA } = getFetchOption(args)
 
   if (
-    state.processCachedVersions !== undefined &&
+    state.processValue !== undefined &&
     fetch !== true &&
     !env.TEST_CACHE_FILENAME
   ) {
-    return state.processCachedVersions
+    return state.processValue
   }
 
-  const versionsInfo = await getVersionsInfo(func, fetch, argsA)
-
+  const returnValue = await getVersionsInfo(func, fetch, argsA)
   // eslint-disable-next-line fp/no-mutation, require-atomic-updates, no-param-reassign
-  state.processCachedVersions = versionsInfo
-
-  return versionsInfo
+  state.processValue = returnValue
+  return returnValue
 }
 
 const getFetchOption = function ([{ fetch, ...arg }, ...argsA]) {
@@ -46,9 +44,9 @@ const getVersionsInfo = async function (func, fetch, args) {
   }
 
   try {
-    const versionsInfo = await func(...args)
-    await writeCachedVersions(versionsInfo)
-    return versionsInfo
+    const returnValue = await func(...args)
+    await writeCachedVersions(returnValue)
+    return returnValue
   } catch (error) {
     return handleOfflineError(error)
   }
