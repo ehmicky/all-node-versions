@@ -37,6 +37,7 @@ const getCacheFileContent = async function (cachePath) {
   return { versionsInfo, age }
 }
 
+// TODO: extract
 const maxAgeOption = function ({ fetch }) {
   if (fetch === false) {
     return Infinity

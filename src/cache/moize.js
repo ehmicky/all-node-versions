@@ -27,6 +27,7 @@ const processMoized = async function ({ func, args, state, getCachePath }) {
   return returnValue
 }
 
+// TODO: extract
 const shouldCacheProcess = function ({ fetch }) {
   return fetch !== true && !env.TEST_CACHE_FILENAME
 }
