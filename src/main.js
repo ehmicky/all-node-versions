@@ -10,13 +10,15 @@ import { getOpts } from './options.js'
 // Versions are already sorted from newest to oldest.
 const allNodeVersions = async function (opts) {
   const { fetch, fetchNodeOpts } = getOpts(opts)
-  const cachedFunc = getAllVersions.bind(null, getIndex)
-  const versionsInfo = await cachedFunc(fetch, fetchNodeOpts)
+  const cGetIndex = getAllVersions.bind(null, getIndex)
+  const versionsInfo = await cGetIndex({ ...fetchNodeOpts, fetch })
   return versionsInfo
 }
 
 // We cache the HTTP request once per process.
-const getAllVersions = async function (func, fetch, ...args) {
+const getAllVersions = async function (func, ...args) {
+  const { fetch, args: argsA } = getFetchOption(args)
+
   if (
     processCachedVersions !== undefined &&
     fetch !== true &&
@@ -25,7 +27,7 @@ const getAllVersions = async function (func, fetch, ...args) {
     return processCachedVersions
   }
 
-  const versionsInfo = await getVersionsInfo(func, fetch, ...args)
+  const versionsInfo = await getVersionsInfo(func, fetch, ...argsA)
 
   // eslint-disable-next-line fp/no-mutation, require-atomic-updates
   processCachedVersions = versionsInfo
@@ -35,6 +37,10 @@ const getAllVersions = async function (func, fetch, ...args) {
 
 // eslint-disable-next-line fp/no-let, init-declarations
 let processCachedVersions
+
+const getFetchOption = function ([{ fetch, ...arg }, ...argsA]) {
+  return { fetch, args: [arg, ...argsA] }
+}
 
 // We also cache the HTTP request for one hour using a cache file.
 const getVersionsInfo = async function (func, fetch, ...args) {
