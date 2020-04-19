@@ -1,4 +1,4 @@
-import { readFsCache } from './read.js'
+import { readFsCache } from './fs.js'
 
 // When offline, we try to reuse cached versions if any is available.
 // We do this even if `fetch` option is `true`.

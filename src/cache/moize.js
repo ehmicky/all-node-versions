@@ -1,7 +1,7 @@
 import { env } from 'process'
 
+import { readFsCache, writeCachedVersions } from './fs.js'
 import { handleOfflineError } from './offline.js'
-import { readFsCache, writeCachedVersions } from './read.js'
 
 // Moize a function:
 //  - process-wise, like a regular memoization library
