@@ -7,7 +7,6 @@ import { getOpts } from './options.js'
 // Versions are already sorted from newest to oldest.
 const allNodeVersions = async function (opts) {
   const { fetch, fetchNodeOpts } = getOpts(opts)
-  const cGetIndex = moizeFs(getIndex)
   const versionsInfo = await cGetIndex({ ...fetchNodeOpts, fetch })
   return versionsInfo
 }
@@ -17,6 +16,8 @@ const getIndex = async function (fetchNodeOpts) {
   const versionsInfo = normalizeIndex(index)
   return versionsInfo
 }
+
+const cGetIndex = moizeFs(getIndex)
 
 // We do not use `export default` because Babel transpiles it in a way that
 // requires CommonJS users to `require(...).default` instead of `require(...)`.
