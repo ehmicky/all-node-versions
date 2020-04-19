@@ -1,5 +1,7 @@
 import { env } from 'process'
 
+import keepFuncProps from 'keep-func-props'
+
 import { readFsCache, writeFsCache } from './fs.js'
 import { handleOfflineError } from './offline.js'
 
@@ -7,13 +9,12 @@ import { handleOfflineError } from './offline.js'
 //  - process-wise, like a regular memoization library
 //  - but also on the filesystem
 // Also handles offline connections.
-export const moizeFs = function (func) {
+const kMoizeFs = function (func) {
   const state = {}
-
-  return function moizedFsFunction(...args) {
-    return processMoized(func, args, state)
-  }
+  return (...args) => processMoized(func, args, state)
 }
+
+export const moizeFs = keepFuncProps(kMoizeFs)
 
 const processMoized = async function (func, args, state) {
   const { fetch, args: argsA } = getFetchOption(args)
