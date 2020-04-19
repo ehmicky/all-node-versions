@@ -11,11 +11,11 @@ import { getOpts } from './options.js'
 // Versions are already sorted from newest to oldest.
 const allNodeVersions = async function (opts) {
   const { fetch, fetchNodeOpts } = getOpts(opts)
-  const versionsInfo = await cGetIndex({ ...fetchNodeOpts, fetch })
+  const versionsInfo = await cGetIndex({ fetchNodeOpts, fetch })
   return versionsInfo
 }
 
-const getIndex = async function (fetchNodeOpts) {
+const getIndex = async function ({ fetchNodeOpts }) {
   const index = await fetchIndex(fetchNodeOpts)
   const versionsInfo = normalizeIndex(index)
   return versionsInfo
