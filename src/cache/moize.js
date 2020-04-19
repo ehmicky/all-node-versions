@@ -32,6 +32,9 @@ const processMoized = async function (func, args, state) {
   return returnValue
 }
 
+// TODO: opts.shouldCacheProcess(...args)->boolean
+// and opts.shouldCacheFile(...args)->boolean
+// (with default: always true)
 const getFetchOption = function ([{ fetch, ...arg }, ...argsA]) {
   return { fetch, args: [arg, ...argsA] }
 }
