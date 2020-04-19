@@ -41,7 +41,7 @@ const getFetchOption = function ({ fetch }) {
 const fileMoized = async function ({ func, args, getCachePath }) {
   const fetch = getFetchOption(...args)
   const cachePath = getCachePath(...args)
-  const fileValue = await readFsCache(cachePath, fetch)
+  const fileValue = await readFsCache(cachePath, fetch, args)
 
   if (fileValue !== undefined) {
     return fileValue
@@ -52,6 +52,6 @@ const fileMoized = async function ({ func, args, getCachePath }) {
     await writeFsCache(cachePath, returnValue)
     return returnValue
   } catch (error) {
-    return handleOfflineError(cachePath, error)
+    return handleOfflineError(cachePath, error, args)
   }
 }

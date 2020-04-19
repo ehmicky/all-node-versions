@@ -11,7 +11,7 @@ import writeFileAtomic from 'write-file-atomic'
 //   - `false`: we use the cache even if it is old
 //   - `true`: we do not use the cache
 // In all three cases, we update the cache on any successful function call.
-export const readFsCache = async function (cachePath, fetch) {
+export const readFsCache = async function (cachePath, fetch, args) {
   if (fetch === true) {
     return
   }
@@ -22,7 +22,7 @@ export const readFsCache = async function (cachePath, fetch) {
 
   const { versionsInfo, age } = await getCacheFileContent(cachePath)
 
-  if (isOldCache(age, fetch)) {
+  if (age > maxAgeOption(...args)) {
     return
   }
 
@@ -37,12 +37,7 @@ const getCacheFileContent = async function (cachePath) {
   return { versionsInfo, age }
 }
 
-const isOldCache = function (age, fetch) {
-  const maxAge = maxAgeOption(fetch)
-  return age > maxAge
-}
-
-const maxAgeOption = function (fetch) {
+const maxAgeOption = function ({ fetch }) {
   if (fetch === false) {
     return Infinity
   }
