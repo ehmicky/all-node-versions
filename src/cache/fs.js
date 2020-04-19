@@ -38,7 +38,16 @@ const getCacheFileContent = async function (cachePath) {
 }
 
 const isOldCache = function (age, fetch) {
-  return age > MAX_AGE_MS && fetch !== false
+  const maxAge = maxAgeOption(fetch)
+  return age > maxAge
+}
+
+const maxAgeOption = function (fetch) {
+  if (fetch === false) {
+    return Infinity
+  }
+
+  return MAX_AGE_MS
 }
 
 // One hour
