@@ -10,13 +10,19 @@ import { getOpts } from './options.js'
 // Versions are already sorted from newest to oldest.
 const allNodeVersions = async function (opts) {
   const { fetch, fetchNodeOpts } = getOpts(opts)
-  const cGetIndex = getAllVersions.bind(null, getIndex)
+  const cGetIndex = moizeFs(getIndex)
   const versionsInfo = await cGetIndex({ ...fetchNodeOpts, fetch })
   return versionsInfo
 }
 
+const moizeFs = function (func) {
+  return function moizedFsFunction(...args) {
+    return getAllVersions(func, args)
+  }
+}
+
 // We cache the HTTP request once per process.
-const getAllVersions = async function (func, ...args) {
+const getAllVersions = async function (func, args) {
   const { fetch, args: argsA } = getFetchOption(args)
 
   if (
@@ -27,7 +33,7 @@ const getAllVersions = async function (func, ...args) {
     return processCachedVersions
   }
 
-  const versionsInfo = await getVersionsInfo(func, fetch, ...argsA)
+  const versionsInfo = await getVersionsInfo(func, fetch, argsA)
 
   // eslint-disable-next-line fp/no-mutation, require-atomic-updates
   processCachedVersions = versionsInfo
@@ -43,7 +49,7 @@ const getFetchOption = function ([{ fetch, ...arg }, ...argsA]) {
 }
 
 // We also cache the HTTP request for one hour using a cache file.
-const getVersionsInfo = async function (func, fetch, ...args) {
+const getVersionsInfo = async function (func, fetch, args) {
   const cachedVersions = await readCachedVersions(fetch)
 
   if (cachedVersions !== undefined) {
