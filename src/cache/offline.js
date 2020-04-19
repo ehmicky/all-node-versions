@@ -1,19 +1,19 @@
 import { readFsCache } from './fs.js'
 
-// When offline, we try to reuse cached versions if any is available.
+// When offline, we try to reuse the file-cached value if any is available.
 // We do this even if `fetch` option is `true`.
 export const handleOfflineError = async function (error) {
   if (!isOfflineError(error)) {
     throw error
   }
 
-  const cachedVersions = await readFsCache(false)
+  const fileValue = await readFsCache(false)
 
-  if (cachedVersions === undefined) {
+  if (fileValue === undefined) {
     throw error
   }
 
-  return cachedVersions
+  return fileValue
 }
 
 // On Windows, offline errors are the same as wrong `mirror` option errors.
