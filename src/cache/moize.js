@@ -17,20 +17,18 @@ const kMoizeFs = function (func, getCachePath) {
 export const moizeFs = keepFuncProps(kMoizeFs)
 
 const processMoized = async function ({ func, args, state, getCachePath }) {
-  const fetch = getFetchOption(...args)
-
-  if (
-    state.processValue !== undefined &&
-    fetch !== true &&
-    !env.TEST_CACHE_FILENAME
-  ) {
+  if (state.processValue !== undefined && shouldCacheProcess(...args)) {
     return state.processValue
   }
 
-  const returnValue = await fileMoized({ func, fetch, args, getCachePath })
+  const returnValue = await fileMoized({ func, args, getCachePath })
   // eslint-disable-next-line fp/no-mutation, require-atomic-updates, no-param-reassign
   state.processValue = returnValue
   return returnValue
+}
+
+const shouldCacheProcess = function ({ fetch }) {
+  return fetch !== true && !env.TEST_CACHE_FILENAME
 }
 
 // TODO: opts.shouldCacheProcess(...args)->boolean
@@ -40,7 +38,8 @@ const getFetchOption = function ({ fetch }) {
   return fetch
 }
 
-const fileMoized = async function ({ func, fetch, args, getCachePath }) {
+const fileMoized = async function ({ func, args, getCachePath }) {
+  const fetch = getFetchOption(...args)
   const cachePath = getCachePath(...args)
   const fileValue = await readFsCache(cachePath, fetch)
 
