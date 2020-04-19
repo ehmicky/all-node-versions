@@ -1,6 +1,6 @@
 import { env } from 'process'
 
-import { readFsCache, writeCachedVersions } from './fs.js'
+import { readFsCache, writeFsCache } from './fs.js'
 import { handleOfflineError } from './offline.js'
 
 // Moize a function:
@@ -45,7 +45,7 @@ const fileMoized = async function (func, fetch, args) {
 
   try {
     const returnValue = await func(...args)
-    await writeCachedVersions(returnValue)
+    await writeFsCache(returnValue)
     return returnValue
   } catch (error) {
     return handleOfflineError(error)

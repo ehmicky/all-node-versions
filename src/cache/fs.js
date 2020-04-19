@@ -6,14 +6,13 @@ import {
   setCacheFileContent,
 } from './file.js'
 
-// We cache the HTTP request. It only lasts for one hour (except offline)
-// to make sure we include new Node versions made available every week.
-// We also cache it in-memory so it's performed only once per process.
+// Cache the return value on the filesystem.
+// It has a TTL of one hour.
 // If the `fetch` option is:
 //   - `undefined`: we use the cache
 //   - `false`: we use the cache even if it is old
 //   - `true`: we do not use the cache
-// In all three cases, we update the cache on any successful HTTP request.
+// In all three cases, we update the cache on any successful function call.
 export const readFsCache = async function (fetch) {
   if (fetch === true) {
     return
@@ -41,8 +40,8 @@ const isOldCache = function (age, fetch) {
 // One hour
 const MAX_AGE_MS = 36e5
 
-// Persist the cached versions
-export const writeCachedVersions = async function (versionsInfo) {
+// Persist the file cache
+export const writeFsCache = async function (versionsInfo) {
   const cacheFile = await getCacheFile()
   await setCacheFileContent(cacheFile, versionsInfo)
 }
