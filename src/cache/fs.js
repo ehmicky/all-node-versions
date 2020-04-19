@@ -4,8 +4,6 @@ import { dirname } from 'path'
 import pathExists from 'path-exists'
 import writeFileAtomic from 'write-file-atomic'
 
-import { getCacheFileContent } from './file.js'
-
 // Cache the return value on the filesystem.
 // It has a TTL of one hour.
 // If the `fetch` option is:
@@ -29,6 +27,14 @@ export const readFsCache = async function (cachePath, fetch) {
   }
 
   return versionsInfo
+}
+
+// Retrieve cache file's content
+const getCacheFileContent = async function (cachePath) {
+  const cacheFileContent = await fs.readFile(cachePath, 'utf8')
+  const { lastUpdate, ...versionsInfo } = JSON.parse(cacheFileContent)
+  const age = Date.now() - lastUpdate
+  return { versionsInfo, age }
 }
 
 const isOldCache = function (age, fetch) {
