@@ -18,7 +18,7 @@ export const readFsCache = async function (fetch) {
     return
   }
 
-  const cacheFile = await getCacheFile()
+  const cacheFile = getCacheFile()
 
   if (!(await pathExists(cacheFile))) {
     return
@@ -42,6 +42,6 @@ const MAX_AGE_MS = 36e5
 
 // Persist the file cache
 export const writeFsCache = async function (versionsInfo) {
-  const cacheFile = await getCacheFile()
+  const cacheFile = getCacheFile()
   await setCacheFileContent(cacheFile, versionsInfo)
 }

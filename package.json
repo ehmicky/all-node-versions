@@ -50,10 +50,10 @@
     "test": "test"
   },
   "dependencies": {
+    "cachedir": "^2.3.0",
     "fetch-node-website": "^5.0.3",
     "filter-obj": "^2.0.1",
     "get-stream": "^5.1.0",
-    "global-cache-dir": "^2.0.0",
     "jest-validate": "^25.4.0",
     "keep-func-props": "^3.0.0",
     "path-exists": "^4.0.0",
