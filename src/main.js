@@ -10,12 +10,13 @@ import { getOpts } from './options.js'
 // Versions are already sorted from newest to oldest.
 const allNodeVersions = async function (opts) {
   const { fetch, ...fetchNodeOpts } = getOpts(opts)
-  const versionsInfo = await getAllVersions(fetch, fetchNodeOpts)
+  const cachedFunc = getAllVersions.bind(null, getIndex)
+  const versionsInfo = await cachedFunc(fetch, fetchNodeOpts)
   return versionsInfo
 }
 
 // We cache the HTTP request once per process.
-const getAllVersions = async function (fetch, fetchNodeOpts) {
+const getAllVersions = async function (func, fetch, ...args) {
   if (
     processCachedVersions !== undefined &&
     fetch !== true &&
@@ -24,7 +25,7 @@ const getAllVersions = async function (fetch, fetchNodeOpts) {
     return processCachedVersions
   }
 
-  const versionsInfo = await getVersionsInfo(fetch, fetchNodeOpts)
+  const versionsInfo = await getVersionsInfo(func, fetch, ...args)
 
   // eslint-disable-next-line fp/no-mutation, require-atomic-updates
   processCachedVersions = versionsInfo
@@ -36,7 +37,7 @@ const getAllVersions = async function (fetch, fetchNodeOpts) {
 let processCachedVersions
 
 // We also cache the HTTP request for one hour using a cache file.
-const getVersionsInfo = async function (fetch, fetchNodeOpts) {
+const getVersionsInfo = async function (func, fetch, ...args) {
   const cachedVersions = await readCachedVersions(fetch)
 
   if (cachedVersions !== undefined) {
@@ -44,13 +45,18 @@ const getVersionsInfo = async function (fetch, fetchNodeOpts) {
   }
 
   try {
-    const index = await fetchIndex(fetchNodeOpts)
-    const versionsInfo = normalizeIndex(index)
+    const versionsInfo = await func(...args)
     await writeCachedVersions(versionsInfo)
     return versionsInfo
   } catch (error) {
     return handleOfflineError(error)
   }
+}
+
+const getIndex = async function (fetchNodeOpts) {
+  const index = await fetchIndex(fetchNodeOpts)
+  const versionsInfo = normalizeIndex(index)
+  return versionsInfo
 }
 
 // We do not use `export default` because Babel transpiles it in a way that
