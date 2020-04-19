@@ -1,6 +1,10 @@
-import pathExists from 'path-exists'
+import { promises as fs } from 'fs'
+import { dirname } from 'path'
 
-import { getCacheFileContent, setCacheFileContent } from './file.js'
+import pathExists from 'path-exists'
+import writeFileAtomic from 'write-file-atomic'
+
+import { getCacheFileContent } from './file.js'
 
 // Cache the return value on the filesystem.
 // It has a TTL of one hour.
@@ -36,5 +40,26 @@ const MAX_AGE_MS = 36e5
 
 // Persist the file cache
 export const writeFsCache = async function (cachePath, versionsInfo) {
-  await setCacheFileContent(cachePath, versionsInfo)
+  const lastUpdate = Date.now()
+  const cacheContent = { lastUpdate, ...versionsInfo }
+  const cacheFileContent = `${JSON.stringify(cacheContent, undefined, 2)}\n`
+
+  try {
+    await createCacheDir(cachePath)
+    await writeFileAtomic(cachePath, cacheFileContent)
+    // If two different functions are calling `normalize-node-version` at the
+    // same time and there's no cache file, they will both try to persist the
+    // file and one might fail, especially on Windows (with EPERM lock file
+    // errors)
+  } catch {}
+}
+
+const createCacheDir = async function (cachePath) {
+  const cacheDir = dirname(cachePath)
+
+  if (await pathExists(cacheDir)) {
+    return
+  }
+
+  await fs.mkdir(cacheDir, { recursive: true })
 }
