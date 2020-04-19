@@ -3,6 +3,10 @@ import { env } from 'process'
 import { handleOfflineError } from './offline.js'
 import { readCachedVersions, writeCachedVersions } from './read.js'
 
+// Moize a function:
+//  - process-wise, like a regular memoization library
+//  - but also on the filesystem
+// Also handles offline connections.
 export const moizeFs = function (func) {
   const state = {}
 
@@ -11,7 +15,6 @@ export const moizeFs = function (func) {
   }
 }
 
-// We cache the HTTP request once per process.
 const getAllVersions = async function (func, args, state) {
   const { fetch, args: argsA } = getFetchOption(args)
 
@@ -35,7 +38,6 @@ const getFetchOption = function ([{ fetch, ...arg }, ...argsA]) {
   return { fetch, args: [arg, ...argsA] }
 }
 
-// We also cache the HTTP request for one hour using a cache file.
 const getVersionsInfo = async function (func, fetch, args) {
   const cachedVersions = await readCachedVersions(fetch)
 
