@@ -1,22 +1,29 @@
-import { env } from 'process'
-
 import keepFuncProps from 'keep-func-props'
 
 import { readFsCache, writeFsCache } from './fs.js'
 import { handleOfflineError } from './offline.js'
+import { getOpts } from './options.js'
 
 // Moize a function:
 //  - process-wise, like a regular memoization library
 //  - but also on the filesystem
 // Also handles offline connections.
-const kMoizeFs = function (func, cacheOption) {
+const kMoizeFs = function (func, cacheOption, opts) {
+  const { shouldCacheProcess } = getOpts(opts)
   const state = {}
-  return (...args) => processMoized({ func, args, state, cacheOption })
+  return (...args) =>
+    processMoized({ func, args, state, cacheOption, shouldCacheProcess })
 }
 
 export const moizeFs = keepFuncProps(kMoizeFs)
 
-const processMoized = async function ({ func, args, state, cacheOption }) {
+const processMoized = async function ({
+  func,
+  args,
+  state,
+  cacheOption,
+  shouldCacheProcess,
+}) {
   if (state.processValue !== undefined && shouldCacheProcess(...args)) {
     return state.processValue
   }
@@ -58,11 +65,6 @@ const getFsCache = function ({ cachePath, args }) {
   }
 
   return readFsCache({ cachePath, args, maxAge })
-}
-
-// TODO: extract. Make it default to () => true
-const shouldCacheProcess = function ({ fetch }) {
-  return fetch !== true && !env.TEST_CACHE_FILENAME
 }
 
 // TODO: extract. Make it default to () => true

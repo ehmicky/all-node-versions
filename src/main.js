@@ -31,7 +31,11 @@ const getCachePath = function () {
 const CACHE_DIR = 'nve'
 const CACHE_FILENAME = 'versions.json'
 
-const cGetIndex = moizeFs(getIndex, getCachePath)
+const cGetIndex = moizeFs(getIndex, getCachePath, {
+  shouldCacheProcess({ fetch }) {
+    return fetch !== true && !env.TEST_CACHE_FILENAME
+  },
+})
 
 // We do not use `export default` because Babel transpiles it in a way that
 // requires CommonJS users to `require(...).default` instead of `require(...)`.
