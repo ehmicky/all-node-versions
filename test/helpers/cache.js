@@ -2,6 +2,7 @@ import { promises as fs } from 'fs'
 import { env } from 'process'
 
 import globalCacheDir from 'global-cache-dir'
+import pathExists from 'path-exists'
 
 // We set an environment variable with mocked cached versions to be able to
 // test caching.
@@ -16,29 +17,43 @@ export const unsetTestCache = function () {
 }
 
 export const writeCacheFile = async function (oldCacheFile = false) {
-  const cacheFile = await getCacheFile()
-  const lastUpdate = oldCacheFile ? 0 : Date.now()
+  const cachePath = await getCachePath()
+  const timestamp = oldCacheFile ? 0 : Date.now()
   const versionsInfo = {
     versions: ['cached'],
     majors: [{ major: 1, latest: 'cached' }],
   }
-  const cacheContent = { lastUpdate, ...versionsInfo }
-  const cacheFileContent = JSON.stringify(cacheContent, undefined, 2)
+  const cacheFileContent = JSON.stringify(versionsInfo, undefined, 2)
 
-  await fs.writeFile(cacheFile, cacheFileContent)
+  await Promise.all([
+    fs.writeFile(cachePath, cacheFileContent),
+    fs.writeFile(`${cachePath}${TIMESTAMP_SUFFIX}`, `${timestamp}\n`),
+  ])
 
-  return cacheFile
+  return cachePath
 }
 
 export const removeCacheFile = async function () {
-  const cacheFile = await getCacheFile()
-  await fs.unlink(cacheFile)
+  const cachePath = await getCachePath()
+  await Promise.all([
+    maybeUnlink(cachePath),
+    maybeUnlink(`${cachePath}${TIMESTAMP_SUFFIX}`),
+  ])
 }
 
-const getCacheFile = async function () {
+const maybeUnlink = async function (path) {
+  if (!(await pathExists(path))) {
+    return
+  }
+
+  await fs.unlink(path)
+}
+
+const getCachePath = async function () {
   const cacheDir = await globalCacheDir(CACHE_DIR)
   const cacheFile = `${cacheDir}/${env.TEST_CACHE_FILENAME}`
   return cacheFile
 }
 
 const CACHE_DIR = 'nve'
+const TIMESTAMP_SUFFIX = '.timestamp.txt'
