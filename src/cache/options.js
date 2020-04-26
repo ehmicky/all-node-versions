@@ -23,6 +23,7 @@ const DEFAULT_OPTS = {
     return true
   },
   maxAge: DEFAULT_MAX_AGE_MS,
+  strict: true,
 }
 
 const EXAMPLE_OPTS = {

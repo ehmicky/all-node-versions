@@ -70,9 +70,14 @@ export const writeFsCache = async function ({
   cachePath,
   timestampPath,
   returnValue,
+  strict,
 }) {
   const timestamp = `${Date.now()}\n`
-  const cacheFileContent = serialize(returnValue)
+  const cacheFileContent = trySerialize(returnValue, strict)
+
+  if (cacheFileContent === undefined) {
+    return
+  }
 
   await createCacheDir(cachePath)
 
@@ -86,6 +91,24 @@ export const writeFsCache = async function ({
     // file and one might fail, especially on Windows (with EPERM lock file
     // errors)
   } catch {}
+}
+
+const trySerialize = function (returnValue, strict) {
+  try {
+    return serialize(returnValue)
+  } catch (error) {
+    handleSerializeError(error, strict)
+  }
+}
+
+const handleSerializeError = function (error, strict) {
+  if (!strict) {
+    return
+  }
+
+  // eslint-disable-next-line no-param-reassign, fp/no-mutation
+  error.message = `Could not cache the return value: not serializable with the structured cloned algorithm\n${error.message}`
+  throw error
 }
 
 const createCacheDir = async function (cachePath) {

@@ -9,7 +9,7 @@ import { getOpts } from './options.js'
 //  - but also on the filesystem
 // Also handles offline connections.
 const kMoizeFs = function (func, cacheOption, opts) {
-  const { shouldCacheProcess, shouldCacheFile, maxAge } = getOpts(opts)
+  const { shouldCacheProcess, shouldCacheFile, maxAge, strict } = getOpts(opts)
   const state = {}
   return (...args) =>
     processMoized({
@@ -20,6 +20,7 @@ const kMoizeFs = function (func, cacheOption, opts) {
       shouldCacheProcess,
       shouldCacheFile,
       maxAge,
+      strict,
     })
 }
 
@@ -33,6 +34,7 @@ const processMoized = async function ({
   shouldCacheProcess,
   shouldCacheFile,
   maxAge,
+  strict,
 }) {
   if (state.processValue !== undefined && shouldCacheProcess(...args)) {
     return state.processValue
@@ -44,6 +46,7 @@ const processMoized = async function ({
     cacheOption,
     shouldCacheFile,
     maxAge,
+    strict,
   })
   // eslint-disable-next-line fp/no-mutation, require-atomic-updates, no-param-reassign
   state.processValue = returnValue
@@ -56,6 +59,7 @@ const fileMoized = async function ({
   cacheOption,
   shouldCacheFile,
   maxAge,
+  strict,
 }) {
   const { cachePath, timestampPath } = getCachePath(cacheOption, args)
   const fileValue = await getFsCache({
@@ -72,7 +76,7 @@ const fileMoized = async function ({
 
   try {
     const returnValue = await func(...args)
-    await writeFsCache({ cachePath, timestampPath, returnValue })
+    await writeFsCache({ cachePath, timestampPath, returnValue, strict })
     return returnValue
   } catch (error) {
     return handleOfflineError({ cachePath, timestampPath, error, args })
