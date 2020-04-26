@@ -27,7 +27,12 @@ export const readFsCache = async function ({
     return
   }
 
-  const returnValue = deserialize(cacheFileContent)
+  const returnValue = safeDeserialize(cacheFileContent)
+
+  if (returnValue === undefined) {
+    return
+  }
+
   const age = Date.now() - Number(String(timestamp).trim())
 
   if (age > getMaxAge(maxAge, args)) {
@@ -43,6 +48,13 @@ const maybeReadFile = async function (path) {
   }
 
   return fs.readFile(path)
+}
+
+// If the file is corrupted, ignore it
+const safeDeserialize = function (cacheFileContent) {
+  try {
+    return deserialize(cacheFileContent)
+  } catch {}
 }
 
 const getMaxAge = function (maxAge, args) {
