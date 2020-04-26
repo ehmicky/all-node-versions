@@ -6,12 +6,6 @@ import pathExists from 'path-exists'
 import writeFileAtomic from 'write-file-atomic'
 
 // Cache the return value on the filesystem.
-// It has a TTL of one hour.
-// If the `fetch` option is:
-//   - `undefined`: we use the cache
-//   - `false`: we use the cache even if it is old
-//   - `true`: we do not use the cache
-// In all three cases, we update the cache on any successful function call.
 export const readFsCache = async function ({
   cachePath,
   timestampPath,
