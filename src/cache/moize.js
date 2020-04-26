@@ -74,7 +74,7 @@ const fileMoized = async function ({
     await writeFsCache(cachePath, returnValue)
     return returnValue
   } catch (error) {
-    return handleOfflineError({ cachePath, error, args, maxAge })
+    return handleOfflineError({ cachePath, error, args })
   }
 }
 

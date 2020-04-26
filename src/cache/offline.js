@@ -2,17 +2,12 @@ import { readFsCache } from './fs.js'
 
 // When offline, we try to reuse the file-cached value if any is available.
 // We do this even if `fetch` option is `true`.
-export const handleOfflineError = async function ({
-  cachePath,
-  error,
-  args,
-  maxAge,
-}) {
+export const handleOfflineError = async function ({ cachePath, error, args }) {
   if (!isOfflineError(error)) {
     throw error
   }
 
-  const fileValue = await readFsCache({ cachePath, args, maxAge })
+  const fileValue = await readFsCache({ cachePath, args, maxAge: Infinity })
 
   if (fileValue === undefined) {
     throw error
