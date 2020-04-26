@@ -9,10 +9,17 @@ import { getOpts } from './options.js'
 //  - but also on the filesystem
 // Also handles offline connections.
 const kMoizeFs = function (func, cacheOption, opts) {
-  const { shouldCacheProcess } = getOpts(opts)
+  const { shouldCacheProcess, shouldCacheFile } = getOpts(opts)
   const state = {}
   return (...args) =>
-    processMoized({ func, args, state, cacheOption, shouldCacheProcess })
+    processMoized({
+      func,
+      args,
+      state,
+      cacheOption,
+      shouldCacheProcess,
+      shouldCacheFile,
+    })
 }
 
 export const moizeFs = keepFuncProps(kMoizeFs)
@@ -23,20 +30,31 @@ const processMoized = async function ({
   state,
   cacheOption,
   shouldCacheProcess,
+  shouldCacheFile,
 }) {
   if (state.processValue !== undefined && shouldCacheProcess(...args)) {
     return state.processValue
   }
 
-  const returnValue = await fileMoized({ func, args, cacheOption })
+  const returnValue = await fileMoized({
+    func,
+    args,
+    cacheOption,
+    shouldCacheFile,
+  })
   // eslint-disable-next-line fp/no-mutation, require-atomic-updates, no-param-reassign
   state.processValue = returnValue
   return returnValue
 }
 
-const fileMoized = async function ({ func, args, cacheOption }) {
+const fileMoized = async function ({
+  func,
+  args,
+  cacheOption,
+  shouldCacheFile,
+}) {
   const cachePath = getCachePath(cacheOption, args)
-  const fileValue = await getFsCache({ cachePath, args })
+  const fileValue = await getFsCache({ cachePath, args, shouldCacheFile })
 
   if (fileValue !== undefined) {
     return fileValue
@@ -59,17 +77,12 @@ const getCachePath = function (cacheOption, args) {
   return cacheOption(...args)
 }
 
-const getFsCache = function ({ cachePath, args }) {
+const getFsCache = function ({ cachePath, args, shouldCacheFile }) {
   if (!shouldCacheFile(...args)) {
     return
   }
 
   return readFsCache({ cachePath, args, maxAge })
-}
-
-// TODO: extract. Make it default to () => true
-const shouldCacheFile = function ({ fetch }) {
-  return fetch !== true
 }
 
 // TODO: extract. Make it default to 1 hour

@@ -15,6 +15,10 @@ const DEFAULT_OPTS = {
   shouldCacheProcess() {
     return true
   },
+  // TODO: allow boolean
+  shouldCacheFile() {
+    return true
+  },
 }
 
 const EXAMPLE_OPTS = {

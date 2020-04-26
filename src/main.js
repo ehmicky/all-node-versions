@@ -35,6 +35,9 @@ const cGetIndex = moizeFs(getIndex, getCachePath, {
   shouldCacheProcess({ fetch }) {
     return fetch !== true && !env.TEST_CACHE_FILENAME
   },
+  shouldCacheFile({ fetch }) {
+    return fetch !== true
+  },
 })
 
 // We do not use `export default` because Babel transpiles it in a way that
