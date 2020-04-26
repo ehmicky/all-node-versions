@@ -12,13 +12,7 @@ import { getOpts } from './options.js'
 //  - but also on the filesystem
 // Also handles offline connections.
 const kMoizeFs = function (func, cacheOption, opts) {
-  const {
-    shouldCacheProcess,
-    shouldCacheFile,
-    useMaxAge,
-    maxAge,
-    strict,
-  } = getOpts(opts)
+  const { useCache, useMaxAge, maxAge, strict } = getOpts(opts)
   const state = {}
   return (...args) =>
     processMoized({
@@ -26,8 +20,7 @@ const kMoizeFs = function (func, cacheOption, opts) {
       args,
       state,
       cacheOption,
-      shouldCacheProcess,
-      shouldCacheFile,
+      useCache,
       useMaxAge,
       maxAge,
       strict,
@@ -41,15 +34,16 @@ const processMoized = async function ({
   args,
   state,
   cacheOption,
-  shouldCacheProcess,
-  shouldCacheFile,
+  useCache,
   useMaxAge,
   maxAge,
   strict,
 }) {
+  const useCacheValue = useCache(...args)
+
   if (
     state.processValue !== undefined &&
-    shouldCacheProcess(...args) &&
+    useCacheValue &&
     !env.TEST_CACHE_FILENAME
   ) {
     return state.processValue
@@ -59,7 +53,7 @@ const processMoized = async function ({
     func,
     args,
     cacheOption,
-    shouldCacheFile,
+    useCacheValue,
     useMaxAge,
     maxAge,
     strict,
@@ -73,7 +67,7 @@ const fileMoized = async function ({
   func,
   args,
   cacheOption,
-  shouldCacheFile,
+  useCacheValue,
   useMaxAge,
   maxAge,
   strict,
@@ -83,7 +77,7 @@ const fileMoized = async function ({
     cachePath,
     timestampPath,
     args,
-    shouldCacheFile,
+    useCacheValue,
     useMaxAge,
     maxAge,
   })
@@ -118,11 +112,11 @@ const getFsCache = function ({
   cachePath,
   timestampPath,
   args,
-  shouldCacheFile,
+  useCacheValue,
   useMaxAge,
   maxAge,
 }) {
-  if (!shouldCacheFile(...args)) {
+  if (!useCacheValue) {
     return
   }
 

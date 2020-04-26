@@ -37,10 +37,7 @@ const MAX_AGE_MS = 36e5
 //   - `true`: we do not use the cache
 // In all three cases, we update the cache on any successful function call.
 const cFetchIndex = moizeFs(fetchIndex, getCachePath, {
-  shouldCacheProcess({ fetch }) {
-    return fetch !== true
-  },
-  shouldCacheFile({ fetch }) {
+  useCache({ fetch }) {
     return fetch !== true
   },
   useMaxAge({ fetch }) {
