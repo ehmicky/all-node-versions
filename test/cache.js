@@ -20,7 +20,6 @@ each(
     { result: true, fetch: false },
     { result: false, fetch: true },
     { result: false, oldCacheFile: true },
-    { result: true, fetch: false, oldCacheFile: true },
   ],
   ({ title }, { result, fetch, oldCacheFile }) => {
     test.serial(`Caching | ${title}`, async (t) => {
@@ -43,7 +42,7 @@ test.serial('No cache file', async (t) => {
   setTestCache()
 
   try {
-    const latestVersion = await getLatestVersion({ fetch: false })
+    const latestVersion = await getLatestVersion()
     t.not(latestVersion, '1.0.0')
   } finally {
     await removeCacheFile()
@@ -64,7 +63,7 @@ each(
       try {
         await writeCacheFile()
 
-        await getLatestVersion({ fetch: false })
+        await getLatestVersion()
       } finally {
         await removeCacheFile()
         unsetTestCache()

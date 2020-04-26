@@ -17,9 +17,6 @@ const DEFAULT_OPTS = {
   useCache() {
     return true
   },
-  useMaxAge() {
-    return true
-  },
   maxAge: DEFAULT_MAX_AGE_MS,
   strict: true,
 }

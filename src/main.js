@@ -31,17 +31,11 @@ const MAX_AGE_MS = 36e5
 
 // Cache the return value on the filesystem.
 // It has a TTL of one hour.
-// If the `fetch` option is:
-//   - `undefined`: we use the cache
-//   - `false`: we use the cache even if it is old
-//   - `true`: we do not use the cache
-// In all three cases, we update the cache on any successful function call.
+// If the `fetch` option is `true`, we do not read the cache (but still write
+// it)
 const cFetchIndex = moizeFs(fetchIndex, getCachePath, {
   useCache({ fetch }) {
-    return fetch !== true
-  },
-  useMaxAge({ fetch }) {
-    return fetch !== false
+    return !fetch
   },
   maxAge: MAX_AGE_MS,
 })

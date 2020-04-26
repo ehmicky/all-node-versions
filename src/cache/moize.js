@@ -12,7 +12,7 @@ import { getOpts } from './options.js'
 //  - but also on the filesystem
 // Also handles offline connections.
 const kMoizeFs = function (func, cacheOption, opts) {
-  const { useCache, useMaxAge, maxAge, strict } = getOpts(opts)
+  const { useCache, maxAge, strict } = getOpts(opts)
   const state = {}
   return (...args) =>
     processMoized({
@@ -21,7 +21,6 @@ const kMoizeFs = function (func, cacheOption, opts) {
       state,
       cacheOption,
       useCache,
-      useMaxAge,
       maxAge,
       strict,
     })
@@ -35,7 +34,6 @@ const processMoized = async function ({
   state,
   cacheOption,
   useCache,
-  useMaxAge,
   maxAge,
   strict,
 }) {
@@ -54,7 +52,6 @@ const processMoized = async function ({
     args,
     cacheOption,
     useCacheValue,
-    useMaxAge,
     maxAge,
     strict,
   })
@@ -68,7 +65,6 @@ const fileMoized = async function ({
   args,
   cacheOption,
   useCacheValue,
-  useMaxAge,
   maxAge,
   strict,
 }) {
@@ -76,9 +72,7 @@ const fileMoized = async function ({
   const fileValue = await getFsCache({
     cachePath,
     timestampPath,
-    args,
     useCacheValue,
-    useMaxAge,
     maxAge,
   })
 
@@ -91,7 +85,7 @@ const fileMoized = async function ({
     await writeFsCache({ cachePath, timestampPath, returnValue, strict })
     return returnValue
   } catch (error) {
-    return handleOfflineError({ cachePath, timestampPath, error, args })
+    return handleOfflineError({ cachePath, timestampPath, error })
   }
 }
 
@@ -111,14 +105,12 @@ const TIMESTAMP_FILE_EXTENSION = '.timestamp.txt'
 const getFsCache = function ({
   cachePath,
   timestampPath,
-  args,
   useCacheValue,
-  useMaxAge,
   maxAge,
 }) {
   if (!useCacheValue) {
     return
   }
 
-  return readFsCache({ cachePath, timestampPath, args, useMaxAge, maxAge })
+  return readFsCache({ cachePath, timestampPath, useMaxAge: true, maxAge })
 }

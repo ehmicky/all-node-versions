@@ -9,13 +9,12 @@ import writeFileAtomic from 'write-file-atomic'
 export const readFsCache = async function ({
   cachePath,
   timestampPath,
-  args,
   useMaxAge,
   maxAge,
 }) {
   const [cacheContent, isOldCache] = await Promise.all([
     maybeReadFile(cachePath),
-    checkTimestamp({ timestampPath, args, useMaxAge, maxAge }),
+    checkTimestamp({ timestampPath, useMaxAge, maxAge }),
   ])
 
   if (cacheContent === undefined || isOldCache) {
@@ -26,13 +25,8 @@ export const readFsCache = async function ({
   return fileValue
 }
 
-const checkTimestamp = async function ({
-  timestampPath,
-  args,
-  useMaxAge,
-  maxAge,
-}) {
-  if (!useMaxAge(...args)) {
+const checkTimestamp = async function ({ timestampPath, useMaxAge, maxAge }) {
+  if (!useMaxAge) {
     return false
   }
 

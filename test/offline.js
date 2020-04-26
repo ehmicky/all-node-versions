@@ -19,7 +19,7 @@ test.serial(`Offline | fetch: true`, async (t) => {
   try {
     await writeCacheFile()
 
-    await getLatestVersion({ fetch: false })
+    await getLatestVersion()
     const latestVersion = await getLatestVersion({
       fetch: true,
       mirror: INVALID_MIRROR,
@@ -35,9 +35,7 @@ test.serial(`Offline | no cache`, async (t) => {
   setTestCache()
 
   try {
-    await t.throwsAsync(
-      getLatestVersion({ fetch: false, mirror: INVALID_MIRROR }),
-    )
+    await t.throwsAsync(getLatestVersion({ mirror: INVALID_MIRROR }))
   } finally {
     unsetTestCache()
   }
