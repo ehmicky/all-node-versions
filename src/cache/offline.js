@@ -12,18 +12,18 @@ export const handleOfflineError = async function ({
     throw error
   }
 
-  const fileValue = await readFsCache({
+  const returnValue = await readFsCache({
     cachePath,
     timestampPath,
     args,
     maxAge: Infinity,
   })
 
-  if (fileValue === undefined) {
+  if (returnValue === undefined) {
     throw error
   }
 
-  return fileValue
+  return returnValue
 }
 
 // On Windows, offline errors are the same as wrong `mirror` option errors.
