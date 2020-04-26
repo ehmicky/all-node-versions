@@ -31,12 +31,22 @@ const getCachePath = function () {
 const CACHE_DIR = 'nve'
 const CACHE_FILENAME = 'versions.json'
 
+// One hour
+const MAX_AGE_MS = 36e5
+
 const cGetIndex = moizeFs(getIndex, getCachePath, {
   shouldCacheProcess({ fetch }) {
     return fetch !== true && !env.TEST_CACHE_FILENAME
   },
   shouldCacheFile({ fetch }) {
     return fetch !== true
+  },
+  maxAge({ fetch }) {
+    if (fetch === false) {
+      return Infinity
+    }
+
+    return MAX_AGE_MS
   },
 })
 

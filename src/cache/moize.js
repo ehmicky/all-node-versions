@@ -9,7 +9,7 @@ import { getOpts } from './options.js'
 //  - but also on the filesystem
 // Also handles offline connections.
 const kMoizeFs = function (func, cacheOption, opts) {
-  const { shouldCacheProcess, shouldCacheFile } = getOpts(opts)
+  const { shouldCacheProcess, shouldCacheFile, maxAge } = getOpts(opts)
   const state = {}
   return (...args) =>
     processMoized({
@@ -19,6 +19,7 @@ const kMoizeFs = function (func, cacheOption, opts) {
       cacheOption,
       shouldCacheProcess,
       shouldCacheFile,
+      maxAge,
     })
 }
 
@@ -31,6 +32,7 @@ const processMoized = async function ({
   cacheOption,
   shouldCacheProcess,
   shouldCacheFile,
+  maxAge,
 }) {
   if (state.processValue !== undefined && shouldCacheProcess(...args)) {
     return state.processValue
@@ -41,6 +43,7 @@ const processMoized = async function ({
     args,
     cacheOption,
     shouldCacheFile,
+    maxAge,
   })
   // eslint-disable-next-line fp/no-mutation, require-atomic-updates, no-param-reassign
   state.processValue = returnValue
@@ -52,9 +55,15 @@ const fileMoized = async function ({
   args,
   cacheOption,
   shouldCacheFile,
+  maxAge,
 }) {
   const cachePath = getCachePath(cacheOption, args)
-  const fileValue = await getFsCache({ cachePath, args, shouldCacheFile })
+  const fileValue = await getFsCache({
+    cachePath,
+    args,
+    shouldCacheFile,
+    maxAge,
+  })
 
   if (fileValue !== undefined) {
     return fileValue
@@ -77,22 +86,10 @@ const getCachePath = function (cacheOption, args) {
   return cacheOption(...args)
 }
 
-const getFsCache = function ({ cachePath, args, shouldCacheFile }) {
+const getFsCache = function ({ cachePath, args, shouldCacheFile, maxAge }) {
   if (!shouldCacheFile(...args)) {
     return
   }
 
   return readFsCache({ cachePath, args, maxAge })
 }
-
-// TODO: extract. Make it default to 1 hour
-const maxAge = function ({ fetch }) {
-  if (fetch === false) {
-    return Infinity
-  }
-
-  return MAX_AGE_MS
-}
-
-// One hour
-const MAX_AGE_MS = 36e5
