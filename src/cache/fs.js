@@ -40,16 +40,11 @@ const getCachedValue = function ({
   useMaxAge,
   maxAge,
 }) {
-  const returnValue = safeDeserialize(cacheContent)
-
-  if (
-    returnValue === undefined ||
-    isOldCache({ timestamp, args, useMaxAge, maxAge })
-  ) {
+  if (isOldCache({ timestamp, args, useMaxAge, maxAge })) {
     return
   }
 
-  return returnValue
+  return safeDeserialize(cacheContent)
 }
 
 // If the file is corrupted, ignore it
