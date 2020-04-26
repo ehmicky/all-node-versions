@@ -1,3 +1,5 @@
+import { normalize } from 'path'
+
 import keepFuncProps from 'keep-func-props'
 
 import { readFsCache, writeFsCache } from './fs.js'
@@ -97,8 +99,9 @@ const fileMoized = async function ({
 const getCachePath = function (cacheOption, args) {
   const cachePathValue =
     typeof cacheOption === 'function' ? cacheOption(...args) : cacheOption
-  const cachePath = `${cachePathValue}${CACHE_FILE_EXTENSION}`
-  const timestampPath = `${cachePathValue}${TIMESTAMP_FILE_EXTENSION}`
+  const cachePathValueA = normalize(cachePathValue)
+  const cachePath = `${cachePathValueA}${CACHE_FILE_EXTENSION}`
+  const timestampPath = `${cachePathValueA}${TIMESTAMP_FILE_EXTENSION}`
   return { cachePath, timestampPath }
 }
 
