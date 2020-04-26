@@ -22,7 +22,7 @@ export const readFsCache = async function (cachePath, fetch, args) {
 
   const { versionsInfo, age } = await getCacheFileContent(cachePath)
 
-  if (age > maxAgeOption(...args)) {
+  if (age > maxAge(...args)) {
     return
   }
 
@@ -38,7 +38,7 @@ const getCacheFileContent = async function (cachePath) {
 }
 
 // TODO: extract
-const maxAgeOption = function ({ fetch }) {
+const maxAge = function ({ fetch }) {
   if (fetch === false) {
     return Infinity
   }
