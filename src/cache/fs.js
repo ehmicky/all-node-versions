@@ -18,7 +18,7 @@ export const readFsCache = async function ({
     maybeReadFile(timestampPath),
   ])
 
-  if (cacheContent === undefined || timestamp === undefined) {
+  if (cacheContent === undefined) {
     return
   }
 
@@ -47,7 +47,8 @@ const safeDeserialize = function (cacheContent) {
 const isOldCache = function ({ timestamp, args, useMaxAge, maxAge }) {
   return (
     useMaxAge(...args) &&
-    maxAge <= Date.now() - Number(String(timestamp).trim())
+    (timestamp === undefined ||
+      maxAge <= Date.now() - Number(String(timestamp).trim()))
   )
 }
 
