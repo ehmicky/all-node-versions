@@ -1,5 +1,5 @@
 import filterObj from 'filter-obj'
-import { validate, multipleValidOptions } from 'jest-validate'
+import { validate } from 'jest-validate'
 
 // Normalize options and assign default values
 export const getOpts = function (opts = {}) {
@@ -22,13 +22,15 @@ const DEFAULT_OPTS = {
   shouldCacheFile() {
     return true
   },
+  useMaxAge() {
+    return true
+  },
   maxAge: DEFAULT_MAX_AGE_MS,
   strict: true,
 }
 
 const EXAMPLE_OPTS = {
   ...DEFAULT_OPTS,
-  maxAge: multipleValidOptions(DEFAULT_MAX_AGE_MS, () => DEFAULT_MAX_AGE_MS),
 }
 
 const isDefined = function (key, value) {

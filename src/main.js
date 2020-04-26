@@ -43,13 +43,10 @@ const cFetchIndex = moizeFs(fetchIndex, getCachePath, {
   shouldCacheFile({ fetch }) {
     return fetch !== true
   },
-  maxAge({ fetch }) {
-    if (fetch === false) {
-      return Infinity
-    }
-
-    return MAX_AGE_MS
+  useMaxAge({ fetch }) {
+    return fetch !== false
   },
+  maxAge: MAX_AGE_MS,
 })
 
 // We do not use `export default` because Babel transpiles it in a way that

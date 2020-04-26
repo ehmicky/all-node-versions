@@ -16,7 +16,7 @@ export const handleOfflineError = async function ({
     cachePath,
     timestampPath,
     args,
-    maxAge: Infinity,
+    useMaxAge: offlineUseMaxAge,
   })
 
   if (returnValue === undefined) {
@@ -24,6 +24,10 @@ export const handleOfflineError = async function ({
   }
 
   return returnValue
+}
+
+const offlineUseMaxAge = function () {
+  return false
 }
 
 // On Windows, offline errors are the same as wrong `mirror` option errors.

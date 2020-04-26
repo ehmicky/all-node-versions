@@ -10,6 +10,7 @@ export const readFsCache = async function ({
   cachePath,
   timestampPath,
   args,
+  useMaxAge,
   maxAge,
 }) {
   const [cacheContent, timestamp] = await Promise.all([
@@ -21,7 +22,7 @@ export const readFsCache = async function ({
     return
   }
 
-  return getCachedValue({ cacheContent, timestamp, args, maxAge })
+  return getCachedValue({ cacheContent, timestamp, args, useMaxAge, maxAge })
 }
 
 const maybeReadFile = async function (path) {
@@ -32,10 +33,19 @@ const maybeReadFile = async function (path) {
   return fs.readFile(path)
 }
 
-const getCachedValue = function ({ cacheContent, timestamp, args, maxAge }) {
+const getCachedValue = function ({
+  cacheContent,
+  timestamp,
+  args,
+  useMaxAge,
+  maxAge,
+}) {
   const returnValue = safeDeserialize(cacheContent)
 
-  if (returnValue === undefined || isOldCache({ timestamp, args, maxAge })) {
+  if (
+    returnValue === undefined ||
+    isOldCache({ timestamp, args, useMaxAge, maxAge })
+  ) {
     return
   }
 
@@ -49,18 +59,11 @@ const safeDeserialize = function (cacheContent) {
   } catch {}
 }
 
-const isOldCache = function ({ timestamp, args, maxAge }) {
-  const age = Date.now() - Number(String(timestamp).trim())
-  const cacheMaxAge = getMaxAge(maxAge, args)
-  return age > cacheMaxAge
-}
-
-const getMaxAge = function (maxAge, args) {
-  if (typeof maxAge !== 'function') {
-    return maxAge
-  }
-
-  return maxAge(...args)
+const isOldCache = function ({ timestamp, args, useMaxAge, maxAge }) {
+  return (
+    useMaxAge(...args) &&
+    maxAge <= Date.now() - Number(String(timestamp).trim())
+  )
 }
 
 // Persist the file cache
