@@ -7,7 +7,7 @@ export const handleOfflineError = async function (cachePath, error, args) {
     throw error
   }
 
-  const fileValue = await readFsCache(cachePath, false, args)
+  const fileValue = await readFsCache(cachePath, args)
 
   if (fileValue === undefined) {
     throw error

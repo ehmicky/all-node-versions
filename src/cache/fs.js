@@ -11,11 +11,7 @@ import writeFileAtomic from 'write-file-atomic'
 //   - `false`: we use the cache even if it is old
 //   - `true`: we do not use the cache
 // In all three cases, we update the cache on any successful function call.
-export const readFsCache = async function (cachePath, fetch, args) {
-  if (fetch === true) {
-    return
-  }
-
+export const readFsCache = async function (cachePath, args) {
   if (!(await pathExists(cachePath))) {
     return
   }
