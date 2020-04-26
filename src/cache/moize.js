@@ -9,26 +9,26 @@ import { handleOfflineError } from './offline.js'
 //  - process-wise, like a regular memoization library
 //  - but also on the filesystem
 // Also handles offline connections.
-const kMoizeFs = function (func, getCachePath) {
+const kMoizeFs = function (func, cacheOption) {
   const state = {}
-  return (...args) => processMoized({ func, args, state, getCachePath })
+  return (...args) => processMoized({ func, args, state, cacheOption })
 }
 
 export const moizeFs = keepFuncProps(kMoizeFs)
 
-const processMoized = async function ({ func, args, state, getCachePath }) {
+const processMoized = async function ({ func, args, state, cacheOption }) {
   if (state.processValue !== undefined && shouldCacheProcess(...args)) {
     return state.processValue
   }
 
-  const returnValue = await fileMoized({ func, args, getCachePath })
+  const returnValue = await fileMoized({ func, args, cacheOption })
   // eslint-disable-next-line fp/no-mutation, require-atomic-updates, no-param-reassign
   state.processValue = returnValue
   return returnValue
 }
 
-const fileMoized = async function ({ func, args, getCachePath }) {
-  const cachePath = getCachePath(...args)
+const fileMoized = async function ({ func, args, cacheOption }) {
+  const cachePath = getCachePath(cacheOption, args)
   const fileValue = await getFsCache({ cachePath, args })
 
   if (fileValue !== undefined) {
@@ -42,6 +42,14 @@ const fileMoized = async function ({ func, args, getCachePath }) {
   } catch (error) {
     return handleOfflineError({ cachePath, error, args, maxAge })
   }
+}
+
+const getCachePath = function (cacheOption, args) {
+  if (typeof cacheOption !== 'function') {
+    return cacheOption
+  }
+
+  return cacheOption(...args)
 }
 
 const getFsCache = function ({ cachePath, args }) {
