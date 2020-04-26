@@ -11,12 +11,7 @@ import { getOpts } from './options.js'
 // Versions are already sorted from newest to oldest.
 const allNodeVersions = async function (opts) {
   const { fetch, fetchNodeOpts } = getOpts(opts)
-  const versionsInfo = await cGetIndex({ fetchNodeOpts, fetch })
-  return versionsInfo
-}
-
-const getIndex = async function ({ fetchNodeOpts }) {
-  const index = await fetchIndex(fetchNodeOpts)
+  const index = await cFetchIndex({ fetchNodeOpts, fetch })
   const versionsInfo = normalizeIndex(index)
   return versionsInfo
 }
@@ -29,12 +24,12 @@ const getCachePath = function () {
 }
 
 const CACHE_DIR = 'nve'
-const CACHE_FILENAME = 'versions.json'
+const CACHE_FILENAME = 'node_versions.json'
 
 // One hour
 const MAX_AGE_MS = 36e5
 
-const cGetIndex = moizeFs(getIndex, getCachePath, {
+const cFetchIndex = moizeFs(fetchIndex, getCachePath, {
   shouldCacheProcess({ fetch }) {
     return fetch !== true && !env.TEST_CACHE_FILENAME
   },

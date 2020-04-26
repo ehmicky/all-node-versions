@@ -30,7 +30,7 @@ each(
         await writeCacheFile(oldCacheFile)
 
         const latestVersion = await getLatestVersion({ fetch })
-        t.is(latestVersion === 'cached', result)
+        t.is(latestVersion === '1.0.0', result)
       } finally {
         await removeCacheFile()
         unsetTestCache()
@@ -44,7 +44,7 @@ test.serial('No cache file', async (t) => {
 
   try {
     const latestVersion = await getLatestVersion({ fetch: false })
-    t.not(latestVersion, 'cached')
+    t.not(latestVersion, '1.0.0')
   } finally {
     await removeCacheFile()
     unsetTestCache()
@@ -71,7 +71,7 @@ each(
       }
 
       const latestVersion = await getLatestVersion({ fetch })
-      t.is(latestVersion === 'cached', result)
+      t.is(latestVersion === '1.0.0', result)
     })
   },
 )

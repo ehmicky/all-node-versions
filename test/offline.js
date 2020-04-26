@@ -24,7 +24,7 @@ test.serial(`Offline | fetch: true`, async (t) => {
       fetch: true,
       mirror: INVALID_MIRROR,
     })
-    t.is(latestVersion, 'cached')
+    t.is(latestVersion, '1.0.0')
   } finally {
     await removeCacheFile()
     unsetTestCache()

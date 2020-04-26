@@ -1,5 +1,6 @@
 import { promises as fs } from 'fs'
 import { env } from 'process'
+import { serialize } from 'v8'
 
 import globalCacheDir from 'global-cache-dir'
 import pathExists from 'path-exists'
@@ -17,28 +18,22 @@ export const unsetTestCache = function () {
 }
 
 export const writeCacheFile = async function (oldCacheFile = false) {
-  const cachePath = await getCachePath()
+  const { cachePath, timestampPath } = await getCachePath()
   const timestamp = oldCacheFile ? 0 : Date.now()
-  const versionsInfo = {
-    versions: ['cached'],
-    majors: [{ major: 1, latest: 'cached' }],
-  }
-  const cacheFileContent = JSON.stringify(versionsInfo, undefined, 2)
+  const versionsInfo = [{ version: 'v1.0.0' }]
+  const cacheFileContent = serialize(versionsInfo)
 
   await Promise.all([
     fs.writeFile(cachePath, cacheFileContent),
-    fs.writeFile(`${cachePath}${TIMESTAMP_SUFFIX}`, `${timestamp}\n`),
+    fs.writeFile(timestampPath, `${timestamp}\n`),
   ])
 
   return cachePath
 }
 
 export const removeCacheFile = async function () {
-  const cachePath = await getCachePath()
-  await Promise.all([
-    maybeUnlink(cachePath),
-    maybeUnlink(`${cachePath}${TIMESTAMP_SUFFIX}`),
-  ])
+  const { cachePath, timestampPath } = await getCachePath()
+  await Promise.all([maybeUnlink(cachePath), maybeUnlink(timestampPath)])
 }
 
 const maybeUnlink = async function (path) {
@@ -51,9 +46,12 @@ const maybeUnlink = async function (path) {
 
 const getCachePath = async function () {
   const cacheDir = await globalCacheDir(CACHE_DIR)
-  const cacheFile = `${cacheDir}/${env.TEST_CACHE_FILENAME}`
-  return cacheFile
+  const cachePathValue = `${cacheDir}/${env.TEST_CACHE_FILENAME}`
+  const cachePath = `${cachePathValue}${CACHE_FILE_EXTENSION}`
+  const timestampPath = `${cachePathValue}${TIMESTAMP_SUFFIX}`
+  return { cachePath, timestampPath }
 }
 
 const CACHE_DIR = 'nve'
+const CACHE_FILE_EXTENSION = '.v8.bin'
 const TIMESTAMP_SUFFIX = '.timestamp.txt'

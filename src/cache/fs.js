@@ -1,5 +1,6 @@
 import { promises as fs } from 'fs'
 import { dirname } from 'path'
+import { serialize, deserialize } from 'v8'
 
 import pathExists from 'path-exists'
 import writeFileAtomic from 'write-file-atomic'
@@ -11,8 +12,12 @@ import writeFileAtomic from 'write-file-atomic'
 //   - `false`: we use the cache even if it is old
 //   - `true`: we do not use the cache
 // In all three cases, we update the cache on any successful function call.
-export const readFsCache = async function ({ cachePath, args, maxAge }) {
-  const timestampPath = getTimestampPath(cachePath)
+export const readFsCache = async function ({
+  cachePath,
+  timestampPath,
+  args,
+  maxAge,
+}) {
   const [cacheFileContent, timestamp] = await Promise.all([
     maybeReadFile(cachePath),
     maybeReadFile(timestampPath),
@@ -22,8 +27,8 @@ export const readFsCache = async function ({ cachePath, args, maxAge }) {
     return
   }
 
-  const returnValue = JSON.parse(cacheFileContent)
-  const age = Date.now() - Number(timestamp.trim())
+  const returnValue = deserialize(cacheFileContent)
+  const age = Date.now() - Number(String(timestamp).trim())
 
   if (age > getMaxAge(maxAge, args)) {
     return
@@ -37,7 +42,7 @@ const maybeReadFile = async function (path) {
     return
   }
 
-  return fs.readFile(path, 'utf8')
+  return fs.readFile(path)
 }
 
 const getMaxAge = function (maxAge, args) {
@@ -49,10 +54,13 @@ const getMaxAge = function (maxAge, args) {
 }
 
 // Persist the file cache
-export const writeFsCache = async function (cachePath, returnValue) {
-  const timestampPath = getTimestampPath(cachePath)
+export const writeFsCache = async function ({
+  cachePath,
+  timestampPath,
+  returnValue,
+}) {
   const timestamp = `${Date.now()}\n`
-  const cacheFileContent = `${JSON.stringify(returnValue, undefined, 2)}\n`
+  const cacheFileContent = serialize(returnValue)
 
   await createCacheDir(cachePath)
 
@@ -77,10 +85,3 @@ const createCacheDir = async function (cachePath) {
 
   await fs.mkdir(cacheDir, { recursive: true })
 }
-
-// We store the timestamp as a sibling file and use it to calculate cache age
-const getTimestampPath = function (cachePath) {
-  return `${cachePath}${TIMESTAMP_SUFFIX}`
-}
-
-const TIMESTAMP_SUFFIX = '.timestamp.txt'
