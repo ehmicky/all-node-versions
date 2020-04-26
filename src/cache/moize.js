@@ -27,7 +27,7 @@ const processMoized = async function ({ func, args, state, getCachePath }) {
   return returnValue
 }
 
-// TODO: extract
+// TODO: extract. Default always return true
 const shouldCacheProcess = function ({ fetch }) {
   return fetch !== true && !env.TEST_CACHE_FILENAME
 }
@@ -57,9 +57,7 @@ const getFsCache = function (cachePath, args) {
   return readFsCache(cachePath, args)
 }
 
-// TODO: opts.shouldCacheProcess(...args)->boolean
-// and opts.shouldCacheFile(...args)->boolean
-// (with default: always true)
+// TODO: extract. Default always return true
 const shouldCacheFile = function ({ fetch }) {
   return fetch !== true
 }
