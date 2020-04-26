@@ -12,18 +12,18 @@ export const handleOfflineError = async function ({
     throw error
   }
 
-  const returnValue = await readFsCache({
+  const fileValue = await readFsCache({
     cachePath,
     timestampPath,
     args,
     useMaxAge: offlineUseMaxAge,
   })
 
-  if (returnValue === undefined) {
+  if (fileValue === undefined) {
     throw error
   }
 
-  return returnValue
+  return fileValue
 }
 
 const offlineUseMaxAge = function () {

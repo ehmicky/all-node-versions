@@ -13,20 +13,35 @@ export const readFsCache = async function ({
   useMaxAge,
   maxAge,
 }) {
-  const [cacheContent, timestamp] = await Promise.all([
+  const [cacheContent, isOldCache] = await Promise.all([
     maybeReadFile(cachePath),
-    maybeReadFile(timestampPath),
+    checkTimestamp({ timestampPath, args, useMaxAge, maxAge }),
   ])
 
-  if (cacheContent === undefined) {
+  if (cacheContent === undefined || isOldCache) {
     return
   }
 
-  if (isOldCache({ timestamp, args, useMaxAge, maxAge })) {
-    return
+  const fileValue = safeDeserialize(cacheContent)
+  return fileValue
+}
+
+const checkTimestamp = async function ({
+  timestampPath,
+  args,
+  useMaxAge,
+  maxAge,
+}) {
+  if (!useMaxAge(...args)) {
+    return false
   }
 
-  return safeDeserialize(cacheContent)
+  const timestamp = await maybeReadFile(timestampPath)
+
+  return (
+    timestamp === undefined ||
+    maxAge <= Date.now() - Number(String(timestamp).trim())
+  )
 }
 
 const maybeReadFile = async function (path) {
@@ -42,14 +57,6 @@ const safeDeserialize = function (cacheContent) {
   try {
     return deserialize(cacheContent)
   } catch {}
-}
-
-const isOldCache = function ({ timestamp, args, useMaxAge, maxAge }) {
-  return (
-    useMaxAge(...args) &&
-    (timestamp === undefined ||
-      maxAge <= Date.now() - Number(String(timestamp).trim()))
-  )
 }
 
 // Persist the file cache
