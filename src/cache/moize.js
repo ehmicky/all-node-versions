@@ -27,14 +27,9 @@ const processMoized = async function ({ func, args, state, getCachePath }) {
   return returnValue
 }
 
-// TODO: extract. Default always return true
-const shouldCacheProcess = function ({ fetch }) {
-  return fetch !== true && !env.TEST_CACHE_FILENAME
-}
-
 const fileMoized = async function ({ func, args, getCachePath }) {
   const cachePath = getCachePath(...args)
-  const fileValue = await getFsCache(cachePath, args)
+  const fileValue = await getFsCache({ cachePath, args })
 
   if (fileValue !== undefined) {
     return fileValue
@@ -45,19 +40,36 @@ const fileMoized = async function ({ func, args, getCachePath }) {
     await writeFsCache(cachePath, returnValue)
     return returnValue
   } catch (error) {
-    return handleOfflineError(cachePath, error, args)
+    return handleOfflineError({ cachePath, error, args, maxAge })
   }
 }
 
-const getFsCache = function (cachePath, args) {
+const getFsCache = function ({ cachePath, args }) {
   if (!shouldCacheFile(...args)) {
     return
   }
 
-  return readFsCache(cachePath, args)
+  return readFsCache({ cachePath, args, maxAge })
+}
+
+// TODO: extract. Default always return true
+const shouldCacheProcess = function ({ fetch }) {
+  return fetch !== true && !env.TEST_CACHE_FILENAME
 }
 
 // TODO: extract. Default always return true
 const shouldCacheFile = function ({ fetch }) {
   return fetch !== true
 }
+
+// TODO: extract
+const maxAge = function ({ fetch }) {
+  if (fetch === false) {
+    return Infinity
+  }
+
+  return MAX_AGE_MS
+}
+
+// One hour
+const MAX_AGE_MS = 36e5
