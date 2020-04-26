@@ -51,7 +51,8 @@ const safeDeserialize = function (cacheContent) {
 
 const isOldCache = function ({ timestamp, args, maxAge }) {
   const age = Date.now() - Number(String(timestamp).trim())
-  return age > getMaxAge(maxAge, args)
+  const cacheMaxAge = getMaxAge(maxAge, args)
+  return age > cacheMaxAge
 }
 
 const getMaxAge = function (maxAge, args) {
