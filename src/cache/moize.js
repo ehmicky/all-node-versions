@@ -1,4 +1,5 @@
 import { normalize } from 'path'
+import { env } from 'process'
 
 import keepFuncProps from 'keep-func-props'
 
@@ -46,7 +47,11 @@ const processMoized = async function ({
   maxAge,
   strict,
 }) {
-  if (state.processValue !== undefined && shouldCacheProcess(...args)) {
+  if (
+    state.processValue !== undefined &&
+    shouldCacheProcess(...args) &&
+    !env.TEST_CACHE_FILENAME
+  ) {
     return state.processValue
   }
 
