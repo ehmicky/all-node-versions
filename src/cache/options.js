@@ -14,11 +14,9 @@ export const getOpts = function (opts = {}) {
 const DEFAULT_MAX_AGE_MS = 36e5
 
 const DEFAULT_OPTS = {
-  // TODO: allow boolean
   shouldCacheProcess() {
     return true
   },
-  // TODO: allow boolean
   shouldCacheFile() {
     return true
   },
