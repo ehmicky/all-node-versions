@@ -27,6 +27,23 @@ export const readFsCache = async function ({
     return
   }
 
+  return getCachedValue({ cacheFileContent, timestamp, args, maxAge })
+}
+
+const maybeReadFile = async function (path) {
+  if (!(await pathExists(path))) {
+    return
+  }
+
+  return fs.readFile(path)
+}
+
+const getCachedValue = function ({
+  cacheFileContent,
+  timestamp,
+  args,
+  maxAge,
+}) {
   const returnValue = safeDeserialize(cacheFileContent)
 
   if (returnValue === undefined) {
@@ -40,14 +57,6 @@ export const readFsCache = async function ({
   }
 
   return returnValue
-}
-
-const maybeReadFile = async function (path) {
-  if (!(await pathExists(path))) {
-    return
-  }
-
-  return fs.readFile(path)
 }
 
 // If the file is corrupted, ignore it
