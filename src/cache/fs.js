@@ -47,8 +47,9 @@ export const writeFsCache = async function (cachePath, versionsInfo) {
   const cacheContent = { lastUpdate, ...versionsInfo }
   const cacheFileContent = `${JSON.stringify(cacheContent, undefined, 2)}\n`
 
+  await createCacheDir(cachePath)
+
   try {
-    await createCacheDir(cachePath)
     await writeFileAtomic(cachePath, cacheFileContent)
     // If two different functions are calling `normalize-node-version` at the
     // same time and there's no cache file, they will both try to persist the
