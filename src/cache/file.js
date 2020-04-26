@@ -26,7 +26,7 @@ export const getCacheFileContent = async function (cacheFile) {
 export const setCacheFileContent = async function (cacheFile, versionsInfo) {
   const lastUpdate = Date.now()
   const cacheContent = { lastUpdate, ...versionsInfo }
-  const cacheFileContent = `${JSON.stringify(cacheContent, null, 2)}\n`
+  const cacheFileContent = `${JSON.stringify(cacheContent, undefined, 2)}\n`
 
   try {
     await writeFileAtomic(cacheFile, cacheFileContent)

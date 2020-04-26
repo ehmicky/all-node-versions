@@ -10,11 +10,11 @@ const getMapper = function (group) {
   }
 
   if (typeof group === 'string') {
-    return getByProp.bind(null, group)
+    return getByProp.bind(undefined, group)
   }
 
   if (Array.isArray(group)) {
-    return getByProps.bind(null, group)
+    return getByProps.bind(undefined, group)
   }
 
   throw new Error(`Group must be a function, property or array of properties`)
