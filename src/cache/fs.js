@@ -35,13 +35,7 @@ const maybeReadFile = async function (path) {
 const getCachedValue = function ({ cacheContent, timestamp, args, maxAge }) {
   const returnValue = safeDeserialize(cacheContent)
 
-  if (returnValue === undefined) {
-    return
-  }
-
-  const age = Date.now() - Number(String(timestamp).trim())
-
-  if (age > getMaxAge(maxAge, args)) {
+  if (returnValue === undefined || isOldCache({ timestamp, args, maxAge })) {
     return
   }
 
@@ -53,6 +47,11 @@ const safeDeserialize = function (cacheContent) {
   try {
     return deserialize(cacheContent)
   } catch {}
+}
+
+const isOldCache = function ({ timestamp, args, maxAge }) {
+  const age = Date.now() - Number(String(timestamp).trim())
+  return age > getMaxAge(maxAge, args)
 }
 
 const getMaxAge = function (maxAge, args) {
