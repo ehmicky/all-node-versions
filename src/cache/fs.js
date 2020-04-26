@@ -12,16 +12,16 @@ export const readFsCache = async function ({
   args,
   maxAge,
 }) {
-  const [cacheFileContent, timestamp] = await Promise.all([
+  const [cacheContent, timestamp] = await Promise.all([
     maybeReadFile(cachePath),
     maybeReadFile(timestampPath),
   ])
 
-  if (cacheFileContent === undefined || timestamp === undefined) {
+  if (cacheContent === undefined || timestamp === undefined) {
     return
   }
 
-  return getCachedValue({ cacheFileContent, timestamp, args, maxAge })
+  return getCachedValue({ cacheContent, timestamp, args, maxAge })
 }
 
 const maybeReadFile = async function (path) {
@@ -32,13 +32,8 @@ const maybeReadFile = async function (path) {
   return fs.readFile(path)
 }
 
-const getCachedValue = function ({
-  cacheFileContent,
-  timestamp,
-  args,
-  maxAge,
-}) {
-  const returnValue = safeDeserialize(cacheFileContent)
+const getCachedValue = function ({ cacheContent, timestamp, args, maxAge }) {
+  const returnValue = safeDeserialize(cacheContent)
 
   if (returnValue === undefined) {
     return
@@ -54,9 +49,9 @@ const getCachedValue = function ({
 }
 
 // If the file is corrupted, ignore it
-const safeDeserialize = function (cacheFileContent) {
+const safeDeserialize = function (cacheContent) {
   try {
-    return deserialize(cacheFileContent)
+    return deserialize(cacheContent)
   } catch {}
 }
 
@@ -76,9 +71,9 @@ export const writeFsCache = async function ({
   strict,
 }) {
   const timestamp = `${Date.now()}\n`
-  const cacheFileContent = trySerialize(returnValue, strict)
+  const cacheContent = trySerialize(returnValue, strict)
 
-  if (cacheFileContent === undefined) {
+  if (cacheContent === undefined) {
     return
   }
 
@@ -86,7 +81,7 @@ export const writeFsCache = async function ({
 
   try {
     await Promise.all([
-      writeFileAtomic(cachePath, cacheFileContent),
+      writeFileAtomic(cachePath, cacheContent),
       writeFileAtomic(timestampPath, timestamp),
     ])
     // If two different functions are calling `normalize-node-version` at the
