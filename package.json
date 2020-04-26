@@ -61,7 +61,7 @@
     "write-file-atomic": "^3.0.3"
   },
   "devDependencies": {
-    "@ehmicky/dev-tasks": "^0.31.42",
+    "@ehmicky/dev-tasks": "^0.31.43",
     "ava": "^3.8.1",
     "global-cache-dir": "^2.0.0",
     "gulp": "^4.0.2",
