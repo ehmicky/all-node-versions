@@ -45,24 +45,24 @@ const fileMoized = async function ({ func, args, getCachePath }) {
 }
 
 const getFsCache = function ({ cachePath, args }) {
-  if (shouldCacheFile !== undefined && !shouldCacheFile(...args)) {
+  if (!shouldCacheFile(...args)) {
     return
   }
 
   return readFsCache({ cachePath, args, maxAge })
 }
 
-// TODO: extract. Default always return true
+// TODO: extract. Make it default to () => true
 const shouldCacheProcess = function ({ fetch }) {
   return fetch !== true && !env.TEST_CACHE_FILENAME
 }
 
-// TODO: extract
+// TODO: extract. Make it default to () => true
 const shouldCacheFile = function ({ fetch }) {
   return fetch !== true
 }
 
-// TODO: extract
+// TODO: extract. Make it default to 1 hour
 const maxAge = function ({ fetch }) {
   if (fetch === false) {
     return Infinity
