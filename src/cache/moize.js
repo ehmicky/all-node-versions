@@ -208,9 +208,7 @@ const refreshProcessExpireAt = function ({
   }
 
   const ttl = Math.min(expireAt - Date.now(), MAX_TIMEOUT)
-  setTimeout(() => {
-    removeProcessPath(cachePath)
-  }, ttl).unref()
+  setTimeout(removeProcessPath.bind(undefined, cachePath), ttl).unref()
 }
 
 // `setTimeout()` argument has a maximum value in Node.js. That's 25 days.
