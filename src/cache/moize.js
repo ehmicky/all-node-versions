@@ -18,7 +18,7 @@ const kMoizeFs = function (func, cacheOption, opts) {
   const getCachePath = getCacheOption.bind(undefined, cacheOption)
   const kFileMoized = moizeFileMoized(getCachePath, maxAge)
   return (...args) =>
-    processMoized({
+    callMoizedFunc({
       func,
       kFileMoized,
       args,
@@ -49,7 +49,7 @@ const moizeFileMoized = function (getCachePath, maxAge) {
   })
 }
 
-const processMoized = function ({
+const callMoizedFunc = function ({
   func,
   kFileMoized,
   args,
