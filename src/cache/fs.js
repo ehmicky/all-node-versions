@@ -28,7 +28,7 @@ export const readFsCache = async function ({
     return { cached: false }
   }
 
-  const expireAtA = await maybeUpdateTimestamp(cachePath, updateAge, expireAt)
+  const expireAtA = await maybeUpdateExpireAt(cachePath, updateAge, expireAt)
 
   const returnValue = parse(cacheContent, { serialization })
 
@@ -86,7 +86,7 @@ export const writeFsCache = async function ({
 
   const [returnValueA, expireAt] = await Promise.all([
     writeContent({ cachePath, cacheContent, returnValue, streams }),
-    updateTimestamp(cachePath),
+    updateExpireAt(cachePath),
   ])
   return { returnValue: returnValueA, cached: true, expireAt }
 }
@@ -116,15 +116,15 @@ const writeContent = async function ({
   return returnValue
 }
 
-const maybeUpdateTimestamp = function (cachePath, updateAge, expireAt) {
+const maybeUpdateExpireAt = function (cachePath, updateAge, expireAt) {
   if (!updateAge) {
     return expireAt
   }
 
-  return updateTimestamp(cachePath)
+  return updateExpireAt(cachePath)
 }
 
-const updateTimestamp = async function (cachePath) {
+const updateExpireAt = async function (cachePath) {
   const expireAt = new Date()
   const timestamp = `${Number(expireAt)}\n`
   await writeAtomic(`${cachePath}${EXPIRE_EXTENSION}`, timestamp, false)
