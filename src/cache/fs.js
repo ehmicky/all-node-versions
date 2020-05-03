@@ -40,14 +40,13 @@ export const readFsCache = async function ({
 }
 
 const getExpireAt = async function (cachePath) {
-  const timestamp = await maybeReadFile(`${cachePath}${TIMESTAMP_EXTENSION}`)
+  const expireAt = await maybeReadFile(`${cachePath}${EXPIRE_EXTENSION}`)
 
-  if (timestamp === undefined) {
+  if (expireAt === undefined) {
     return
   }
 
-  const expireAt = new Date(Number(String(timestamp).trim()))
-  return expireAt
+  return new Date(Number(String(expireAt).trim()))
 }
 
 const canUseCache = function (cacheContent, maxAge, expireAt) {
@@ -128,9 +127,11 @@ const maybeUpdateTimestamp = function (cachePath, updateAge, expireAt) {
 const updateTimestamp = async function (cachePath) {
   const expireAt = new Date()
   const timestamp = `${Number(expireAt)}\n`
-  await writeAtomic(`${cachePath}${TIMESTAMP_EXTENSION}`, timestamp, false)
+  await writeAtomic(`${cachePath}${EXPIRE_EXTENSION}`, timestamp, false)
   return expireAt
 }
 
-// We store the timestamp as a sibling file and use it to calculate cache age
-const TIMESTAMP_EXTENSION = '.timestamp.txt'
+// We store the expire time as a sibling file and use it to calculate cache age.
+// We cannot use a real mtime since some partitions and OS do not reliably
+// store it.
+const EXPIRE_EXTENSION = '.expire.txt'

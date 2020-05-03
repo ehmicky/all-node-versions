@@ -20,14 +20,14 @@ export const writeCacheFile = async function ({
   oldCacheFile = false,
   version = TEST_VERSION,
 } = {}) {
-  const { cachePath, timestampPath } = await getCachePath()
-  const timestamp = oldCacheFile ? 0 : Date.now()
+  const { cachePath, expireAtPath } = await getCachePath()
+  const expireAt = oldCacheFile ? 0 : Date.now()
   const versionsInfo = [{ version }]
   const cacheFileContent = JSON.stringify(versionsInfo, undefined, 2)
 
   await Promise.all([
     fs.writeFile(cachePath, cacheFileContent),
-    fs.writeFile(timestampPath, `${timestamp}\n`),
+    fs.writeFile(expireAtPath, `${expireAt}\n`),
   ])
 
   return cachePath
@@ -36,8 +36,8 @@ export const writeCacheFile = async function ({
 const TEST_VERSION = 'v1.0.0'
 
 export const removeCacheFile = async function () {
-  const { cachePath, timestampPath } = await getCachePath()
-  await Promise.all([maybeUnlink(cachePath), maybeUnlink(timestampPath)])
+  const { cachePath, expireAtPath } = await getCachePath()
+  await Promise.all([maybeUnlink(cachePath), maybeUnlink(expireAtPath)])
 }
 
 const maybeUnlink = async function (path) {
@@ -51,9 +51,9 @@ const maybeUnlink = async function (path) {
 const getCachePath = async function () {
   const cacheDir = await globalCacheDir(CACHE_DIR)
   const cachePath = `${cacheDir}/${env.TEST_CACHE_FILENAME}`
-  const timestampPath = `${cachePath}${TIMESTAMP_SUFFIX}`
-  return { cachePath, timestampPath }
+  const expireAtPath = `${cachePath}${EXPIRE_SUFFIX}`
+  return { cachePath, expireAtPath }
 }
 
 const CACHE_DIR = 'nve'
-const TIMESTAMP_SUFFIX = '.timestamp.txt'
+const EXPIRE_SUFFIX = '.expire.txt'
