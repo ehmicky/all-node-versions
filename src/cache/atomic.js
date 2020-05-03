@@ -31,7 +31,7 @@ export const writeAtomic = async function (
 // Use a sibling file because `fs.rename()` does not work between partitions
 const getTmpFile = function (filePath) {
   const uniqueId = String(Math.random()).replace('.', '')
-  return `${filePath}.${uniqueId}.download`
+  return `${filePath}.${uniqueId}`
 }
 
 const writeContent = async function (tmpFile, content, returnStreamContent) {
