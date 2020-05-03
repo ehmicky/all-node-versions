@@ -16,11 +16,11 @@ export const writeAtomic = async function (
   const tmpFile = getTmpFile(filePath)
 
   try {
-    const streamContent = await writeContent({
+    const streamContent = await writeContent(
       tmpFile,
       content,
       returnStreamContent,
-    })
+    )
     await fs.rename(tmpFile, filePath)
     return streamContent
   } finally {
@@ -34,13 +34,9 @@ const getTmpFile = function (filePath) {
   return `${filePath}.${uniqueId}.download`
 }
 
-const writeContent = async function ({
-  tmpFile,
-  content,
-  returnStreamContent,
-}) {
+const writeContent = async function (tmpFile, content, returnStreamContent) {
   if (content instanceof Readable) {
-    return writeStream(tmpFile, content, { buffer: returnStreamContent })
+    return writeStream(tmpFile, content, returnStreamContent)
   }
 
   await fs.writeFile(tmpFile, content)
