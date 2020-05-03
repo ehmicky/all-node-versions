@@ -79,40 +79,27 @@ const callMoizedFunc = async function ({
     serialization,
     strict,
     streams,
-    cacheInfo,
     info,
   })
+  const returnInfoA = { ...returnInfo, state: info.state }
 
-  if (!cacheInfo) {
-    return returnInfo
-  }
-
-  const returnInfoA = await syncCache({
-    returnInfo,
-    state: info.state,
+  const returnInfoB = await syncCache({
+    returnInfo: returnInfoA,
     cachePath,
     processMoized,
     maxAge,
     updateAge,
   })
-  return { ...returnInfoA, state: info.state }
+
+  const returnInfoC = applyCacheInfo(returnInfoB, cacheInfo)
+  return returnInfoC
 }
 
 const fsMoized = async function (
   cachePath,
-  {
-    func,
-    args,
-    forceRefresh,
-    maxAge,
-    serialization,
-    strict,
-    streams,
-    cacheInfo,
-    info,
-  },
+  { func, args, forceRefresh, maxAge, serialization, strict, streams, info },
 ) {
-  const returnInfo = await getReturnInfo({
+  const { state, ...returnInfo } = await getReturnInfo({
     cachePath,
     func,
     args,
@@ -122,16 +109,10 @@ const fsMoized = async function (
     strict,
     streams,
   })
-
-  if (!cacheInfo) {
-    return returnInfo.returnValue
-  }
-
   // This function is memoized in-memory. To distinguish between memoized calls
   // or not, we need to do a side-effect like this.
   // eslint-disable-next-line fp/no-mutation, no-param-reassign
-  info.state = returnInfo.state
-
+  info.state = state
   return returnInfo
 }
 
@@ -173,8 +154,7 @@ const getReturnInfo = async function ({
 
 const syncCache = async function ({
   returnInfo,
-  returnInfo: { expireAt },
-  state,
+  returnInfo: { state, expireAt },
   cachePath,
   processMoized,
   maxAge,
@@ -227,3 +207,12 @@ const updateProcessCacheTime = function ({
 // `setTimeout()` argument has a maximum value in Node.js. That's 25 days.
 // eslint-disable-next-line no-magic-numbers
 const MAX_TIMEOUT = 2 ** 31 - 1
+
+// Use `cacheInfo: true`, return more caching-related information
+const applyCacheInfo = function (returnInfo, cacheInfo) {
+  if (!cacheInfo) {
+    return returnInfo.returnValue
+  }
+
+  return returnInfo
+}
