@@ -15,7 +15,7 @@ const kMoize = keepFuncProps(moize)
 // Also handles offline connections.
 const kMoizeFs = function (func, getCachePath, opts) {
   const {
-    useCache,
+    shouldForceRefresh,
     maxAge,
     updateAge,
     serialization,
@@ -35,7 +35,7 @@ const kMoizeFs = function (func, getCachePath, opts) {
       func,
       args,
       getCachePath,
-      useCache,
+      shouldForceRefresh,
       maxAge,
       updateAge,
       serialization,
@@ -52,7 +52,7 @@ const callMoizedFunc = function ({
   func,
   args,
   getCachePath,
-  useCache,
+  shouldForceRefresh,
   maxAge,
   updateAge,
   serialization,
@@ -60,7 +60,7 @@ const callMoizedFunc = function ({
   streams,
   cacheInfo,
 }) {
-  const shouldReadCache = useCache(...args)
+  const shouldReadCache = !shouldForceRefresh(...args)
   const cachePath = normalize(getCachePath(...args))
 
   // TODO: add value back if `kFileMoized` throws
