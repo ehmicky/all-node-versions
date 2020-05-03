@@ -3,7 +3,7 @@ import { normalize } from 'path'
 import keepFuncProps from 'keep-func-props'
 import moize from 'moize'
 
-import { readFsCache, writeFsCache, refreshExpireAt } from './fs.js'
+import { readFsCache, writeFsCache, refreshFileExpireAt } from './fs.js'
 import { handleOfflineError } from './offline.js'
 import { getOpts } from './options.js'
 
@@ -152,6 +152,7 @@ const getReturnInfo = async function ({
   }
 }
 
+// Keep the process cache and file cache `expireAt` in-sync
 const syncCache = async function ({
   returnInfo,
   returnInfo: { state, expireAt },
@@ -160,7 +161,7 @@ const syncCache = async function ({
   maxAge,
   updateExpire,
 }) {
-  updateProcessCacheTime({
+  refreshProcessExpireAt({
     processMoized,
     cachePath,
     updateExpire,
@@ -168,7 +169,7 @@ const syncCache = async function ({
     state,
   })
 
-  const expireAtA = await refreshExpireAt({
+  const expireAtA = await refreshFileExpireAt({
     cachePath,
     updateExpire,
     expireAt,
@@ -188,7 +189,7 @@ const syncCache = async function ({
 // TTL of the process cache must match the one left in-file so that are in sync.
 // If `updateExpire` is `true`, this is not needed since the
 // TTL will === maxAge.
-const updateProcessCacheTime = function ({
+const refreshProcessExpireAt = function ({
   processMoized,
   cachePath,
   updateExpire,

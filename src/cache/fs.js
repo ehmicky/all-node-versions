@@ -139,7 +139,7 @@ const writeContent = async function ({
 // `process`).
 // We also don't refresh when `new` because the `expireAt` has just been set,
 // so it would be a noop.
-export const refreshExpireAt = function ({
+export const refreshFileExpireAt = function ({
   cachePath,
   updateExpire,
   expireAt,
