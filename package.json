@@ -55,7 +55,7 @@
     "filter-obj": "^2.0.1",
     "jest-validate": "^25.5.0",
     "keep-func-props": "^3.0.0",
-    "moize": "^5.4.5",
+    "moize": "^5.4.6",
     "path-exists": "^4.0.0",
     "semver": "^7.3.2"
   },
