@@ -142,7 +142,9 @@ const maybeUpdateExpireAt = function ({
 }
 
 const updateExpireAt = async function (cachePath, maxAge) {
-  const expireAt = Date.now() + maxAge
+  const expireAt = Math.round(
+    Math.min(Date.now() + maxAge, Number.MAX_SAFE_INTEGER),
+  )
   await writeAtomic(`${cachePath}${EXPIRE_EXTENSION}`, `${expireAt}\n`, false)
   return expireAt
 }
