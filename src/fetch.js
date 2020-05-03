@@ -8,8 +8,7 @@ export const fetchIndex = async function ({ fetchNodeOpts }) {
     progress: false,
   })
   const content = await getStream(response)
-  const index = JSON.parse(content)
-  return index
+  return content
 }
 
 const INDEX_PATH = 'index.json'

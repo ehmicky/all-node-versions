@@ -11,7 +11,8 @@ import { getOpts } from './options.js'
 // Versions are already sorted from newest to oldest.
 const allNodeVersions = async function (opts) {
   const { fetch, fetchNodeOpts } = getOpts(opts)
-  const index = await cFetchIndex({ fetchNodeOpts, fetch })
+  const content = await cFetchIndex({ fetchNodeOpts, fetch })
+  const index = JSON.parse(content)
   const versionsInfo = normalizeIndex(index)
   return versionsInfo
 }
@@ -38,7 +39,7 @@ const cFetchIndex = moizeFs(fetchIndex, getCachePath, {
     return !fetch
   },
   maxAge: MAX_AGE_MS,
-  serialization: 'json',
+  serialization: 'none',
 })
 
 // We do not use `export default` because Babel transpiles it in a way that
