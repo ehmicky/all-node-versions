@@ -67,7 +67,6 @@ export const writeFsCache = async function ({
   strict,
   returnCachePath,
 }) {
-  const timestamp = `${Date.now()}\n`
   const cacheContent = serialize(returnValue, { serialization, strict })
 
   if (cacheContent === undefined) {
@@ -78,7 +77,7 @@ export const writeFsCache = async function ({
 
   const [returnValueA] = await Promise.all([
     writeContent({ cachePath, cacheContent, returnValue, returnCachePath }),
-    writeAtomic(`${cachePath}${TIMESTAMP_EXTENSION}`, timestamp, false),
+    updateTimestamp(cachePath),
   ])
   return returnCachePath ? cachePath : returnValueA
 }
@@ -110,6 +109,11 @@ const writeContent = async function ({
   }
 
   return returnValue
+}
+
+const updateTimestamp = async function (cachePath) {
+  const timestamp = `${Date.now()}\n`
+  await writeAtomic(`${cachePath}${TIMESTAMP_EXTENSION}`, timestamp, false)
 }
 
 // We store the timestamp as a sibling file and use it to calculate cache age
