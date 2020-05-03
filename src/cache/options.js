@@ -2,8 +2,8 @@ import filterObj from 'filter-obj'
 import { validate } from 'jest-validate'
 
 // Normalize options and assign default values
-export const getOpts = function (opts = {}) {
-  validate(opts, { exampleConfig: EXAMPLE_OPTS })
+export const getOpts = function (getCachePath, opts = {}) {
+  validate({ ...opts, getCachePath }, { exampleConfig: EXAMPLE_OPTS })
 
   const optsA = filterObj(opts, isDefined)
   const optsB = { ...DEFAULT_OPTS, ...optsA }
@@ -23,6 +23,9 @@ const DEFAULT_OPTS = {
 
 const EXAMPLE_OPTS = {
   ...DEFAULT_OPTS,
+  getCachePath() {
+    return '/path/to/cache.json'
+  },
 }
 
 const isDefined = function (key, value) {

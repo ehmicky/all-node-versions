@@ -14,7 +14,7 @@ const kMoize = keepFuncProps(moize)
 //  - but also on the filesystem
 // Also handles offline connections.
 const kMoizeFs = function (func, cacheOption, opts) {
-  const { useCache, maxAge, strict } = getOpts(opts)
+  const { useCache, maxAge, strict } = getOpts(cacheOption, opts)
   const kFileMoized = kMoize(fileMoized, {
     maxArgs: 1,
     isPromise: true,
@@ -59,8 +59,7 @@ const callMoizedFunc = function ({
 }
 
 const getCachePath = function (cacheOption, args) {
-  const cachePath =
-    typeof cacheOption === 'function' ? cacheOption(...args) : cacheOption
+  const cachePath = cacheOption(...args)
   const cachePathA = normalize(cachePath)
   return cachePathA
 }
