@@ -17,7 +17,7 @@ const kMoizeFs = function (func, getCachePath, opts) {
   const {
     shouldForceRefresh,
     maxAge,
-    updateAge,
+    updateExpire,
     serialization,
     strict,
     streams,
@@ -27,7 +27,7 @@ const kMoizeFs = function (func, getCachePath, opts) {
     maxArgs: 1,
     isPromise: true,
     maxAge,
-    updateExpire: Boolean(updateAge),
+    updateExpire: Boolean(updateExpire),
   })
   return (...args) =>
     callMoizedFunc({
@@ -37,7 +37,7 @@ const kMoizeFs = function (func, getCachePath, opts) {
       getCachePath,
       shouldForceRefresh,
       maxAge,
-      updateAge,
+      updateExpire,
       serialization,
       strict,
       streams,
@@ -54,7 +54,7 @@ const callMoizedFunc = async function ({
   getCachePath,
   shouldForceRefresh,
   maxAge,
-  updateAge,
+  updateExpire,
   serialization,
   strict,
   streams,
@@ -88,7 +88,7 @@ const callMoizedFunc = async function ({
     cachePath,
     processMoized,
     maxAge,
-    updateAge,
+    updateExpire,
   })
 
   const returnInfoC = applyCacheInfo(returnInfoB, cacheInfo)
@@ -158,19 +158,19 @@ const syncCache = async function ({
   cachePath,
   processMoized,
   maxAge,
-  updateAge,
+  updateExpire,
 }) {
   updateProcessCacheTime({
     processMoized,
     cachePath,
-    updateAge,
+    updateExpire,
     expireAt,
     state,
   })
 
   const expireAtA = await refreshExpireAt({
     cachePath,
-    updateAge,
+    updateExpire,
     expireAt,
     maxAge,
     state,
@@ -186,15 +186,16 @@ const syncCache = async function ({
 // When the function has been cached on file by a different process, the new
 // process will cache it in-process using the file-cached value. However, the
 // TTL of the process cache must match the one left in-file so that are in sync.
-// If `updateAge` is `true`, this is not needed since the TTL will === maxAge.
+// If `updateExpire` is `true`, this is not needed since the
+// TTL will === maxAge.
 const updateProcessCacheTime = function ({
   processMoized,
   cachePath,
-  updateAge,
+  updateExpire,
   expireAt,
   state,
 }) {
-  if (updateAge || state !== 'file') {
+  if (updateExpire || state !== 'file') {
     return
   }
 

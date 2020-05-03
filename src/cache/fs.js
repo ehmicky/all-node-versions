@@ -141,12 +141,12 @@ const writeContent = async function ({
 // so it would be a noop.
 export const refreshExpireAt = function ({
   cachePath,
-  updateAge,
+  updateExpire,
   expireAt,
   maxAge,
   state,
 }) {
-  if (!updateAge || expireAt === undefined || state === 'new') {
+  if (!updateExpire || expireAt === undefined || state === 'new') {
     return expireAt
   }
 
