@@ -25,10 +25,10 @@ const kMoizeFs = function (func, getCachePath, opts) {
   const processMoized = kMoize(fsMoized, {
     maxArgs: 1,
     isPromise: true,
-    updateExpire: Boolean(updateAge),
     // TODO: re-enable after the following bug is fixed:
     // https://github.com/planttheidea/moize/issues/122
     // maxAge,
+    // updateExpire: Boolean(updateAge),
   })
   return (...args) =>
     callMoizedFunc({
