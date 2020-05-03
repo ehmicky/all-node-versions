@@ -12,6 +12,7 @@ export const readFsCache = async function ({
   cachePath,
   forceRefresh,
   maxAge,
+  useMaxAge,
   updateAge,
   serialization,
 }) {
@@ -24,11 +25,16 @@ export const readFsCache = async function ({
     getExpireAt(cachePath),
   ])
 
-  if (!canUseCache(cacheContent, maxAge, expireAt)) {
+  if (!canUseCache(cacheContent, useMaxAge, maxAge, expireAt)) {
     return { cached: false }
   }
 
-  const expireAtA = await maybeUpdateExpireAt(cachePath, updateAge, expireAt)
+  const expireAtA = await maybeUpdateExpireAt({
+    cachePath,
+    updateAge,
+    expireAt,
+    useMaxAge,
+  })
 
   const returnValue = parse(cacheContent, { serialization })
 
@@ -49,13 +55,13 @@ const getExpireAt = async function (cachePath) {
   return new Date(Number(String(expireAt).trim()))
 }
 
-const canUseCache = function (cacheContent, maxAge, expireAt) {
-  return cacheContent !== undefined && isFreshCache(maxAge, expireAt)
+const canUseCache = function (cacheContent, useMaxAge, maxAge, expireAt) {
+  return cacheContent !== undefined && isFreshCache(useMaxAge, maxAge, expireAt)
 }
 
-const isFreshCache = function (maxAge, expireAt) {
+const isFreshCache = function (useMaxAge, maxAge, expireAt) {
   return (
-    maxAge === Infinity ||
+    !useMaxAge ||
     (expireAt !== undefined && maxAge > Date.now() - Number(expireAt))
   )
 }
@@ -116,8 +122,13 @@ const writeContent = async function ({
   return returnValue
 }
 
-const maybeUpdateExpireAt = function (cachePath, updateAge, expireAt) {
-  if (!updateAge) {
+const maybeUpdateExpireAt = function ({
+  cachePath,
+  updateAge,
+  expireAt,
+  useMaxAge,
+}) {
+  if (!updateAge || !useMaxAge) {
     return expireAt
   }
 
