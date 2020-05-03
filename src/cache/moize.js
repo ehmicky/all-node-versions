@@ -15,7 +15,7 @@ const kMoize = keepFuncProps(moize)
 // Also handles offline connections.
 const kMoizeFs = function (func, getCachePath, opts) {
   const { useCache, maxAge, strict } = getOpts(getCachePath, opts)
-  const kFileMoized = kMoize(fileMoized, {
+  const processMoized = kMoize(fsMoized, {
     maxArgs: 1,
     isPromise: true,
     // TODO: re-enable after the following bug is fixed:
@@ -24,7 +24,7 @@ const kMoizeFs = function (func, getCachePath, opts) {
   })
   return (...args) =>
     callMoizedFunc({
-      kFileMoized,
+      processMoized,
       func,
       args,
       getCachePath,
@@ -37,7 +37,7 @@ const kMoizeFs = function (func, getCachePath, opts) {
 export const moizeFs = keepFuncProps(kMoizeFs)
 
 const callMoizedFunc = function ({
-  kFileMoized,
+  processMoized,
   func,
   args,
   getCachePath,
@@ -52,13 +52,19 @@ const callMoizedFunc = function ({
   // TODO: maybe find a better way to make moize not read cache, but still write
   // it on success
   if (!shouldUseCache) {
-    kFileMoized.remove([cachePath])
+    processMoized.remove([cachePath])
   }
 
-  return kFileMoized(cachePath, { func, args, shouldUseCache, maxAge, strict })
+  return processMoized(cachePath, {
+    func,
+    args,
+    shouldUseCache,
+    maxAge,
+    strict,
+  })
 }
 
-const fileMoized = async function (
+const fsMoized = async function (
   cachePath,
   { func, args, shouldUseCache, maxAge, strict },
 ) {
