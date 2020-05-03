@@ -2,10 +2,13 @@ import { normalize } from 'path'
 import { env } from 'process'
 
 import keepFuncProps from 'keep-func-props'
+import moize from 'moize'
 
 import { readFsCache, writeFsCache } from './fs.js'
 import { handleOfflineError } from './offline.js'
 import { getOpts } from './options.js'
+
+const kMoize = keepFuncProps(moize)
 
 // Moize a function:
 //  - process-wise, like a regular memoization library
@@ -13,13 +16,14 @@ import { getOpts } from './options.js'
 // Also handles offline connections.
 const kMoizeFs = function (func, cacheOption, opts) {
   const { useCache, maxAge, strict } = getOpts(opts)
-  const state = {}
+  const getCacheValue = getCacheOption.bind(undefined, cacheOption)
+  const kFileMoized = moizeFileMoized(getCacheValue, maxAge)
   return (...args) =>
     processMoized({
       func,
+      kFileMoized,
       args,
-      state,
-      cacheOption,
+      getCacheValue,
       useCache,
       maxAge,
       strict,
@@ -28,47 +32,51 @@ const kMoizeFs = function (func, cacheOption, opts) {
 
 export const moizeFs = keepFuncProps(kMoizeFs)
 
-const processMoized = async function ({
+const moizeFileMoized = function (getCacheValue, maxAge) {
+  return kMoize(fileMoized, {
+    isSerialized: true,
+    serializer: getCacheValue,
+    isPromise: true,
+    // TODO: re-enable after the following bug is fixed:
+    // https://github.com/planttheidea/moize/issues/122
+    // maxAge,
+  })
+}
+
+const processMoized = function ({
   func,
+  kFileMoized,
   args,
-  state,
-  cacheOption,
+  getCacheValue,
   useCache,
   maxAge,
   strict,
 }) {
   const useCacheValue = useCache(...args)
+  const cacheValue = getCacheValue(args)
 
-  if (
-    state.processValue !== undefined &&
-    useCacheValue &&
-    !env.TEST_CACHE_FILENAME
-  ) {
-    return state.processValue
+  // TODO: add value back if `kFileMoized` throws
+  // TODO: maybe find a better way to make moize not read cache, but still write
+  // it on success
+  if (!useCacheValue || env.TEST_CACHE_FILENAME) {
+    kFileMoized.remove(cacheValue)
   }
 
-  const returnValue = await fileMoized({
-    func,
-    args,
-    cacheOption,
-    useCacheValue,
-    maxAge,
-    strict,
-  })
-  // eslint-disable-next-line fp/no-mutation, require-atomic-updates, no-param-reassign
-  state.processValue = returnValue
-  return returnValue
+  return kFileMoized(args, { func, cacheValue, useCacheValue, maxAge, strict })
 }
 
-const fileMoized = async function ({
-  func,
+const getCacheOption = function (cacheOption, args) {
+  const cacheValue =
+    typeof cacheOption === 'function' ? cacheOption(...args) : cacheOption
+  const cacheValueA = normalize(cacheValue)
+  return cacheValueA
+}
+
+const fileMoized = async function (
   args,
-  cacheOption,
-  useCacheValue,
-  maxAge,
-  strict,
-}) {
-  const { cachePath, timestampPath } = getCachePath(cacheOption, args)
+  { func, cacheValue, useCacheValue, maxAge, strict },
+) {
+  const { cachePath, timestampPath } = getCachePath(cacheValue)
   const fileValue = await getFsCache({
     cachePath,
     timestampPath,
@@ -89,12 +97,9 @@ const fileMoized = async function ({
   }
 }
 
-const getCachePath = function (cacheOption, args) {
-  const cachePathValue =
-    typeof cacheOption === 'function' ? cacheOption(...args) : cacheOption
-  const cachePathValueA = normalize(cachePathValue)
-  const cachePath = `${cachePathValueA}${CACHE_FILE_EXTENSION}`
-  const timestampPath = `${cachePathValueA}${TIMESTAMP_FILE_EXTENSION}`
+const getCachePath = function (cacheValue) {
+  const cachePath = `${cacheValue}${CACHE_FILE_EXTENSION}`
+  const timestampPath = `${cacheValue}${TIMESTAMP_FILE_EXTENSION}`
   return { cachePath, timestampPath }
 }
 
