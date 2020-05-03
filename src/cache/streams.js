@@ -1,5 +1,5 @@
 import { createWriteStream } from 'fs'
-import { pipeline, PassThrough } from 'stream'
+import { pipeline, PassThrough, Readable } from 'stream'
 import { promisify } from 'util'
 
 const pPipeline = promisify(pipeline)
@@ -7,7 +7,11 @@ const pPipeline = promisify(pipeline)
 // Write a stream, optionally returning the buffered content
 export const writeStream = async function (tmpFile, stream, buffer) {
   if (stream.readableObjectMode) {
-    throw new Error('Cannot return streams that are in object mode')
+    throw new Error('Stream must not be in object mode')
+  }
+
+  if (!(stream instanceof Readable)) {
+    throw new TypeError('Stream must be readable')
   }
 
   if (!buffer) {

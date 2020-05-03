@@ -1,5 +1,5 @@
 import { promises as fs } from 'fs'
-import { Readable } from 'stream'
+import { Stream } from 'stream'
 
 import pathExists from 'path-exists'
 
@@ -35,7 +35,7 @@ const getTmpFile = function (filePath) {
 }
 
 const writeContent = async function (tmpFile, content, returnStreamContent) {
-  if (content instanceof Readable) {
+  if (content instanceof Stream) {
     return writeStream(tmpFile, content, returnStreamContent)
   }
 
