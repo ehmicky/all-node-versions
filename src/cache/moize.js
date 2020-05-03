@@ -76,12 +76,10 @@ const callMoizedFunc = async function ({
     args,
     forceRefresh,
     maxAge,
-    updateAge,
     serialization,
     strict,
     streams,
     cacheInfo,
-    processMoized,
     info,
   })
 
@@ -89,19 +87,15 @@ const callMoizedFunc = async function ({
     return returnInfo
   }
 
-  const expireAt = await refreshExpireAt({
-    cachePath,
-    updateAge,
-    expireAt: returnInfo.expireAt,
-    maxAge,
+  const returnInfoA = await syncCache({
+    returnInfo,
     state: info.state,
+    cachePath,
+    processMoized,
+    maxAge,
+    updateAge,
   })
-
-  if (expireAt === undefined) {
-    return { ...returnInfo, state: info.state }
-  }
-
-  return { ...returnInfo, state: info.state, expireAt }
+  return { ...returnInfoA, state: info.state }
 }
 
 const fsMoized = async function (
@@ -111,12 +105,10 @@ const fsMoized = async function (
     args,
     forceRefresh,
     maxAge,
-    updateAge,
     serialization,
     strict,
     streams,
     cacheInfo,
-    processMoized,
     info,
   },
 ) {
@@ -126,11 +118,9 @@ const fsMoized = async function (
     args,
     forceRefresh,
     maxAge,
-    updateAge,
     serialization,
     strict,
     streams,
-    processMoized,
   })
 
   if (!cacheInfo) {
@@ -151,11 +141,9 @@ const getReturnInfo = async function ({
   args,
   forceRefresh,
   maxAge,
-  updateAge,
   serialization,
   strict,
   streams,
-  processMoized,
 }) {
   const returnInfo = await readFsCache({
     cachePath,
@@ -164,13 +152,7 @@ const getReturnInfo = async function ({
     serialization,
   })
 
-  if (returnInfo.state !== undefined) {
-    updateProcessCacheTime({
-      processMoized,
-      cachePath,
-      updateAge,
-      expireAt: returnInfo.expireAt,
-    })
+  if (returnInfo.state === 'file') {
     return returnInfo
   }
 
@@ -189,6 +171,38 @@ const getReturnInfo = async function ({
   }
 }
 
+const syncCache = async function ({
+  returnInfo,
+  returnInfo: { expireAt },
+  state,
+  cachePath,
+  processMoized,
+  maxAge,
+  updateAge,
+}) {
+  updateProcessCacheTime({
+    processMoized,
+    cachePath,
+    updateAge,
+    expireAt,
+    state,
+  })
+
+  const expireAtA = await refreshExpireAt({
+    cachePath,
+    updateAge,
+    expireAt,
+    maxAge,
+    state,
+  })
+
+  if (expireAtA === undefined) {
+    return returnInfo
+  }
+
+  return { ...returnInfo, expireAt: expireAtA }
+}
+
 // When the function has been cached on file by a different process, the new
 // process will cache it in-process using the file-cached value. However, the
 // TTL of the process cache must match the one left in-file so that are in sync.
@@ -198,8 +212,9 @@ const updateProcessCacheTime = function ({
   cachePath,
   updateAge,
   expireAt,
+  state,
 }) {
-  if (updateAge) {
+  if (updateAge || state !== 'file') {
     return
   }
 
