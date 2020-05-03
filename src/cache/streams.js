@@ -6,13 +6,7 @@ const pPipeline = promisify(pipeline)
 
 // Write a stream, optionally returning the buffered content
 export const writeStream = async function (tmpFile, stream, buffer) {
-  if (stream.readableObjectMode) {
-    throw new Error('Stream must not be in object mode')
-  }
-
-  if (!(stream instanceof Readable)) {
-    throw new TypeError('Stream must be readable')
-  }
+  validateStream(stream)
 
   if (!buffer) {
     await pPipeline(stream, createWriteStream(tmpFile))
@@ -22,6 +16,16 @@ export const writeStream = async function (tmpFile, stream, buffer) {
   const { passThrough, state } = getPassThrough()
   await pPipeline(stream, passThrough, createWriteStream(tmpFile))
   return state.content
+}
+
+const validateStream = function (stream) {
+  if (stream.readableObjectMode) {
+    throw new Error('Stream must not be in object mode')
+  }
+
+  if (!(stream instanceof Readable)) {
+    throw new TypeError('Stream must be readable')
+  }
 }
 
 // Read content written by stream
