@@ -51,17 +51,17 @@ const processMoized = function ({
   maxAge,
   strict,
 }) {
-  const useCacheValue = useCache(...args)
+  const shouldUseCache = useCache(...args)
   const cachePath = getCachePath(args)
 
   // TODO: add value back if `kFileMoized` throws
   // TODO: maybe find a better way to make moize not read cache, but still write
   // it on success
-  if (!useCacheValue) {
+  if (!shouldUseCache) {
     kFileMoized.remove(cachePath)
   }
 
-  return kFileMoized(args, { func, cachePath, useCacheValue, maxAge, strict })
+  return kFileMoized(args, { func, cachePath, shouldUseCache, maxAge, strict })
 }
 
 const getCacheOption = function (cacheOption, args) {
@@ -73,13 +73,13 @@ const getCacheOption = function (cacheOption, args) {
 
 const fileMoized = async function (
   args,
-  { func, cachePath, useCacheValue, maxAge, strict },
+  { func, cachePath, shouldUseCache, maxAge, strict },
 ) {
   const timestampPath = `${cachePath}${TIMESTAMP_FILE_EXTENSION}`
   const fileValue = await getFsCache({
     cachePath,
     timestampPath,
-    useCacheValue,
+    shouldUseCache,
     maxAge,
   })
 
@@ -102,10 +102,10 @@ const TIMESTAMP_FILE_EXTENSION = '.timestamp.txt'
 const getFsCache = function ({
   cachePath,
   timestampPath,
-  useCacheValue,
+  shouldUseCache,
   maxAge,
 }) {
-  if (!useCacheValue) {
+  if (!shouldUseCache) {
     return
   }
 
