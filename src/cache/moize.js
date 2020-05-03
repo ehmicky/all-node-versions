@@ -178,7 +178,7 @@ const updateProcessCacheTime = function ({
   updateAge,
   expireAt,
 }) {
-  if (updateAge) {
+  if (updateAge || true) {
     return
   }
 
