@@ -33,6 +33,10 @@ const writeContent = async function (tmpFile, content) {
     return content
   }
 
+  if (content.readableObjectMode) {
+    throw new Error('Cannot return streams that are in object mode')
+  }
+
   const { passThrough, state } = getPassThrough()
   await pPipeline(content, passThrough, createWriteStream(tmpFile))
   return state.content
