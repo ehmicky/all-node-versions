@@ -26,7 +26,7 @@ each(
       setTestCache()
 
       try {
-        await writeCacheFile(oldCacheFile)
+        await writeCacheFile({ oldCacheFile })
 
         const latestVersion = await getLatestVersion({ fetch })
         t.is(latestVersion === '1.0.0', result)
@@ -59,18 +59,17 @@ each(
   ({ title }, { result, fetch }) => {
     test.serial(`Twice in same process | ${title}`, async (t) => {
       setTestCache()
+      await writeCacheFile()
 
       try {
-        await writeCacheFile()
-
         await getLatestVersion()
+        await writeCacheFile({ version: 'v2.0.0' })
+        const latestVersion = await getLatestVersion({ fetch })
+        t.is(latestVersion === '1.0.0', result)
       } finally {
         await removeCacheFile()
         unsetTestCache()
       }
-
-      const latestVersion = await getLatestVersion({ fetch })
-      t.is(latestVersion === '1.0.0', result)
     })
   },
 )

@@ -17,10 +17,13 @@ export const unsetTestCache = function () {
   delete env.TEST_CACHE_FILENAME
 }
 
-export const writeCacheFile = async function (oldCacheFile = false) {
+export const writeCacheFile = async function ({
+  oldCacheFile = false,
+  version = TEST_VERSION,
+} = {}) {
   const { cachePath, timestampPath } = await getCachePath()
   const timestamp = oldCacheFile ? 0 : Date.now()
-  const versionsInfo = [{ version: 'v1.0.0' }]
+  const versionsInfo = [{ version }]
   const cacheFileContent = serialize(versionsInfo)
 
   await Promise.all([
@@ -30,6 +33,8 @@ export const writeCacheFile = async function (oldCacheFile = false) {
 
   return cachePath
 }
+
+const TEST_VERSION = 'v1.0.0'
 
 export const removeCacheFile = async function () {
   const { cachePath, timestampPath } = await getCachePath()

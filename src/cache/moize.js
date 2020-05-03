@@ -1,5 +1,4 @@
 import { normalize } from 'path'
-import { env } from 'process'
 
 import keepFuncProps from 'keep-func-props'
 import moize from 'moize'
@@ -58,7 +57,7 @@ const processMoized = function ({
   // TODO: add value back if `kFileMoized` throws
   // TODO: maybe find a better way to make moize not read cache, but still write
   // it on success
-  if (!useCacheValue || env.TEST_CACHE_FILENAME) {
+  if (!useCacheValue) {
     kFileMoized.remove(cacheValue)
   }
 
