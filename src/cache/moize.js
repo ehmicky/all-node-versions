@@ -183,7 +183,7 @@ const updateProcessCacheTime = function ({
     return
   }
 
-  const ttl = Number(expireAt) - Date.now()
+  const ttl = expireAt - Date.now()
   const timeoutId = setTimeout(() => {
     processMoized.remove([cachePath])
   }, ttl)
