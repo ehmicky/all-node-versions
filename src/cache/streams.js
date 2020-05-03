@@ -1,3 +1,4 @@
+import { Buffer } from 'buffer'
 import { createWriteStream } from 'fs'
 import { pipeline, PassThrough, Readable } from 'stream'
 import { promisify } from 'util'
@@ -15,7 +16,8 @@ export const writeStream = async function (tmpFile, stream, streams) {
 
   const { passThrough, state } = getPassThrough()
   await pPipeline(stream, passThrough, createWriteStream(tmpFile))
-  return state.content
+  const content = getContent(state)
+  return content
 }
 
 const validateStream = function (stream, streams) {
@@ -34,11 +36,17 @@ const validateStream = function (stream, streams) {
 
 // Read content written by stream
 const getPassThrough = function () {
-  const state = { content: '' }
-  const passThrough = new PassThrough({ encoding: 'utf8' })
+  const state = { chunks: [], length: 0 }
+  const passThrough = new PassThrough()
   passThrough.on('data', (chunk) => {
+    // eslint-disable-next-line fp/no-mutating-methods
+    state.chunks.push(chunk)
     // eslint-disable-next-line fp/no-mutation
-    state.content += chunk
+    state.length += chunk.length
   })
   return { passThrough, state }
+}
+
+const getContent = function ({ chunks, length }) {
+  return Buffer.concat(chunks, length).toString()
 }
