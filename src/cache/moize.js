@@ -46,7 +46,7 @@ const callMoizedFunc = function ({
   strict,
 }) {
   const shouldUseCache = useCache(...args)
-  const cachePath = getCachePath(cacheOption, args)
+  const cachePath = normalize(cacheOption(...args))
 
   // TODO: add value back if `kFileMoized` throws
   // TODO: maybe find a better way to make moize not read cache, but still write
@@ -56,12 +56,6 @@ const callMoizedFunc = function ({
   }
 
   return kFileMoized(cachePath, { func, args, shouldUseCache, maxAge, strict })
-}
-
-const getCachePath = function (cacheOption, args) {
-  const cachePath = cacheOption(...args)
-  const cachePathA = normalize(cachePath)
-  return cachePathA
 }
 
 const fileMoized = async function (
