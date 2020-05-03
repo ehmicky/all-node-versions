@@ -30,21 +30,19 @@ const kMoizeFs = function (func, getCachePath, opts) {
     updateExpire: Boolean(updateExpire),
   })
   const removeProcessPath = invalidateCachePath.bind(undefined, processMoized)
-  return (...args) =>
-    callMoizedFunc({
-      processMoized,
-      removeProcessPath,
-      func,
-      args,
-      getCachePath,
-      shouldInvalidate,
-      maxAge,
-      updateExpire,
-      serialization,
-      strict,
-      streams,
-      cacheInfo,
-    })
+  return callMoizedFunc.bind(undefined, {
+    processMoized,
+    removeProcessPath,
+    func,
+    getCachePath,
+    shouldInvalidate,
+    maxAge,
+    updateExpire,
+    serialization,
+    strict,
+    streams,
+    cacheInfo,
+  })
 }
 
 export const moizeFs = keepFuncProps(kMoizeFs)
@@ -53,20 +51,22 @@ const invalidateCachePath = function (processMoized, cachePath) {
   processMoized.remove([cachePath])
 }
 
-const callMoizedFunc = async function ({
-  processMoized,
-  removeProcessPath,
-  func,
-  args,
-  getCachePath,
-  shouldInvalidate,
-  maxAge,
-  updateExpire,
-  serialization,
-  strict,
-  streams,
-  cacheInfo,
-}) {
+const callMoizedFunc = async function (
+  {
+    processMoized,
+    removeProcessPath,
+    func,
+    getCachePath,
+    shouldInvalidate,
+    maxAge,
+    updateExpire,
+    serialization,
+    strict,
+    streams,
+    cacheInfo,
+  },
+  ...args
+) {
   const invalidate = shouldInvalidate(args)
   const cachePath = normalize(getCachePath(args))
 
