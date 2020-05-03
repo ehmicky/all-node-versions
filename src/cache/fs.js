@@ -1,12 +1,18 @@
 import { promises as fs } from 'fs'
 import { dirname } from 'path'
-import { serialize, deserialize } from 'v8'
 
 import pathExists from 'path-exists'
 import writeFileAtomic from 'write-file-atomic'
 
+import { parse, serialize } from './serialization.js'
+
 // Cache the return value on the filesystem.
-export const readFsCache = async function ({ cachePath, useMaxAge, maxAge }) {
+export const readFsCache = async function ({
+  cachePath,
+  useMaxAge,
+  maxAge,
+  serialization,
+}) {
   const [cacheContent, isOldCache] = await Promise.all([
     maybeReadFile(cachePath),
     checkTimestamp({ cachePath, useMaxAge, maxAge }),
@@ -16,7 +22,7 @@ export const readFsCache = async function ({ cachePath, useMaxAge, maxAge }) {
     return
   }
 
-  const fileValue = safeDeserialize(cacheContent)
+  const fileValue = parse(cacheContent, { serialization })
   return fileValue
 }
 
@@ -41,21 +47,15 @@ const maybeReadFile = async function (path) {
   return fs.readFile(path)
 }
 
-// If the file is corrupted, ignore it
-const safeDeserialize = function (cacheContent) {
-  try {
-    return deserialize(cacheContent)
-  } catch {}
-}
-
 // Persist the file cache
 export const writeFsCache = async function ({
   cachePath,
   returnValue,
+  serialization,
   strict,
 }) {
   const timestamp = `${Date.now()}\n`
-  const cacheContent = trySerialize(returnValue, strict)
+  const cacheContent = serialize(returnValue, { serialization, strict })
 
   if (cacheContent === undefined) {
     return
@@ -73,24 +73,6 @@ export const writeFsCache = async function ({
     // file and one might fail, especially on Windows (with EPERM lock file
     // errors)
   } catch {}
-}
-
-const trySerialize = function (returnValue, strict) {
-  try {
-    return serialize(returnValue)
-  } catch (error) {
-    handleSerializeError(error, strict)
-  }
-}
-
-const handleSerializeError = function (error, strict) {
-  if (!strict) {
-    return
-  }
-
-  // eslint-disable-next-line no-param-reassign, fp/no-mutation
-  error.message = `Could not cache the return value: not serializable with the structured cloned algorithm\n${error.message}`
-  throw error
 }
 
 const createCacheDir = async function (cachePath) {

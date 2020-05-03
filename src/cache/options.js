@@ -18,6 +18,7 @@ const DEFAULT_OPTS = {
     return true
   },
   maxAge: DEFAULT_MAX_AGE_MS,
+  serialization: 'v8',
   strict: true,
 }
 

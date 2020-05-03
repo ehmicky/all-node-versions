@@ -14,7 +14,10 @@ const kMoize = keepFuncProps(moize)
 //  - but also on the filesystem
 // Also handles offline connections.
 const kMoizeFs = function (func, getCachePath, opts) {
-  const { useCache, maxAge, strict } = getOpts(getCachePath, opts)
+  const { useCache, maxAge, serialization, strict } = getOpts(
+    getCachePath,
+    opts,
+  )
   const processMoized = kMoize(fsMoized, {
     maxArgs: 1,
     isPromise: true,
@@ -30,6 +33,7 @@ const kMoizeFs = function (func, getCachePath, opts) {
       getCachePath,
       useCache,
       maxAge,
+      serialization,
       strict,
     })
 }
@@ -43,6 +47,7 @@ const callMoizedFunc = function ({
   getCachePath,
   useCache,
   maxAge,
+  serialization,
   strict,
 }) {
   const shouldUseCache = useCache(...args)
@@ -60,15 +65,21 @@ const callMoizedFunc = function ({
     args,
     shouldUseCache,
     maxAge,
+    serialization,
     strict,
   })
 }
 
 const fsMoized = async function (
   cachePath,
-  { func, args, shouldUseCache, maxAge, strict },
+  { func, args, shouldUseCache, maxAge, serialization, strict },
 ) {
-  const fileValue = await getFsCache({ cachePath, shouldUseCache, maxAge })
+  const fileValue = await getFsCache({
+    cachePath,
+    shouldUseCache,
+    maxAge,
+    serialization,
+  })
 
   if (fileValue !== undefined) {
     return fileValue
@@ -76,17 +87,22 @@ const fsMoized = async function (
 
   try {
     const returnValue = await func(...args)
-    await writeFsCache({ cachePath, returnValue, strict })
+    await writeFsCache({ cachePath, returnValue, serialization, strict })
     return returnValue
   } catch (error) {
-    return handleOfflineError({ cachePath, error })
+    return handleOfflineError({ cachePath, serialization, error })
   }
 }
 
-const getFsCache = function ({ cachePath, shouldUseCache, maxAge }) {
+const getFsCache = function ({
+  cachePath,
+  shouldUseCache,
+  maxAge,
+  serialization,
+}) {
   if (!shouldUseCache) {
     return
   }
 
-  return readFsCache({ cachePath, useMaxAge: true, maxAge })
+  return readFsCache({ cachePath, useMaxAge: true, maxAge, serialization })
 }

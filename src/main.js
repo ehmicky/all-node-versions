@@ -38,6 +38,7 @@ const cFetchIndex = moizeFs(fetchIndex, getCachePath, {
     return !fetch
   },
   maxAge: MAX_AGE_MS,
+  serialization: 'json',
 })
 
 // We do not use `export default` because Babel transpiles it in a way that

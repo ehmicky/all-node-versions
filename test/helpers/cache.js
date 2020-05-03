@@ -1,6 +1,5 @@
 import { promises as fs } from 'fs'
 import { env } from 'process'
-import { serialize } from 'v8'
 
 import globalCacheDir from 'global-cache-dir'
 import pathExists from 'path-exists'
@@ -24,7 +23,7 @@ export const writeCacheFile = async function ({
   const { cachePath, timestampPath } = await getCachePath()
   const timestamp = oldCacheFile ? 0 : Date.now()
   const versionsInfo = [{ version }]
-  const cacheFileContent = serialize(versionsInfo)
+  const cacheFileContent = JSON.stringify(versionsInfo, undefined, 2)
 
   await Promise.all([
     fs.writeFile(cachePath, cacheFileContent),
