@@ -24,13 +24,18 @@ export const readFsCache = async function ({
     getExpireAt(cachePath),
   ])
 
-  if (cacheContent === undefined || isOldCache(maxAge, expireAt)) {
+  if (!canUseCache(cacheContent, maxAge, expireAt)) {
     return { cached: false }
   }
 
   const expireAtA = await maybeUpdateTimestamp(cachePath, updateAge, expireAt)
 
   const returnValue = parse(cacheContent, { serialization })
+
+  if (returnValue === undefined) {
+    return { cached: false }
+  }
+
   return { returnValue, cached: true, expireAt: expireAtA }
 }
 
@@ -45,10 +50,14 @@ const getExpireAt = async function (cachePath) {
   return expireAt
 }
 
-const isOldCache = function (maxAge, expireAt) {
+const canUseCache = function (cacheContent, maxAge, expireAt) {
+  return cacheContent !== undefined && isFreshCache(maxAge, expireAt)
+}
+
+const isFreshCache = function (maxAge, expireAt) {
   return (
-    maxAge !== Infinity &&
-    (expireAt === undefined || maxAge <= Date.now() - Number(expireAt))
+    maxAge === Infinity ||
+    (expireAt !== undefined && maxAge > Date.now() - Number(expireAt))
   )
 }
 
