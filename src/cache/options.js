@@ -16,6 +16,7 @@ export const getOpts = function (getCachePath, opts = {}) {
 
 // One hour
 const DEFAULT_MAX_AGE_MS = 36e5
+const DEFAULT_STREAM = false
 
 const DEFAULT_OPTS = {
   shouldInvalidate() {
@@ -25,7 +26,7 @@ const DEFAULT_OPTS = {
   updateExpire: false,
   serialization: 'v8',
   strict: false,
-  streams: 'error',
+  stream: DEFAULT_STREAM,
   cacheInfo: false,
 }
 
@@ -49,21 +50,20 @@ const validateMaxAge = function (maxAge) {
 
 const ENUMS = {
   serialization: ['none', 'json', 'v8'],
-  streams: ['error', 'pipe', 'buffer'],
 }
 
 // Streams are piped directly to files without a serialization step
 const addSerialization = function ({
   opts,
-  opts: { serialization, streams = 'error' },
+  opts: { serialization, stream = DEFAULT_STREAM },
 }) {
-  if (streams === 'error') {
+  if (!stream) {
     return opts
   }
 
   if (serialization !== undefined && serialization !== 'none') {
     throw new Error(
-      `The "serialization" option must be "none" when using the "streams": "${streams}" option`,
+      `The "serialization" option must be "none" when using the "stream" option`,
     )
   }
 

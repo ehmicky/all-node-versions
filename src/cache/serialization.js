@@ -4,6 +4,10 @@ import { isDeepStrictEqual } from 'util'
 import { serialize as v8Serialize, deserialize as v8Deserialize } from 'v8'
 
 export const parse = function (serializedValue, { serialization }) {
+  if (serializedValue instanceof Stream) {
+    return serializedValue
+  }
+
   try {
     // eslint-disable-next-line max-depth
     if (Buffer.isBuffer(serializedValue)) {

@@ -8,16 +8,20 @@ import { writeStream } from './streams.js'
 // Writing the cache file should be atomic, so we don't leave partially written
 // files. We cannot use libraries like `write-file-atomic` because they don't
 // support streams.
-export const writeAtomic = async function (filePath, content, streams) {
+export const writeAtomic = async function (filePath, content) {
   const tmpFile = getTmpFile(filePath)
 
-  try {
-    const streamContent = await writeContent(tmpFile, content, streams)
-    await fs.rename(tmpFile, filePath)
-    return streamContent
-  } finally {
-    await cleanTmpFile(tmpFile)
+  if (content instanceof Stream) {
+    const { tmpFileStream, tmpFilePromise } = await writeStream(
+      tmpFile,
+      content,
+    )
+    renameFileOnEnd(tmpFilePromise, tmpFile, filePath)
+    return tmpFileStream
   }
+
+  const tmpFilePromiseA = fs.writeFile(tmpFile, content)
+  await renameFileOnEnd(tmpFilePromiseA, tmpFile, filePath)
 }
 
 // Use a sibling file because `fs.rename()` does not work between partitions
@@ -26,12 +30,13 @@ const getTmpFile = function (filePath) {
   return `${filePath}.${uniqueId}`
 }
 
-const writeContent = async function (tmpFile, content, streams) {
-  if (content instanceof Stream) {
-    return writeStream(tmpFile, content, streams)
+const renameFileOnEnd = async function (promise, tmpFile, filePath) {
+  try {
+    await promise
+    await fs.rename(tmpFile, filePath)
+  } catch (error) {
+    await cleanTmpFile(tmpFile)
   }
-
-  await fs.writeFile(tmpFile, content)
 }
 
 // The temporary file might still exist if:
@@ -42,5 +47,7 @@ const cleanTmpFile = async function (tmpFile) {
     return
   }
 
-  await fs.unlink(tmpFile)
+  try {
+    await fs.unlink(tmpFile)
+  } catch {}
 }

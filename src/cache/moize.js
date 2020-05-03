@@ -1,3 +1,4 @@
+import { createReadStream } from 'fs'
 import { normalize } from 'path'
 
 import keepFuncProps from 'keep-func-props'
@@ -20,7 +21,7 @@ const kMoizeFs = function (func, getCachePath, opts) {
     updateExpire,
     serialization,
     strict,
-    streams,
+    stream: streamOpt,
     cacheInfo,
   } = getOpts(getCachePath, opts)
   const processMoized = kMoize(fsMoized, {
@@ -40,7 +41,7 @@ const kMoizeFs = function (func, getCachePath, opts) {
     updateExpire,
     serialization,
     strict,
-    streams,
+    streamOpt,
     cacheInfo,
   })
 }
@@ -62,7 +63,7 @@ const callMoizedFunc = async function (
     updateExpire,
     serialization,
     strict,
-    streams,
+    streamOpt,
     cacheInfo,
   },
   ...args
@@ -85,10 +86,10 @@ const callMoizedFunc = async function (
     maxAge,
     serialization,
     strict,
-    streams,
+    streamOpt,
     info,
   })
-  const returnInfoA = { ...returnInfo, state: info.state }
+  const returnInfoA = applyInfo({ returnInfo, info, cachePath, streamOpt })
 
   const returnInfoB = await syncCache({
     returnInfo: returnInfoA,
@@ -104,7 +105,7 @@ const callMoizedFunc = async function (
 
 const fsMoized = async function (
   cachePath,
-  { func, args, invalidate, maxAge, serialization, strict, streams, info },
+  { func, args, invalidate, maxAge, serialization, strict, streamOpt, info },
 ) {
   const { state, ...returnInfo } = await getReturnInfo({
     cachePath,
@@ -114,13 +115,23 @@ const fsMoized = async function (
     maxAge,
     serialization,
     strict,
-    streams,
+    streamOpt,
   })
   // This function is memoized in-memory. To distinguish between memoized calls
   // or not, we need to do a side-effect like this.
   // eslint-disable-next-line fp/no-mutation, no-param-reassign
   info.state = state
-  return returnInfo
+
+  if (!streamOpt) {
+    return returnInfo
+  }
+
+  const { returnValue, ...returnInfoA } = returnInfo
+  // This function is memoized in-memory. We don't want to memoize streams since
+  // they are stateful, so we pass them using a side-effect like this.
+  // eslint-disable-next-line fp/no-mutation, no-param-reassign
+  info.returnValue = returnValue
+  return returnInfoA
 }
 
 const getReturnInfo = async function ({
@@ -131,12 +142,13 @@ const getReturnInfo = async function ({
   maxAge,
   serialization,
   strict,
-  streams,
+  streamOpt,
 }) {
   const returnInfo = await readFsCache({
     cachePath,
     invalidate,
     serialization,
+    streamOpt,
     offline: false,
   })
 
@@ -152,11 +164,34 @@ const getReturnInfo = async function ({
       maxAge,
       serialization,
       strict,
-      streams,
+      streamOpt,
     })
   } catch (error) {
-    return handleOfflineError({ cachePath, serialization, error })
+    return handleOfflineError({ cachePath, serialization, streamOpt, error })
   }
+}
+
+const applyInfo = function ({
+  returnInfo,
+  returnInfo: { path },
+  info: { state, returnValue },
+  streamOpt,
+}) {
+  const returnInfoA = { ...returnInfo, state }
+
+  if (!streamOpt) {
+    return returnInfoA
+  }
+
+  if (state !== 'process') {
+    return { ...returnInfoA, returnValue }
+  }
+
+  if (path === undefined) {
+    return returnInfoA
+  }
+
+  return { ...returnInfoA, returnValue: createReadStream(path) }
 }
 
 // Keep the process cache and file cache `expireAt` in-sync

@@ -5,6 +5,7 @@ import { readFsCache } from './fs.js'
 export const handleOfflineError = async function ({
   cachePath,
   serialization,
+  streamOpt,
   error,
 }) {
   if (!isOfflineError(error)) {
@@ -13,8 +14,9 @@ export const handleOfflineError = async function ({
 
   const { returnValue, state } = await readFsCache({
     cachePath,
-    serialization,
     invalidate: false,
+    serialization,
+    streamOpt,
     offline: true,
   })
 

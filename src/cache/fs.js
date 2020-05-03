@@ -1,4 +1,4 @@
-import { promises as fs } from 'fs'
+import { promises as fs, createReadStream } from 'fs'
 import { dirname } from 'path'
 import { Stream } from 'stream'
 
@@ -12,6 +12,7 @@ export const readFsCache = async function ({
   cachePath,
   invalidate,
   serialization,
+  streamOpt,
   offline,
 }) {
   if (invalidate) {
@@ -19,7 +20,7 @@ export const readFsCache = async function ({
   }
 
   const [cacheContent, expireAt] = await Promise.all([
-    maybeReadFile(cachePath),
+    maybeReadFile(cachePath, streamOpt),
     getExpireAt(cachePath),
   ])
 
@@ -37,7 +38,10 @@ export const readFsCache = async function ({
 }
 
 const getExpireAt = async function (cachePath) {
-  const expireAtString = await maybeReadFile(`${cachePath}${EXPIRE_EXTENSION}`)
+  const expireAtString = await maybeReadFile(
+    `${cachePath}${EXPIRE_EXTENSION}`,
+    false,
+  )
 
   if (expireAtString === undefined) {
     return
@@ -60,9 +64,13 @@ const isFreshCache = function (expireAt) {
   return expireAt !== undefined && expireAt > Date.now()
 }
 
-const maybeReadFile = async function (path) {
+const maybeReadFile = async function (path, streamOpt) {
   if (!(await pathExists(path))) {
     return
+  }
+
+  if (streamOpt) {
+    return createReadStream(path)
   }
 
   return fs.readFile(path)
@@ -75,8 +83,10 @@ export const writeFsCache = async function ({
   maxAge,
   serialization,
   strict,
-  streams,
+  streamOpt,
 }) {
+  validateStreamOpt(returnValue, streamOpt)
+
   const cacheContent = serialize(returnValue, { serialization, strict })
 
   if (cacheContent === undefined) {
@@ -86,10 +96,27 @@ export const writeFsCache = async function ({
   await createCacheDir(cachePath)
 
   const [returnValueA, expireAt] = await Promise.all([
-    writeContent({ cachePath, cacheContent, returnValue, streams }),
+    writeContent({ cachePath, cacheContent, returnValue }),
     setExpireAt(cachePath, maxAge),
   ])
   return { returnValue: returnValueA, state: 'new', path: cachePath, expireAt }
+}
+
+const validateStreamOpt = function (returnValue, streamOpt) {
+  if (returnValue instanceof Stream) {
+    // eslint-disable-next-line max-depth
+    if (!streamOpt) {
+      throw new TypeError(
+        'Must return use the "stream" option to return a stream',
+      )
+    }
+
+    return
+  }
+
+  if (streamOpt) {
+    throw new TypeError('Must return a stream when using the "stream" option')
+  }
 }
 
 const createCacheDir = async function (cachePath) {
@@ -102,16 +129,11 @@ const createCacheDir = async function (cachePath) {
   await fs.mkdir(cacheDir, { recursive: true })
 }
 
-const writeContent = async function ({
-  cachePath,
-  cacheContent,
-  returnValue,
-  streams,
-}) {
-  const streamContent = await writeAtomic(cachePath, cacheContent, streams)
+const writeContent = async function ({ cachePath, cacheContent, returnValue }) {
+  const returnStream = await writeAtomic(cachePath, cacheContent)
 
-  if (cacheContent instanceof Stream) {
-    return streamContent
+  if (returnStream !== undefined) {
+    return returnStream
   }
 
   return returnValue
@@ -147,7 +169,7 @@ const setExpireAt = async function (cachePath, maxAge) {
   const expireAt = Math.round(
     Math.min(Date.now() + maxAge, Number.MAX_SAFE_INTEGER),
   )
-  await writeAtomic(`${cachePath}${EXPIRE_EXTENSION}`, `${expireAt}\n`, false)
+  await writeAtomic(`${cachePath}${EXPIRE_EXTENSION}`, `${expireAt}\n`)
   return expireAt
 }
 

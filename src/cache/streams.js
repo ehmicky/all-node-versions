@@ -1,54 +1,64 @@
-import { Buffer } from 'buffer'
-import { createWriteStream } from 'fs'
-import { pipeline, PassThrough, Readable } from 'stream'
-import { promisify } from 'util'
+import { promises as fs } from 'fs'
+import { Readable, pipeline } from 'stream'
+import { callbackify } from 'util'
 
-const pPipeline = promisify(pipeline)
+import through from 'through2'
 
 // Write a stream, optionally returning the buffered content
-export const writeStream = async function (tmpFile, stream, streams) {
-  validateStream(stream, streams)
+export const writeStream = async function (tmpFile, stream) {
+  validateStream(stream)
 
-  if (streams === 'pipe') {
-    await pPipeline(stream, createWriteStream(tmpFile))
-    return
-  }
-
-  const { passThrough, state } = getPassThrough()
-  await pPipeline(stream, passThrough, createWriteStream(tmpFile))
-  const content = getContent(state)
-  return content
+  const writeFileStream = await getWriteFileStream(tmpFile)
+  const { stream: tmpFileStream, promise } = pipelinePromise(
+    stream,
+    writeFileStream,
+  )
+  return { tmpFileStream, tmpFilePromise: promise }
 }
 
-const validateStream = function (stream, streams) {
-  if (streams === 'error') {
-    throw new Error('Must not use streams')
+const validateStream = function (stream) {
+  if (!(stream instanceof Readable)) {
+    throw new TypeError('Stream must be readable')
   }
 
   if (stream.readableObjectMode) {
     throw new Error('Stream must not be in object mode')
   }
-
-  if (!(stream instanceof Readable)) {
-    throw new TypeError('Stream must be readable')
-  }
 }
 
-// Read content written by stream
-// TODO: use `get-stream` internals instead.
-// See https://github.com/sindresorhus/get-stream/issues/37
-const getPassThrough = function () {
-  const state = { chunks: [], length: 0 }
-  const passThrough = new PassThrough()
-  passThrough.on('data', (chunk) => {
-    // eslint-disable-next-line fp/no-mutating-methods
-    state.chunks.push(chunk)
+// Like `createWriteStream()` but readable.
+// Also append-only and error if file exists.
+const getWriteFileStream = async function (tmpFile) {
+  const fileHandle = await fs.open(tmpFile, 'ax')
+  return through(
+    transform.bind(undefined, fileHandle),
+    flush.bind(undefined, fileHandle),
+  )
+}
+
+const transform = callbackify(async function cTransform(fileHandle, chunk) {
+  await fileHandle.write(chunk, 0, chunk.length)
+  return chunk
+})
+
+const flush = callbackify(async function cFlush(fileHandle) {
+  await fileHandle.close()
+})
+
+// Like `stream.pipeline()` but return both as `Promise` and as `Stream`
+const pipelinePromise = function (...args) {
+  // eslint-disable-next-line fp/no-let, init-declarations
+  let stream
+  // eslint-disable-next-line promise/avoid-new
+  const promise = new Promise((resolve, reject) => {
     // eslint-disable-next-line fp/no-mutation
-    state.length += chunk.length
-  })
-  return { passThrough, state }
-}
+    stream = pipeline(...args, (error) => {
+      if (error) {
+        return reject(error)
+      }
 
-const getContent = function ({ chunks, length }) {
-  return Buffer.concat(chunks, length).toString()
+      resolve()
+    })
+  })
+  return { stream, promise }
 }

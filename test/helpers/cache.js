@@ -29,8 +29,6 @@ export const writeCacheFile = async function ({
     fs.writeFile(cachePath, cacheFileContent),
     fs.writeFile(expireAtPath, `${expireAt}\n`),
   ])
-
-  return cachePath
 }
 
 const TEST_VERSION = 'v1.0.0'

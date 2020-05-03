@@ -6,8 +6,7 @@ import { getOpts } from './options.js'
 // Versions are already sorted from newest to oldest.
 const allNodeVersions = async function (opts) {
   const { fetch, fetchNodeOpts } = getOpts(opts)
-  const content = await fetchIndex({ fetchNodeOpts, fetch })
-  const index = JSON.parse(content)
+  const index = await fetchIndex({ fetchNodeOpts, fetch })
   const versionsInfo = normalizeIndex(index)
   return versionsInfo
 }

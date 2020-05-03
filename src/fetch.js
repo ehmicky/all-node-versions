@@ -2,12 +2,19 @@ import { env } from 'process'
 
 import getCacheDir from 'cachedir'
 import fetchNodeWebsite from 'fetch-node-website'
+import getStream from 'get-stream'
 
 import { moizeFs } from './cache/moize.js'
 
 // Do the actual HTTP request
-const mFetchIndex = function ({ fetchNodeOpts }) {
-  return fetchNodeWebsite(INDEX_PATH, { ...fetchNodeOpts, progress: false })
+const mFetchIndex = async function ({ fetchNodeOpts }) {
+  const stream = await fetchNodeWebsite(INDEX_PATH, {
+    ...fetchNodeOpts,
+    progress: false,
+  })
+  const content = await getStream(stream)
+  const index = JSON.parse(content)
+  return index
 }
 
 const INDEX_PATH = 'index.json'
@@ -34,6 +41,6 @@ export const fetchIndex = moizeFs(mFetchIndex, getCachePath, {
     return fetch
   },
   maxAge: MAX_AGE_MS,
-  streams: 'buffer',
+  serialization: 'json',
   strict: true,
 })
