@@ -1,10 +1,9 @@
-import { promises as fs, createWriteStream } from 'fs'
-import { Readable, pipeline, PassThrough } from 'stream'
-import { promisify } from 'util'
+import { promises as fs } from 'fs'
+import { Readable } from 'stream'
 
 import pathExists from 'path-exists'
 
-const pPipeline = promisify(pipeline)
+import { writeStream } from './streams.js'
 
 // Writing the cache file should be atomic, so we don't leave partially written
 // files. We cannot use libraries like `write-file-atomic` because they don't
@@ -45,37 +44,6 @@ const writeContent = async function ({
   }
 
   await fs.writeFile(tmpFile, content)
-}
-
-const writeStream = async function ({
-  tmpFile,
-  stream,
-  stream: { readableObjectMode },
-  returnStreamContent,
-}) {
-  if (readableObjectMode) {
-    throw new Error('Cannot return streams that are in object mode')
-  }
-
-  if (!returnStreamContent) {
-    await pPipeline(stream, createWriteStream(tmpFile))
-    return
-  }
-
-  const { passThrough, state } = getPassThrough()
-  await pPipeline(stream, passThrough, createWriteStream(tmpFile))
-  return state.content
-}
-
-// Read content written by stream
-const getPassThrough = function () {
-  const state = { content: '' }
-  const passThrough = new PassThrough({ encoding: 'utf8' })
-  passThrough.on('data', (chunk) => {
-    // eslint-disable-next-line fp/no-mutation
-    state.content += chunk
-  })
-  return { passThrough, state }
 }
 
 // The temporary file might still exist if:
