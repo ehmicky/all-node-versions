@@ -17,7 +17,7 @@ export const readFsCache = async function ({
   cacheInfo,
 }) {
   const [cacheContent, isOldCache] = await Promise.all([
-    maybeReadFile(cachePath, cacheInfo),
+    maybeReadFile(cachePath),
     checkTimestamp({ cachePath, useMaxAge, maxAge }),
   ])
 
@@ -28,7 +28,7 @@ export const readFsCache = async function ({
   await maybeUpdateTimestamp(cachePath, updateAge)
 
   if (cacheInfo) {
-    return cacheContent
+    return cachePath
   }
 
   const fileValue = parse(cacheContent, { serialization })
@@ -40,10 +40,7 @@ const checkTimestamp = async function ({ cachePath, useMaxAge, maxAge }) {
     return false
   }
 
-  const timestamp = await maybeReadFile(
-    `${cachePath}${TIMESTAMP_EXTENSION}`,
-    false,
-  )
+  const timestamp = await maybeReadFile(`${cachePath}${TIMESTAMP_EXTENSION}`)
 
   return (
     timestamp === undefined ||
@@ -51,13 +48,9 @@ const checkTimestamp = async function ({ cachePath, useMaxAge, maxAge }) {
   )
 }
 
-const maybeReadFile = async function (path, cacheInfo) {
+const maybeReadFile = async function (path) {
   if (!(await pathExists(path))) {
     return
-  }
-
-  if (cacheInfo) {
-    return path
   }
 
   return fs.readFile(path)
