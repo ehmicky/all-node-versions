@@ -40,7 +40,7 @@ const writeContent = async function ({
   returnStreamContent,
 }) {
   if (content instanceof Readable) {
-    return writeStream(tmpFile, content, { returnStreamContent })
+    return writeStream(tmpFile, content, { buffer: returnStreamContent })
   }
 
   await fs.writeFile(tmpFile, content)
