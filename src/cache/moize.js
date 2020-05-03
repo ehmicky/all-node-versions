@@ -61,7 +61,7 @@ const callMoizedFunc = async function ({
   cacheInfo,
 }) {
   const invalidate = shouldInvalidate(args)
-  const cachePath = normalize(getCachePath(...args))
+  const cachePath = normalize(getCachePath(args))
 
   // TODO: add value back if `kFileMoized` throws
   // TODO: maybe find a better way to make moize not read cache, but still write
