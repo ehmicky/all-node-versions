@@ -137,8 +137,8 @@ const maybeUpdateExpireAt = function ({
 
 const updateExpireAt = async function (cachePath) {
   const expireAt = new Date()
-  const timestamp = `${Number(expireAt)}\n`
-  await writeAtomic(`${cachePath}${EXPIRE_EXTENSION}`, timestamp, false)
+  const timestamp = Number(expireAt)
+  await writeAtomic(`${cachePath}${EXPIRE_EXTENSION}`, `${timestamp}\n`, false)
   return expireAt
 }
 
