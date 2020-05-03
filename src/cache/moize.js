@@ -31,6 +31,13 @@ const kMoizeFs = function (func, cacheOption, opts) {
 
 export const moizeFs = keepFuncProps(kMoizeFs)
 
+const getCacheOption = function (cacheOption, args) {
+  const cacheValue =
+    typeof cacheOption === 'function' ? cacheOption(...args) : cacheOption
+  const cacheValueA = normalize(cacheValue)
+  return cacheValueA
+}
+
 const moizeFileMoized = function (getCachePath, maxAge) {
   return kMoize(fileMoized, {
     isSerialized: true,
@@ -62,13 +69,6 @@ const processMoized = function ({
   }
 
   return kFileMoized(args, { func, cachePath, shouldUseCache, maxAge, strict })
-}
-
-const getCacheOption = function (cacheOption, args) {
-  const cacheValue =
-    typeof cacheOption === 'function' ? cacheOption(...args) : cacheOption
-  const cacheValueA = normalize(cacheValue)
-  return cacheValueA
 }
 
 const fileMoized = async function (
