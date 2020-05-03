@@ -14,7 +14,7 @@ const kMoize = keepFuncProps(moize)
 //  - but also on the filesystem
 // Also handles offline connections.
 const kMoizeFs = function (func, getCachePath, opts) {
-  const { useCache, maxAge, serialization, strict } = getOpts(
+  const { useCache, maxAge, serialization, strict, returnCachePath } = getOpts(
     getCachePath,
     opts,
   )
@@ -35,6 +35,7 @@ const kMoizeFs = function (func, getCachePath, opts) {
       maxAge,
       serialization,
       strict,
+      returnCachePath,
     })
 }
 
@@ -49,6 +50,7 @@ const callMoizedFunc = function ({
   maxAge,
   serialization,
   strict,
+  returnCachePath,
 }) {
   const shouldUseCache = useCache(...args)
   const cachePath = normalize(getCachePath(...args))
@@ -67,18 +69,28 @@ const callMoizedFunc = function ({
     maxAge,
     serialization,
     strict,
+    returnCachePath,
   })
 }
 
 const fsMoized = async function (
   cachePath,
-  { func, args, shouldUseCache, maxAge, serialization, strict },
+  {
+    func,
+    args,
+    shouldUseCache,
+    maxAge,
+    serialization,
+    strict,
+    returnCachePath,
+  },
 ) {
   const fileValue = await getFsCache({
     cachePath,
     shouldUseCache,
     maxAge,
     serialization,
+    returnCachePath,
   })
 
   if (fileValue !== undefined) {
@@ -92,10 +104,16 @@ const fsMoized = async function (
       returnValue,
       serialization,
       strict,
+      returnCachePath,
     })
     return returnValueA
   } catch (error) {
-    return handleOfflineError({ cachePath, serialization, error })
+    return handleOfflineError({
+      cachePath,
+      serialization,
+      returnCachePath,
+      error,
+    })
   }
 }
 
@@ -104,10 +122,17 @@ const getFsCache = function ({
   shouldUseCache,
   maxAge,
   serialization,
+  returnCachePath,
 }) {
   if (!shouldUseCache) {
     return
   }
 
-  return readFsCache({ cachePath, useMaxAge: true, maxAge, serialization })
+  return readFsCache({
+    cachePath,
+    useMaxAge: true,
+    maxAge,
+    serialization,
+    returnCachePath,
+  })
 }

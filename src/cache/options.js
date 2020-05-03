@@ -20,6 +20,7 @@ const DEFAULT_OPTS = {
   maxAge: DEFAULT_MAX_AGE_MS,
   serialization: 'v8',
   strict: true,
+  returnCachePath: false,
 }
 
 const EXAMPLE_OPTS = {

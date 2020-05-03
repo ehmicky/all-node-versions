@@ -5,6 +5,7 @@ import { readFsCache } from './fs.js'
 export const handleOfflineError = async function ({
   cachePath,
   serialization,
+  returnCachePath,
   error,
 }) {
   if (!isOfflineError(error)) {
@@ -15,6 +16,7 @@ export const handleOfflineError = async function ({
     cachePath,
     useMaxAge: false,
     serialization,
+    returnCachePath,
   })
 
   if (fileValue === undefined) {

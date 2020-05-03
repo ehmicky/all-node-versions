@@ -1,6 +1,5 @@
 import { promises as fs } from 'fs'
 import { dirname } from 'path'
-import { Readable } from 'stream'
 
 import pathExists from 'path-exists'
 
@@ -13,14 +12,19 @@ export const readFsCache = async function ({
   useMaxAge,
   maxAge,
   serialization,
+  returnCachePath,
 }) {
   const [cacheContent, isOldCache] = await Promise.all([
-    maybeReadFile(cachePath),
+    maybeReadFile(cachePath, returnCachePath),
     checkTimestamp({ cachePath, useMaxAge, maxAge }),
   ])
 
   if (cacheContent === undefined || isOldCache) {
     return
+  }
+
+  if (returnCachePath) {
+    return cacheContent
   }
 
   const fileValue = parse(cacheContent, { serialization })
@@ -32,7 +36,10 @@ const checkTimestamp = async function ({ cachePath, useMaxAge, maxAge }) {
     return false
   }
 
-  const timestamp = await maybeReadFile(`${cachePath}${TIMESTAMP_EXTENSION}`)
+  const timestamp = await maybeReadFile(
+    `${cachePath}${TIMESTAMP_EXTENSION}`,
+    false,
+  )
 
   return (
     timestamp === undefined ||
@@ -40,9 +47,13 @@ const checkTimestamp = async function ({ cachePath, useMaxAge, maxAge }) {
   )
 }
 
-const maybeReadFile = async function (path) {
+const maybeReadFile = async function (path, returnCachePath) {
   if (!(await pathExists(path))) {
     return
+  }
+
+  if (returnCachePath) {
+    return path
   }
 
   return fs.readFile(path)
@@ -54,21 +65,22 @@ export const writeFsCache = async function ({
   returnValue,
   serialization,
   strict,
+  returnCachePath,
 }) {
   const timestamp = `${Date.now()}\n`
   const cacheContent = serialize(returnValue, { serialization, strict })
 
   if (cacheContent === undefined) {
-    return returnValue
+    return returnCachePath ? undefined : returnValue
   }
 
   await createCacheDir(cachePath)
 
   const [returnValueA] = await Promise.all([
-    writeContent({ cachePath, cacheContent, returnValue }),
-    writeAtomic(`${cachePath}${TIMESTAMP_EXTENSION}`, timestamp),
+    writeContent({ cachePath, cacheContent, returnValue, returnCachePath }),
+    writeAtomic(`${cachePath}${TIMESTAMP_EXTENSION}`, timestamp, false),
   ])
-  return returnValueA
+  return returnCachePath ? cachePath : returnValueA
 }
 
 const createCacheDir = async function (cachePath) {
@@ -81,11 +93,20 @@ const createCacheDir = async function (cachePath) {
   await fs.mkdir(cacheDir, { recursive: true })
 }
 
-const writeContent = async function ({ cachePath, cacheContent, returnValue }) {
-  const returnValueA = await writeAtomic(cachePath, cacheContent)
+const writeContent = async function ({
+  cachePath,
+  cacheContent,
+  returnValue,
+  returnCachePath,
+}) {
+  const streamContent = await writeAtomic(
+    cachePath,
+    cacheContent,
+    !returnCachePath,
+  )
 
-  if (cacheContent instanceof Readable) {
-    return returnValueA
+  if (streamContent !== undefined) {
+    return streamContent
   }
 
   return returnValue

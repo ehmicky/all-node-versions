@@ -9,13 +9,21 @@ const pPipeline = promisify(pipeline)
 // Writing the cache file should be atomic, so we don't leave partially written
 // files. We cannot use libraries like `write-file-atomic` because they don't
 // support streams.
-export const writeAtomic = async function (filePath, content) {
+export const writeAtomic = async function (
+  filePath,
+  content,
+  returnStreamContent,
+) {
   const tmpFile = getTmpFile(filePath)
 
   try {
-    const contentA = await writeContent(tmpFile, content)
+    const streamContent = await writeContent({
+      tmpFile,
+      content,
+      returnStreamContent,
+    })
     await fs.rename(tmpFile, filePath)
-    return contentA
+    return streamContent
   } finally {
     await cleanTmpFile(tmpFile)
   }
@@ -27,18 +35,35 @@ const getTmpFile = function (filePath) {
   return `${filePath}.${uniqueId}.download`
 }
 
-const writeContent = async function (tmpFile, content) {
-  if (!(content instanceof Readable)) {
-    await fs.writeFile(tmpFile, content)
-    return content
+const writeContent = async function ({
+  tmpFile,
+  content,
+  returnStreamContent,
+}) {
+  if (content instanceof Readable) {
+    return writeStream({ tmpFile, stream: content, returnStreamContent })
   }
 
-  if (content.readableObjectMode) {
+  await fs.writeFile(tmpFile, content)
+}
+
+const writeStream = async function ({
+  tmpFile,
+  stream,
+  stream: { readableObjectMode },
+  returnStreamContent,
+}) {
+  if (readableObjectMode) {
     throw new Error('Cannot return streams that are in object mode')
   }
 
+  if (!returnStreamContent) {
+    await pPipeline(stream, createWriteStream(tmpFile))
+    return
+  }
+
   const { passThrough, state } = getPassThrough()
-  await pPipeline(content, passThrough, createWriteStream(tmpFile))
+  await pPipeline(stream, passThrough, createWriteStream(tmpFile))
   return state.content
 }
 
