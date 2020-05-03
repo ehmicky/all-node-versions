@@ -11,8 +11,8 @@ import { parse, serialize } from './serialization.js'
 export const readFsCache = async function ({
   cachePath,
   forceRefresh,
-  useMaxAge,
   serialization,
+  offline,
 }) {
   if (forceRefresh) {
     return {}
@@ -23,7 +23,7 @@ export const readFsCache = async function ({
     getExpireAt(cachePath),
   ])
 
-  if (!canUseCache(cacheContent, useMaxAge, expireAt)) {
+  if (!canUseCache(cacheContent, offline, expireAt)) {
     return {}
   }
 
@@ -34,7 +34,7 @@ export const readFsCache = async function ({
   }
 
   const returnInfo = { returnValue, state: 'file' }
-  return addExpireAt(returnInfo, expireAt, useMaxAge)
+  return addExpireAt(returnInfo, expireAt, offline)
 }
 
 const getExpireAt = async function (cachePath) {
@@ -53,12 +53,12 @@ const getExpireAt = async function (cachePath) {
   return expireAt
 }
 
-const canUseCache = function (cacheContent, useMaxAge, expireAt) {
-  return cacheContent !== undefined && isFreshCache(useMaxAge, expireAt)
+const canUseCache = function (cacheContent, offline, expireAt) {
+  return cacheContent !== undefined && (offline || isFreshCache(expireAt))
 }
 
-const isFreshCache = function (useMaxAge, expireAt) {
-  return !useMaxAge || (expireAt !== undefined && expireAt > Date.now())
+const isFreshCache = function (expireAt) {
+  return expireAt !== undefined && expireAt > Date.now()
 }
 
 const maybeReadFile = async function (path) {
@@ -70,8 +70,8 @@ const maybeReadFile = async function (path) {
 }
 
 // When offline, `expireAt` is outdated
-const addExpireAt = function (returnInfo, expireAt, useMaxAge) {
-  if (!useMaxAge) {
+const addExpireAt = function (returnInfo, expireAt, offline) {
+  if (offline) {
     return returnInfo
   }
 

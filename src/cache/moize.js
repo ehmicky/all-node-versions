@@ -129,8 +129,8 @@ const getReturnInfo = async function ({
   const returnInfo = await readFsCache({
     cachePath,
     forceRefresh,
-    useMaxAge: true,
     serialization,
+    offline: false,
   })
 
   if (returnInfo.state === 'file') {
