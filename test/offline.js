@@ -37,6 +37,7 @@ test.serial(`Offline | no cache`, async (t) => {
   try {
     await t.throwsAsync(getLatestVersion({ mirror: INVALID_MIRROR }))
   } finally {
+    await removeCacheFile()
     unsetTestCache()
   }
 })
