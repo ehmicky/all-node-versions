@@ -60,20 +60,20 @@ const callMoizedFunc = function ({
   streams,
   cacheInfo,
 }) {
-  const shouldReadCache = !shouldForceRefresh(...args)
+  const forceRefresh = shouldForceRefresh(...args)
   const cachePath = normalize(getCachePath(...args))
 
   // TODO: add value back if `kFileMoized` throws
   // TODO: maybe find a better way to make moize not read cache, but still write
   // it on success
-  if (!shouldReadCache) {
+  if (forceRefresh) {
     processMoized.remove([cachePath])
   }
 
   return processMoized(cachePath, {
     func,
     args,
-    shouldReadCache,
+    forceRefresh,
     maxAge,
     updateAge,
     serialization,
@@ -88,7 +88,7 @@ const fsMoized = async function (
   {
     func,
     args,
-    shouldReadCache,
+    forceRefresh,
     maxAge,
     updateAge,
     serialization,
@@ -101,7 +101,7 @@ const fsMoized = async function (
     cachePath,
     func,
     args,
-    shouldReadCache,
+    forceRefresh,
     maxAge,
     updateAge,
     serialization,
@@ -120,7 +120,7 @@ const getReturnInfo = async function ({
   cachePath,
   func,
   args,
-  shouldReadCache,
+  forceRefresh,
   maxAge,
   updateAge,
   serialization,
@@ -129,7 +129,7 @@ const getReturnInfo = async function ({
 }) {
   const returnInfo = await readFsCache({
     cachePath,
-    shouldReadCache,
+    forceRefresh,
     useMaxAge: true,
     maxAge,
     updateAge,

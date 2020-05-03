@@ -10,13 +10,13 @@ import { parse, serialize } from './serialization.js'
 // Cache the return value on the filesystem.
 export const readFsCache = async function ({
   cachePath,
-  shouldReadCache,
+  forceRefresh,
   useMaxAge,
   maxAge,
   updateAge,
   serialization,
 }) {
-  if (!shouldReadCache) {
+  if (forceRefresh) {
     return { cached: false }
   }
 

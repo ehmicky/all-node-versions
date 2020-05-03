@@ -13,7 +13,7 @@ export const handleOfflineError = async function ({
 
   const returnInfo = await readFsCache({
     cachePath,
-    shouldReadCache: true,
+    forceRefresh: false,
     useMaxAge: false,
     updateAge: false,
     serialization,
