@@ -97,6 +97,33 @@ const fsMoized = async function (
     cacheInfo,
   },
 ) {
+  const returnInfo = await getReturnInfo({
+    cachePath,
+    func,
+    args,
+    shouldUseCache,
+    maxAge,
+    updateAge,
+    serialization,
+    strict,
+    streams,
+    cacheInfo,
+  })
+  return returnInfo
+}
+
+const getReturnInfo = async function ({
+  cachePath,
+  func,
+  args,
+  shouldUseCache,
+  maxAge,
+  updateAge,
+  serialization,
+  strict,
+  streams,
+  cacheInfo,
+}) {
   const fsCachedValue = await getFsCache({
     cachePath,
     shouldUseCache,

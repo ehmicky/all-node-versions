@@ -28,8 +28,7 @@ export const readFsCache = async function ({
   await maybeUpdateTimestamp(cachePath, updateAge)
 
   const returnValue = parse(cacheContent, { serialization })
-  const fsCachedValue = addCacheInfo({ cacheInfo, returnValue, cachePath })
-  return fsCachedValue
+  return addCacheInfo({ cacheInfo, returnValue, cachePath })
 }
 
 const checkTimestamp = async function ({ cachePath, useMaxAge, maxAge }) {
