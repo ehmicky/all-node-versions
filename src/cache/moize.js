@@ -97,7 +97,7 @@ const fsMoized = async function (
     cacheInfo,
   },
 ) {
-  const { returnValue, cached } = await getReturnInfo({
+  const { returnValue, cached, expireAt } = await getReturnInfo({
     cachePath,
     func,
     args,
@@ -117,7 +117,7 @@ const fsMoized = async function (
     return { returnValue }
   }
 
-  return { returnValue, cachePath }
+  return { returnValue, cachePath, expireAt }
 }
 
 const getReturnInfo = async function ({

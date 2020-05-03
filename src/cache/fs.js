@@ -11,7 +11,6 @@ import { parse, serialize } from './serialization.js'
 export const readFsCache = async function ({
   cachePath,
   forceRefresh,
-  useMaxAge,
   maxAge,
   updateAge,
   serialization,
@@ -20,31 +19,36 @@ export const readFsCache = async function ({
     return { cached: false }
   }
 
-  const [cacheContent, isOldCache] = await Promise.all([
+  const [cacheContent, expireAt] = await Promise.all([
     maybeReadFile(cachePath),
-    checkTimestamp({ cachePath, useMaxAge, maxAge }),
+    getExpireAt(cachePath),
   ])
 
-  if (cacheContent === undefined || isOldCache) {
+  if (cacheContent === undefined || isOldCache(maxAge, expireAt)) {
     return { cached: false }
   }
 
-  await maybeUpdateTimestamp(cachePath, updateAge)
+  const expireAtA = await maybeUpdateTimestamp(cachePath, updateAge, expireAt)
 
   const returnValue = parse(cacheContent, { serialization })
-  return { returnValue, cached: true }
+  return { returnValue, cached: true, expireAt: expireAtA }
 }
 
-const checkTimestamp = async function ({ cachePath, useMaxAge, maxAge }) {
-  if (!useMaxAge) {
-    return false
-  }
-
+const getExpireAt = async function (cachePath) {
   const timestamp = await maybeReadFile(`${cachePath}${TIMESTAMP_EXTENSION}`)
 
+  if (timestamp === undefined) {
+    return
+  }
+
+  const expireAt = new Date(Number(String(timestamp).trim()))
+  return expireAt
+}
+
+const isOldCache = function (maxAge, expireAt) {
   return (
-    timestamp === undefined ||
-    maxAge <= Date.now() - Number(String(timestamp).trim())
+    maxAge !== Infinity &&
+    (expireAt === undefined || maxAge <= Date.now() - Number(expireAt))
   )
 }
 
@@ -72,11 +76,11 @@ export const writeFsCache = async function ({
 
   await createCacheDir(cachePath)
 
-  const [returnValueA] = await Promise.all([
+  const [returnValueA, expireAt] = await Promise.all([
     writeContent({ cachePath, cacheContent, returnValue, streams }),
     updateTimestamp(cachePath),
   ])
-  return { returnValue: returnValueA, cached: true }
+  return { returnValue: returnValueA, cached: true, expireAt }
 }
 
 const createCacheDir = async function (cachePath) {
@@ -104,17 +108,19 @@ const writeContent = async function ({
   return returnValue
 }
 
-const maybeUpdateTimestamp = async function (cachePath, updateAge) {
+const maybeUpdateTimestamp = function (cachePath, updateAge, expireAt) {
   if (!updateAge) {
-    return
+    return expireAt
   }
 
-  await updateTimestamp(cachePath)
+  return updateTimestamp(cachePath)
 }
 
 const updateTimestamp = async function (cachePath) {
-  const timestamp = `${Date.now()}\n`
+  const expireAt = new Date()
+  const timestamp = `${Number(expireAt)}\n`
   await writeAtomic(`${cachePath}${TIMESTAMP_EXTENSION}`, timestamp, false)
+  return expireAt
 }
 
 // We store the timestamp as a sibling file and use it to calculate cache age
