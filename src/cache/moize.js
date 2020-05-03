@@ -198,13 +198,9 @@ const updateProcessCacheTime = function ({
   }
 
   const ttl = Math.min(expireAt - Date.now(), MAX_TIMEOUT)
-  const timeoutId = setTimeout(() => {
+  setTimeout(() => {
     processMoized.remove([cachePath])
-  }, ttl)
-
-  if (timeoutId.unref !== undefined) {
-    timeoutId.unref()
-  }
+  }, ttl).unref()
 }
 
 // `setTimeout()` argument has a maximum value in Node.js. That's 25 days.
