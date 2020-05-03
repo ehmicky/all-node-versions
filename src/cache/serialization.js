@@ -1,41 +1,59 @@
+import { Buffer } from 'buffer'
 import { Stream } from 'stream'
+import { isDeepStrictEqual } from 'util'
 import { serialize as v8Serialize, deserialize as v8Deserialize } from 'v8'
 
-// If the cache file is corrupted, ignore it
-export const parse = function (cacheContent, { serialization }) {
+export const parse = function (serializedValue, { serialization }) {
   try {
-    return SERIALIZATIONS[serialization].parse(cacheContent)
+    // eslint-disable-next-line max-depth
+    if (Buffer.isBuffer(serializedValue)) {
+      return SERIALIZATIONS[serialization].parseBuffer(serializedValue)
+    }
+
+    return SERIALIZATIONS[serialization].parseString(serializedValue)
   } catch {}
 }
 
-export const serialize = function (returnValue, { serialization, strict }) {
-  if (returnValue instanceof Stream) {
-    return returnValue
+export const serialize = function (parsedValue, { serialization, strict }) {
+  if (parsedValue instanceof Stream) {
+    return parsedValue
   }
 
   try {
-    const cacheContent = SERIALIZATIONS[serialization].serialize(returnValue)
-    return cacheContent
+    const serializedValue = SERIALIZATIONS[serialization].serialize(parsedValue)
+    checkSerialized(serializedValue, parsedValue, serialization)
+    return serializedValue
   } catch (error) {
     handleSerializeError(error, { serialization, strict })
   }
 }
 
+// Ensure that the value is fully serializable by parsing it back and comparing
+const checkSerialized = function (serializedValue, parsedValue, serialization) {
+  const reparsedValue = parse(serializedValue, { serialization })
+
+  if (!isDeepStrictEqual(reparsedValue, parsedValue)) {
+    throw new Error('Some properties are not serializable')
+  }
+}
+
+// If `strict` is `false` and the value is not serializable, we silently do not
+// cache, instead of throwing
 const handleSerializeError = function (error, { serialization, strict }) {
   if (!strict) {
     return
   }
 
   // eslint-disable-next-line no-param-reassign, fp/no-mutation
-  error.message = `Could not serialize the return value with "serialization": "${serialization}"\n${error.message}`
+  error.message = `Could not serialize the return valued with "serialization": "${serialization}"\n${error.message}`
   throw error
 }
 
-const noParse = function (buffer) {
-  return buffer.toString()
+const noneParse = function (serializedValue) {
+  return serializedValue
 }
 
-const noSerialize = function (returnValue) {
+const noneSerialize = function (returnValue) {
   if (typeof returnValue !== 'string') {
     throw new TypeError('The return value should be a string')
   }
@@ -43,8 +61,12 @@ const noSerialize = function (returnValue) {
   return returnValue
 }
 
-const jsonParse = function (buffer) {
-  return JSON.parse(buffer.toString())
+const jsonParseBuffer = function (buffer) {
+  return jsonParseString(buffer.toString())
+}
+
+const jsonParseString = function (string) {
+  return JSON.parse(string)
 }
 
 const jsonSerialize = function (returnValue) {
@@ -52,7 +74,15 @@ const jsonSerialize = function (returnValue) {
 }
 
 const SERIALIZATIONS = {
-  none: { parse: noParse, serialize: noSerialize },
-  json: { parse: jsonParse, serialize: jsonSerialize },
-  v8: { parse: v8Deserialize, serialize: v8Serialize },
+  none: {
+    parseBuffer: noneParse,
+    parseString: noneParse,
+    serialize: noneSerialize,
+  },
+  json: {
+    parseBuffer: jsonParseBuffer,
+    parseString: jsonParseString,
+    serialize: jsonSerialize,
+  },
+  v8: { parseBuffer: v8Deserialize, serialize: v8Serialize },
 }
