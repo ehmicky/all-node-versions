@@ -1,9 +1,12 @@
 import filterObj from 'filter-obj'
 import { validate } from 'jest-validate'
 
+import { validateEnums } from './enum.js'
+
 // Normalize options and assign default values
 export const getOpts = function (getCachePath, opts = {}) {
   validate({ ...opts, getCachePath }, { exampleConfig: EXAMPLE_OPTS })
+  customValidate(opts)
 
   const optsA = addSerialization({ opts })
   const optsB = filterObj(optsA, isDefined)
@@ -33,8 +36,20 @@ const EXAMPLE_OPTS = {
   },
 }
 
-const isDefined = function (key, value) {
-  return value !== undefined
+const customValidate = function ({ maxAge, ...opts }) {
+  validateMaxAge(maxAge)
+  validateEnums(opts, ENUMS)
+}
+
+const validateMaxAge = function (maxAge) {
+  if (maxAge !== undefined && (!Number.isInteger(maxAge) || maxAge < 0)) {
+    throw new Error(`The 'maxAge' option must be a positive integer: ${maxAge}`)
+  }
+}
+
+const ENUMS = {
+  serialization: ['none', 'json', 'v8'],
+  streams: ['error', 'pipe', 'buffer'],
 }
 
 // Streams are piped directly to files without a serialization step
@@ -53,4 +68,8 @@ const addSerialization = function ({
   }
 
   return { ...opts, serialization: 'none' }
+}
+
+const isDefined = function (key, value) {
+  return value !== undefined
 }
