@@ -5,26 +5,25 @@ import { readFsCache } from './fs.js'
 export const handleOfflineError = async function ({
   cachePath,
   serialization,
-  cacheInfo,
   error,
 }) {
   if (!isOfflineError(error)) {
     throw error
   }
 
-  const fsCachedValue = await readFsCache({
+  const returnInfo = await readFsCache({
     cachePath,
+    shouldReadCache: true,
     useMaxAge: false,
     updateAge: false,
     serialization,
-    cacheInfo,
   })
 
-  if (fsCachedValue === undefined) {
-    throw error
+  if (returnInfo.cached) {
+    return returnInfo
   }
 
-  return fsCachedValue
+  throw error
 }
 
 // On Windows, offline errors are the same as wrong `mirror` option errors.

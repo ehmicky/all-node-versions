@@ -60,20 +60,20 @@ const callMoizedFunc = function ({
   streams,
   cacheInfo,
 }) {
-  const shouldUseCache = useCache(...args)
+  const shouldReadCache = useCache(...args)
   const cachePath = normalize(getCachePath(...args))
 
   // TODO: add value back if `kFileMoized` throws
   // TODO: maybe find a better way to make moize not read cache, but still write
   // it on success
-  if (!shouldUseCache) {
+  if (!shouldReadCache) {
     processMoized.remove([cachePath])
   }
 
   return processMoized(cachePath, {
     func,
     args,
-    shouldUseCache,
+    shouldReadCache,
     maxAge,
     updateAge,
     serialization,
@@ -88,7 +88,7 @@ const fsMoized = async function (
   {
     func,
     args,
-    shouldUseCache,
+    shouldReadCache,
     maxAge,
     updateAge,
     serialization,
@@ -97,80 +97,59 @@ const fsMoized = async function (
     cacheInfo,
   },
 ) {
-  const returnInfo = await getReturnInfo({
+  const { returnValue, cached } = await getReturnInfo({
     cachePath,
     func,
     args,
-    shouldUseCache,
+    shouldReadCache,
     maxAge,
     updateAge,
     serialization,
     strict,
     streams,
-    cacheInfo,
   })
-  return returnInfo
+
+  if (cacheInfo) {
+    return cached ? cachePath : undefined
+  }
+
+  return returnValue
 }
 
 const getReturnInfo = async function ({
   cachePath,
   func,
   args,
-  shouldUseCache,
+  shouldReadCache,
   maxAge,
   updateAge,
   serialization,
   strict,
   streams,
-  cacheInfo,
 }) {
-  const fsCachedValue = await getFsCache({
+  const returnInfo = await readFsCache({
     cachePath,
-    shouldUseCache,
+    shouldReadCache,
+    useMaxAge: true,
     maxAge,
     updateAge,
     serialization,
-    cacheInfo,
   })
 
-  if (fsCachedValue !== undefined) {
-    return fsCachedValue
+  if (returnInfo.cached) {
+    return returnInfo
   }
 
   try {
     const returnValue = await func(...args)
-    const nonCachedValue = await writeFsCache({
+    return await writeFsCache({
       cachePath,
       returnValue,
       serialization,
       strict,
       streams,
-      cacheInfo,
     })
-    return nonCachedValue
   } catch (error) {
-    return handleOfflineError({ cachePath, serialization, cacheInfo, error })
+    return handleOfflineError({ cachePath, serialization, error })
   }
-}
-
-const getFsCache = function ({
-  cachePath,
-  shouldUseCache,
-  maxAge,
-  updateAge,
-  serialization,
-  cacheInfo,
-}) {
-  if (!shouldUseCache) {
-    return
-  }
-
-  return readFsCache({
-    cachePath,
-    useMaxAge: true,
-    maxAge,
-    updateAge,
-    serialization,
-    cacheInfo,
-  })
 }
