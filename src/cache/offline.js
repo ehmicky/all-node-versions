@@ -15,7 +15,6 @@ export const handleOfflineError = async function ({
     cachePath,
     forceRefresh: false,
     useMaxAge: false,
-    updateAge: false,
     serialization,
   })
 

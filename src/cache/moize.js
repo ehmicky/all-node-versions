@@ -3,7 +3,7 @@ import { normalize } from 'path'
 import keepFuncProps from 'keep-func-props'
 import moize from 'moize'
 
-import { readFsCache, writeFsCache } from './fs.js'
+import { readFsCache, writeFsCache, refreshExpireAt } from './fs.js'
 import { handleOfflineError } from './offline.js'
 import { getOpts } from './options.js'
 
@@ -71,7 +71,7 @@ const callMoizedFunc = async function ({
   }
 
   const info = { state: 'process' }
-  const returnValue = await processMoized(cachePath, {
+  const returnInfo = await processMoized(cachePath, {
     func,
     args,
     forceRefresh,
@@ -86,10 +86,22 @@ const callMoizedFunc = async function ({
   })
 
   if (!cacheInfo) {
-    return returnValue
+    return returnInfo
   }
 
-  return { ...returnValue, state: info.state }
+  const expireAt = await refreshExpireAt({
+    cachePath,
+    updateAge,
+    expireAt: returnInfo.expireAt,
+    maxAge,
+    state: info.state,
+  })
+
+  if (expireAt === undefined) {
+    return { ...returnInfo, state: info.state }
+  }
+
+  return { ...returnInfo, state: info.state, expireAt }
 }
 
 const fsMoized = async function (
@@ -108,7 +120,7 @@ const fsMoized = async function (
     info,
   },
 ) {
-  const { returnValue, state, expireAt } = await getReturnInfo({
+  const returnInfo = await getReturnInfo({
     cachePath,
     func,
     args,
@@ -122,19 +134,15 @@ const fsMoized = async function (
   })
 
   if (!cacheInfo) {
-    return returnValue
+    return returnInfo.returnValue
   }
 
   // This function is memoized in-memory. To distinguish between memoized calls
   // or not, we need to do a side-effect like this.
   // eslint-disable-next-line fp/no-mutation, no-param-reassign
-  info.state = state
+  info.state = returnInfo.state
 
-  if (state === 'error') {
-    return { returnValue }
-  }
-
-  return { returnValue, cachePath, expireAt }
+  return returnInfo
 }
 
 const getReturnInfo = async function ({
@@ -153,8 +161,6 @@ const getReturnInfo = async function ({
     cachePath,
     forceRefresh,
     useMaxAge: true,
-    maxAge,
-    updateAge,
     serialization,
   })
 

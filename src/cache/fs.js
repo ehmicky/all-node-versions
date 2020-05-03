@@ -11,9 +11,7 @@ import { parse, serialize } from './serialization.js'
 export const readFsCache = async function ({
   cachePath,
   forceRefresh,
-  maxAge,
   useMaxAge,
-  updateAge,
   serialization,
 }) {
   if (forceRefresh) {
@@ -35,14 +33,8 @@ export const readFsCache = async function ({
     return {}
   }
 
-  const expireAtA = await maybeUpdateExpireAt({
-    cachePath,
-    updateAge,
-    expireAt,
-    maxAge,
-    useMaxAge,
-  })
-  return { returnValue, state: 'file', expireAt: expireAtA }
+  const returnInfo = { returnValue, state: 'file' }
+  return addExpireAt(returnInfo, expireAt, useMaxAge)
 }
 
 const getExpireAt = async function (cachePath) {
@@ -77,6 +69,15 @@ const maybeReadFile = async function (path) {
   return fs.readFile(path)
 }
 
+// When offline, `expireAt` is outdated
+const addExpireAt = function (returnInfo, expireAt, useMaxAge) {
+  if (!useMaxAge) {
+    return returnInfo
+  }
+
+  return { ...returnInfo, expireAt }
+}
+
 // Persist the file cache
 export const writeFsCache = async function ({
   cachePath,
@@ -96,7 +97,7 @@ export const writeFsCache = async function ({
 
   const [returnValueA, expireAt] = await Promise.all([
     writeContent({ cachePath, cacheContent, returnValue, streams }),
-    updateExpireAt(cachePath, maxAge),
+    setExpireAt(cachePath, maxAge),
   ])
   return { returnValue: returnValueA, state: 'new', expireAt }
 }
@@ -126,21 +127,33 @@ const writeContent = async function ({
   return returnValue
 }
 
-const maybeUpdateExpireAt = function ({
+// Refresh `expireAt` file on cache hit when using `expireAt`. Called outside
+// of the process-memoized function because a process-cache hit should keep
+// the file cache in sync.
+// Should happen on process|file cache hit only, which is checked with
+// `expireAt === undefined`.
+// Notably, this should not happen when:
+//  - offline: the `expireAt` file is outdated and should be removed once online
+//  - error: no file has been cached
+// This works even if those have been process-cached (i.e. `state` might be
+// `process`).
+// We also don't refresh when `new` because the `expireAt` has just been set,
+// so it would be a noop.
+export const refreshExpireAt = function ({
   cachePath,
   updateAge,
   expireAt,
   maxAge,
-  useMaxAge,
+  state,
 }) {
-  if (!updateAge || !useMaxAge) {
+  if (!updateAge || expireAt === undefined || state === 'new') {
     return expireAt
   }
 
-  return updateExpireAt(cachePath, maxAge)
+  return setExpireAt(cachePath, maxAge)
 }
 
-const updateExpireAt = async function (cachePath, maxAge) {
+const setExpireAt = async function (cachePath, maxAge) {
   const expireAt = Math.round(
     Math.min(Date.now() + maxAge, Number.MAX_SAFE_INTEGER),
   )
