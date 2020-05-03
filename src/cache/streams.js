@@ -4,13 +4,13 @@ import { promisify } from 'util'
 
 const pPipeline = promisify(pipeline)
 
-export const writeStream = async function ({
+// Write a stream, optionally returning the buffered content
+export const writeStream = async function (
   tmpFile,
   stream,
-  stream: { readableObjectMode },
-  returnStreamContent,
-}) {
-  if (readableObjectMode) {
+  { returnStreamContent },
+) {
+  if (stream.readableObjectMode) {
     throw new Error('Cannot return streams that are in object mode')
   }
 
