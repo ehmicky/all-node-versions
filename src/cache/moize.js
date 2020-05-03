@@ -13,8 +13,8 @@ const kMoize = keepFuncProps(moize)
 //  - process-wise, like a regular memoization library
 //  - but also on the filesystem
 // Also handles offline connections.
-const kMoizeFs = function (func, cacheOption, opts) {
-  const { useCache, maxAge, strict } = getOpts(cacheOption, opts)
+const kMoizeFs = function (func, getCachePath, opts) {
+  const { useCache, maxAge, strict } = getOpts(getCachePath, opts)
   const kFileMoized = kMoize(fileMoized, {
     maxArgs: 1,
     isPromise: true,
@@ -24,10 +24,10 @@ const kMoizeFs = function (func, cacheOption, opts) {
   })
   return (...args) =>
     callMoizedFunc({
-      func,
       kFileMoized,
+      func,
       args,
-      cacheOption,
+      getCachePath,
       useCache,
       maxAge,
       strict,
@@ -37,16 +37,16 @@ const kMoizeFs = function (func, cacheOption, opts) {
 export const moizeFs = keepFuncProps(kMoizeFs)
 
 const callMoizedFunc = function ({
-  func,
   kFileMoized,
+  func,
   args,
-  cacheOption,
+  getCachePath,
   useCache,
   maxAge,
   strict,
 }) {
   const shouldUseCache = useCache(...args)
-  const cachePath = normalize(cacheOption(...args))
+  const cachePath = normalize(getCachePath(...args))
 
   // TODO: add value back if `kFileMoized` throws
   // TODO: maybe find a better way to make moize not read cache, but still write
