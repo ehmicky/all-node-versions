@@ -15,14 +15,19 @@ const kMoize = keepFuncProps(moize)
 // Also handles offline connections.
 const kMoizeFs = function (func, cacheOption, opts) {
   const { useCache, maxAge, strict } = getOpts(opts)
-  const getCachePath = getCacheOption.bind(undefined, cacheOption)
-  const kFileMoized = moizeFileMoized(getCachePath, maxAge)
+  const kFileMoized = kMoize(fileMoized, {
+    maxArgs: 1,
+    isPromise: true,
+    // TODO: re-enable after the following bug is fixed:
+    // https://github.com/planttheidea/moize/issues/122
+    // maxAge,
+  })
   return (...args) =>
     callMoizedFunc({
       func,
       kFileMoized,
       args,
-      getCachePath,
+      cacheOption,
       useCache,
       maxAge,
       strict,
@@ -31,49 +36,38 @@ const kMoizeFs = function (func, cacheOption, opts) {
 
 export const moizeFs = keepFuncProps(kMoizeFs)
 
-const getCacheOption = function (cacheOption, args) {
-  const cacheValue =
-    typeof cacheOption === 'function' ? cacheOption(...args) : cacheOption
-  const cacheValueA = normalize(cacheValue)
-  return cacheValueA
-}
-
-const moizeFileMoized = function (getCachePath, maxAge) {
-  return kMoize(fileMoized, {
-    isSerialized: true,
-    serializer: getCachePath,
-    isPromise: true,
-    // TODO: re-enable after the following bug is fixed:
-    // https://github.com/planttheidea/moize/issues/122
-    // maxAge,
-  })
-}
-
 const callMoizedFunc = function ({
   func,
   kFileMoized,
   args,
-  getCachePath,
+  cacheOption,
   useCache,
   maxAge,
   strict,
 }) {
   const shouldUseCache = useCache(...args)
-  const cachePath = getCachePath(args)
+  const cachePath = getCachePath(cacheOption, args)
 
   // TODO: add value back if `kFileMoized` throws
   // TODO: maybe find a better way to make moize not read cache, but still write
   // it on success
   if (!shouldUseCache) {
-    kFileMoized.remove(cachePath)
+    kFileMoized.remove([cachePath])
   }
 
-  return kFileMoized(args, { func, cachePath, shouldUseCache, maxAge, strict })
+  return kFileMoized(cachePath, { func, args, shouldUseCache, maxAge, strict })
+}
+
+const getCachePath = function (cacheOption, args) {
+  const cachePath =
+    typeof cacheOption === 'function' ? cacheOption(...args) : cacheOption
+  const cachePathA = normalize(cachePath)
+  return cachePathA
 }
 
 const fileMoized = async function (
-  args,
-  { func, cachePath, shouldUseCache, maxAge, strict },
+  cachePath,
+  { func, args, shouldUseCache, maxAge, strict },
 ) {
   const timestampPath = `${cachePath}${TIMESTAMP_FILE_EXTENSION}`
   const fileValue = await getFsCache({
