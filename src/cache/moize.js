@@ -21,7 +21,7 @@ const kMoizeFs = function (func, getCachePath, opts) {
     serialization,
     strict,
     streams,
-    returnCachePath,
+    cacheInfo,
   } = getOpts(getCachePath, opts)
   const processMoized = kMoize(fsMoized, {
     maxArgs: 1,
@@ -41,7 +41,7 @@ const kMoizeFs = function (func, getCachePath, opts) {
       serialization,
       strict,
       streams,
-      returnCachePath,
+      cacheInfo,
     })
 }
 
@@ -58,7 +58,7 @@ const callMoizedFunc = function ({
   serialization,
   strict,
   streams,
-  returnCachePath,
+  cacheInfo,
 }) {
   const shouldUseCache = useCache(...args)
   const cachePath = normalize(getCachePath(...args))
@@ -79,7 +79,7 @@ const callMoizedFunc = function ({
     serialization,
     strict,
     streams,
-    returnCachePath,
+    cacheInfo,
   })
 }
 
@@ -94,7 +94,7 @@ const fsMoized = async function (
     serialization,
     strict,
     streams,
-    returnCachePath,
+    cacheInfo,
   },
 ) {
   const fileValue = await getFsCache({
@@ -103,7 +103,7 @@ const fsMoized = async function (
     maxAge,
     updateAge,
     serialization,
-    returnCachePath,
+    cacheInfo,
   })
 
   if (fileValue !== undefined) {
@@ -118,16 +118,11 @@ const fsMoized = async function (
       serialization,
       strict,
       streams,
-      returnCachePath,
+      cacheInfo,
     })
     return returnValueA
   } catch (error) {
-    return handleOfflineError({
-      cachePath,
-      serialization,
-      returnCachePath,
-      error,
-    })
+    return handleOfflineError({ cachePath, serialization, cacheInfo, error })
   }
 }
 
@@ -137,7 +132,7 @@ const getFsCache = function ({
   maxAge,
   updateAge,
   serialization,
-  returnCachePath,
+  cacheInfo,
 }) {
   if (!shouldUseCache) {
     return
@@ -149,6 +144,6 @@ const getFsCache = function ({
     maxAge,
     updateAge,
     serialization,
-    returnCachePath,
+    cacheInfo,
   })
 }

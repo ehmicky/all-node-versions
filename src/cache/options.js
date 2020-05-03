@@ -22,7 +22,7 @@ const DEFAULT_OPTS = {
   serialization: 'v8',
   strict: true,
   streams: 'error',
-  returnCachePath: false,
+  cacheInfo: false,
 }
 
 const EXAMPLE_OPTS = {

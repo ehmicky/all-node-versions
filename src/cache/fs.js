@@ -14,10 +14,10 @@ export const readFsCache = async function ({
   maxAge,
   updateAge,
   serialization,
-  returnCachePath,
+  cacheInfo,
 }) {
   const [cacheContent, isOldCache] = await Promise.all([
-    maybeReadFile(cachePath, returnCachePath),
+    maybeReadFile(cachePath, cacheInfo),
     checkTimestamp({ cachePath, useMaxAge, maxAge }),
   ])
 
@@ -27,7 +27,7 @@ export const readFsCache = async function ({
 
   await maybeUpdateTimestamp(cachePath, updateAge)
 
-  if (returnCachePath) {
+  if (cacheInfo) {
     return cacheContent
   }
 
@@ -51,12 +51,12 @@ const checkTimestamp = async function ({ cachePath, useMaxAge, maxAge }) {
   )
 }
 
-const maybeReadFile = async function (path, returnCachePath) {
+const maybeReadFile = async function (path, cacheInfo) {
   if (!(await pathExists(path))) {
     return
   }
 
-  if (returnCachePath) {
+  if (cacheInfo) {
     return path
   }
 
@@ -70,12 +70,12 @@ export const writeFsCache = async function ({
   serialization,
   strict,
   streams,
-  returnCachePath,
+  cacheInfo,
 }) {
   const cacheContent = serialize(returnValue, { serialization, strict })
 
   if (cacheContent === undefined) {
-    return returnCachePath ? undefined : returnValue
+    return cacheInfo ? undefined : returnValue
   }
 
   await createCacheDir(cachePath)
@@ -84,7 +84,7 @@ export const writeFsCache = async function ({
     writeContent({ cachePath, cacheContent, returnValue, streams }),
     updateTimestamp(cachePath),
   ])
-  return returnCachePath ? cachePath : returnValueA
+  return cacheInfo ? cachePath : returnValueA
 }
 
 const createCacheDir = async function (cachePath) {
