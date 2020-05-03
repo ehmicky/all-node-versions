@@ -21,7 +21,7 @@ export const writeCacheFile = async function ({
   version = TEST_VERSION,
 } = {}) {
   const { cachePath, expireAtPath } = await getCachePath()
-  const expireAt = oldCacheFile ? 0 : Date.now()
+  const expireAt = oldCacheFile ? Date.now() - 1 : Infinity
   const versionsInfo = [{ version }]
   const cacheFileContent = JSON.stringify(versionsInfo, undefined, 2)
 

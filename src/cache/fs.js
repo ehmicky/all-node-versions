@@ -25,7 +25,7 @@ export const readFsCache = async function ({
     getExpireAt(cachePath),
   ])
 
-  if (!canUseCache(cacheContent, useMaxAge, maxAge, expireAt)) {
+  if (!canUseCache(cacheContent, useMaxAge, expireAt)) {
     return { cached: false }
   }
 
@@ -33,6 +33,7 @@ export const readFsCache = async function ({
     cachePath,
     updateAge,
     expireAt,
+    maxAge,
     useMaxAge,
   })
 
@@ -46,24 +47,27 @@ export const readFsCache = async function ({
 }
 
 const getExpireAt = async function (cachePath) {
-  const expireAt = await maybeReadFile(`${cachePath}${EXPIRE_EXTENSION}`)
+  const expireAtString = await maybeReadFile(`${cachePath}${EXPIRE_EXTENSION}`)
 
-  if (expireAt === undefined) {
+  if (expireAtString === undefined) {
     return
   }
 
-  return new Date(Number(String(expireAt).trim()))
+  const expireAt = Number(String(expireAtString).trim())
+
+  if (Number.isNaN(expireAt)) {
+    return
+  }
+
+  return expireAt
 }
 
-const canUseCache = function (cacheContent, useMaxAge, maxAge, expireAt) {
-  return cacheContent !== undefined && isFreshCache(useMaxAge, maxAge, expireAt)
+const canUseCache = function (cacheContent, useMaxAge, expireAt) {
+  return cacheContent !== undefined && isFreshCache(useMaxAge, expireAt)
 }
 
-const isFreshCache = function (useMaxAge, maxAge, expireAt) {
-  return (
-    !useMaxAge ||
-    (expireAt !== undefined && maxAge > Date.now() - Number(expireAt))
-  )
+const isFreshCache = function (useMaxAge, expireAt) {
+  return !useMaxAge || (expireAt !== undefined && expireAt > Date.now())
 }
 
 const maybeReadFile = async function (path) {
@@ -78,6 +82,7 @@ const maybeReadFile = async function (path) {
 export const writeFsCache = async function ({
   cachePath,
   returnValue,
+  maxAge,
   serialization,
   strict,
   streams,
@@ -92,7 +97,7 @@ export const writeFsCache = async function ({
 
   const [returnValueA, expireAt] = await Promise.all([
     writeContent({ cachePath, cacheContent, returnValue, streams }),
-    updateExpireAt(cachePath),
+    updateExpireAt(cachePath, maxAge),
   ])
   return { returnValue: returnValueA, cached: true, expireAt }
 }
@@ -126,19 +131,20 @@ const maybeUpdateExpireAt = function ({
   cachePath,
   updateAge,
   expireAt,
+  maxAge,
   useMaxAge,
 }) {
   if (!updateAge || !useMaxAge) {
     return expireAt
   }
 
-  return updateExpireAt(cachePath)
+  return updateExpireAt(cachePath, maxAge)
 }
 
-const updateExpireAt = async function (cachePath) {
-  const expireAt = new Date()
-  const timestamp = Number(expireAt)
-  await writeAtomic(`${cachePath}${EXPIRE_EXTENSION}`, `${timestamp}\n`, false)
+// Note that `maxAge` can be `Infinity`
+const updateExpireAt = async function (cachePath, maxAge) {
+  const expireAt = Date.now() + maxAge
+  await writeAtomic(`${cachePath}${EXPIRE_EXTENSION}`, `${expireAt}\n`, false)
   return expireAt
 }
 

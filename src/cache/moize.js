@@ -159,6 +159,7 @@ const getReturnInfo = async function ({
     return await writeFsCache({
       cachePath,
       returnValue,
+      maxAge,
       serialization,
       strict,
       streams,
