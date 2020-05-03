@@ -82,10 +82,10 @@ const createCacheDir = async function (cachePath) {
 }
 
 const writeContent = async function ({ cachePath, cacheContent, returnValue }) {
-  await writeAtomic(cachePath, cacheContent)
+  const returnValueA = await writeAtomic(cachePath, cacheContent)
 
   if (cacheContent instanceof Stream) {
-    return fs.readFile(cachePath, 'utf8')
+    return returnValueA
   }
 
   return returnValue

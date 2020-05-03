@@ -1,5 +1,5 @@
 import { promises as fs, createWriteStream } from 'fs'
-import { Stream, pipeline } from 'stream'
+import { Stream, pipeline, PassThrough } from 'stream'
 import { promisify } from 'util'
 
 import pathExists from 'path-exists'
@@ -13,8 +13,9 @@ export const writeAtomic = async function (filePath, content) {
   const tmpFile = getTmpFile(filePath)
 
   try {
-    await writeContent(tmpFile, content)
+    const contentA = await writeContent(tmpFile, content)
     await fs.rename(tmpFile, filePath)
+    return contentA
   } finally {
     await cleanTmpFile(tmpFile)
   }
@@ -26,12 +27,26 @@ const getTmpFile = function (filePath) {
   return `${filePath}.${uniqueId}.download`
 }
 
-const writeContent = function (tmpFile, content) {
-  if (content instanceof Stream) {
-    return pPipeline(content, createWriteStream(tmpFile))
+const writeContent = async function (tmpFile, content) {
+  if (!(content instanceof Stream)) {
+    await fs.writeFile(tmpFile, content)
+    return content
   }
 
-  return fs.writeFile(tmpFile, content)
+  const { passThrough, state } = getPassThrough()
+  await pPipeline(content, passThrough, createWriteStream(tmpFile))
+  return state.content
+}
+
+// Read content written by stream
+const getPassThrough = function () {
+  const state = { content: '' }
+  const passThrough = new PassThrough({ encoding: 'utf8' })
+  passThrough.on('data', (chunk) => {
+    // eslint-disable-next-line fp/no-mutation
+    state.content += chunk
+  })
+  return { passThrough, state }
 }
 
 // The temporary file might still exist if:
