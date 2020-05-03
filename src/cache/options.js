@@ -5,9 +5,10 @@ import { validate } from 'jest-validate'
 export const getOpts = function (getCachePath, opts = {}) {
   validate({ ...opts, getCachePath }, { exampleConfig: EXAMPLE_OPTS })
 
-  const optsA = filterObj(opts, isDefined)
-  const optsB = { ...DEFAULT_OPTS, ...optsA }
-  return optsB
+  const optsA = addSerialization({ opts })
+  const optsB = filterObj(optsA, isDefined)
+  const optsC = { ...DEFAULT_OPTS, ...optsB }
+  return optsC
 }
 
 // One hour
@@ -34,4 +35,22 @@ const EXAMPLE_OPTS = {
 
 const isDefined = function (key, value) {
   return value !== undefined
+}
+
+// Streams are piped directly to files without a serialization step
+const addSerialization = function ({
+  opts,
+  opts: { serialization, streams = 'error' },
+}) {
+  if (streams === 'error') {
+    return opts
+  }
+
+  if (serialization !== undefined && serialization !== 'none') {
+    throw new Error(
+      `The "serialization" option must be "none" when using the "streams": "${streams}" option`,
+    )
+  }
+
+  return { ...opts, serialization: 'none' }
 }
