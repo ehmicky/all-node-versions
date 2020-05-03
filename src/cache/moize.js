@@ -29,9 +29,11 @@ const kMoizeFs = function (func, getCachePath, opts) {
     maxAge,
     updateExpire: Boolean(updateExpire),
   })
+  const removeProcessPath = invalidateCachePath.bind(undefined, processMoized)
   return (...args) =>
     callMoizedFunc({
       processMoized,
+      removeProcessPath,
       func,
       args,
       getCachePath,
@@ -47,8 +49,13 @@ const kMoizeFs = function (func, getCachePath, opts) {
 
 export const moizeFs = keepFuncProps(kMoizeFs)
 
+const invalidateCachePath = function (processMoized, cachePath) {
+  processMoized.remove([cachePath])
+}
+
 const callMoizedFunc = async function ({
   processMoized,
+  removeProcessPath,
   func,
   args,
   getCachePath,
@@ -67,7 +74,7 @@ const callMoizedFunc = async function ({
   // TODO: maybe find a better way to make moize not read cache, but still write
   // it on success
   if (invalidate) {
-    processMoized.remove([cachePath])
+    removeProcessPath(cachePath)
   }
 
   const info = { state: 'process' }
@@ -86,7 +93,7 @@ const callMoizedFunc = async function ({
   const returnInfoB = await syncCache({
     returnInfo: returnInfoA,
     cachePath,
-    processMoized,
+    removeProcessPath,
     maxAge,
     updateExpire,
   })
@@ -157,12 +164,12 @@ const syncCache = async function ({
   returnInfo,
   returnInfo: { state, expireAt },
   cachePath,
-  processMoized,
+  removeProcessPath,
   maxAge,
   updateExpire,
 }) {
   refreshProcessExpireAt({
-    processMoized,
+    removeProcessPath,
     cachePath,
     updateExpire,
     expireAt,
@@ -190,7 +197,7 @@ const syncCache = async function ({
 // If `updateExpire` is `true`, this is not needed since the
 // TTL will === maxAge.
 const refreshProcessExpireAt = function ({
-  processMoized,
+  removeProcessPath,
   cachePath,
   updateExpire,
   expireAt,
@@ -202,7 +209,7 @@ const refreshProcessExpireAt = function ({
 
   const ttl = Math.min(expireAt - Date.now(), MAX_TIMEOUT)
   setTimeout(() => {
-    processMoized.remove([cachePath])
+    removeProcessPath(cachePath)
   }, ttl).unref()
 }
 
