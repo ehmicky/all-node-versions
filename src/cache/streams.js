@@ -35,6 +35,8 @@ const validateStream = function (stream, streams) {
 }
 
 // Read content written by stream
+// TODO: use `get-stream` internals instead.
+// See https://github.com/sindresorhus/get-stream/issues/37
 const getPassThrough = function () {
   const state = { chunks: [], length: 0 }
   const passThrough = new PassThrough()
