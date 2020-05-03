@@ -51,12 +51,10 @@ const maybeUnlink = async function (path) {
 
 const getCachePath = async function () {
   const cacheDir = await globalCacheDir(CACHE_DIR)
-  const cachePathValue = `${cacheDir}/${env.TEST_CACHE_FILENAME}`
-  const cachePath = `${cachePathValue}${CACHE_FILE_EXTENSION}`
-  const timestampPath = `${cachePathValue}${TIMESTAMP_SUFFIX}`
+  const cachePath = `${cacheDir}/${env.TEST_CACHE_FILENAME}`
+  const timestampPath = `${cachePath}${TIMESTAMP_SUFFIX}`
   return { cachePath, timestampPath }
 }
 
 const CACHE_DIR = 'nve'
-const CACHE_FILE_EXTENSION = '.v8.bin'
 const TIMESTAMP_SUFFIX = '.timestamp.txt'

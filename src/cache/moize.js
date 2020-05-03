@@ -15,14 +15,14 @@ const kMoize = keepFuncProps(moize)
 // Also handles offline connections.
 const kMoizeFs = function (func, cacheOption, opts) {
   const { useCache, maxAge, strict } = getOpts(opts)
-  const getCacheValue = getCacheOption.bind(undefined, cacheOption)
-  const kFileMoized = moizeFileMoized(getCacheValue, maxAge)
+  const getCachePath = getCacheOption.bind(undefined, cacheOption)
+  const kFileMoized = moizeFileMoized(getCachePath, maxAge)
   return (...args) =>
     processMoized({
       func,
       kFileMoized,
       args,
-      getCacheValue,
+      getCachePath,
       useCache,
       maxAge,
       strict,
@@ -31,10 +31,10 @@ const kMoizeFs = function (func, cacheOption, opts) {
 
 export const moizeFs = keepFuncProps(kMoizeFs)
 
-const moizeFileMoized = function (getCacheValue, maxAge) {
+const moizeFileMoized = function (getCachePath, maxAge) {
   return kMoize(fileMoized, {
     isSerialized: true,
-    serializer: getCacheValue,
+    serializer: getCachePath,
     isPromise: true,
     // TODO: re-enable after the following bug is fixed:
     // https://github.com/planttheidea/moize/issues/122
@@ -46,22 +46,22 @@ const processMoized = function ({
   func,
   kFileMoized,
   args,
-  getCacheValue,
+  getCachePath,
   useCache,
   maxAge,
   strict,
 }) {
   const useCacheValue = useCache(...args)
-  const cacheValue = getCacheValue(args)
+  const cachePath = getCachePath(args)
 
   // TODO: add value back if `kFileMoized` throws
   // TODO: maybe find a better way to make moize not read cache, but still write
   // it on success
   if (!useCacheValue) {
-    kFileMoized.remove(cacheValue)
+    kFileMoized.remove(cachePath)
   }
 
-  return kFileMoized(args, { func, cacheValue, useCacheValue, maxAge, strict })
+  return kFileMoized(args, { func, cachePath, useCacheValue, maxAge, strict })
 }
 
 const getCacheOption = function (cacheOption, args) {
@@ -73,9 +73,9 @@ const getCacheOption = function (cacheOption, args) {
 
 const fileMoized = async function (
   args,
-  { func, cacheValue, useCacheValue, maxAge, strict },
+  { func, cachePath, useCacheValue, maxAge, strict },
 ) {
-  const { cachePath, timestampPath } = getCachePath(cacheValue)
+  const timestampPath = `${cachePath}${TIMESTAMP_FILE_EXTENSION}`
   const fileValue = await getFsCache({
     cachePath,
     timestampPath,
@@ -96,13 +96,6 @@ const fileMoized = async function (
   }
 }
 
-const getCachePath = function (cacheValue) {
-  const cachePath = `${cacheValue}${CACHE_FILE_EXTENSION}`
-  const timestampPath = `${cacheValue}${TIMESTAMP_FILE_EXTENSION}`
-  return { cachePath, timestampPath }
-}
-
-const CACHE_FILE_EXTENSION = '.v8.bin'
 // We store the timestamp as a sibling file and use it to calculate cache age
 const TIMESTAMP_FILE_EXTENSION = '.timestamp.txt'
 
