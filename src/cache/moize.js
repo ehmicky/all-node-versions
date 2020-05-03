@@ -14,10 +14,14 @@ const kMoize = keepFuncProps(moize)
 //  - but also on the filesystem
 // Also handles offline connections.
 const kMoizeFs = function (func, getCachePath, opts) {
-  const { useCache, maxAge, serialization, strict, returnCachePath } = getOpts(
-    getCachePath,
-    opts,
-  )
+  const {
+    useCache,
+    maxAge,
+    updateAge,
+    serialization,
+    strict,
+    returnCachePath,
+  } = getOpts(getCachePath, opts)
   const processMoized = kMoize(fsMoized, {
     maxArgs: 1,
     isPromise: true,
@@ -33,6 +37,7 @@ const kMoizeFs = function (func, getCachePath, opts) {
       getCachePath,
       useCache,
       maxAge,
+      updateAge,
       serialization,
       strict,
       returnCachePath,
@@ -48,6 +53,7 @@ const callMoizedFunc = function ({
   getCachePath,
   useCache,
   maxAge,
+  updateAge,
   serialization,
   strict,
   returnCachePath,
@@ -67,6 +73,7 @@ const callMoizedFunc = function ({
     args,
     shouldUseCache,
     maxAge,
+    updateAge,
     serialization,
     strict,
     returnCachePath,
@@ -80,6 +87,7 @@ const fsMoized = async function (
     args,
     shouldUseCache,
     maxAge,
+    updateAge,
     serialization,
     strict,
     returnCachePath,
@@ -89,6 +97,7 @@ const fsMoized = async function (
     cachePath,
     shouldUseCache,
     maxAge,
+    updateAge,
     serialization,
     returnCachePath,
   })
@@ -121,6 +130,7 @@ const getFsCache = function ({
   cachePath,
   shouldUseCache,
   maxAge,
+  updateAge,
   serialization,
   returnCachePath,
 }) {
@@ -132,6 +142,7 @@ const getFsCache = function ({
     cachePath,
     useMaxAge: true,
     maxAge,
+    updateAge,
     serialization,
     returnCachePath,
   })

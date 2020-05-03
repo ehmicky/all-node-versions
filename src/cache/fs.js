@@ -11,6 +11,7 @@ export const readFsCache = async function ({
   cachePath,
   useMaxAge,
   maxAge,
+  updateAge,
   serialization,
   returnCachePath,
 }) {
@@ -22,6 +23,8 @@ export const readFsCache = async function ({
   if (cacheContent === undefined || isOldCache) {
     return
   }
+
+  await maybeUpdateTimestamp(cachePath, updateAge)
 
   if (returnCachePath) {
     return cacheContent
@@ -109,6 +112,14 @@ const writeContent = async function ({
   }
 
   return returnValue
+}
+
+const maybeUpdateTimestamp = async function (cachePath, updateAge) {
+  if (!updateAge) {
+    return
+  }
+
+  await updateTimestamp(cachePath)
 }
 
 const updateTimestamp = async function (cachePath) {
