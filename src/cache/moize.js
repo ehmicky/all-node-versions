@@ -97,7 +97,7 @@ const fsMoized = async function (
     cacheInfo,
   },
 ) {
-  const fileValue = await getFsCache({
+  const fsCachedValue = await getFsCache({
     cachePath,
     shouldUseCache,
     maxAge,
@@ -106,13 +106,13 @@ const fsMoized = async function (
     cacheInfo,
   })
 
-  if (fileValue !== undefined) {
-    return fileValue
+  if (fsCachedValue !== undefined) {
+    return fsCachedValue
   }
 
   try {
     const returnValue = await func(...args)
-    const returnValueA = await writeFsCache({
+    const nonCachedValue = await writeFsCache({
       cachePath,
       returnValue,
       serialization,
@@ -120,7 +120,7 @@ const fsMoized = async function (
       streams,
       cacheInfo,
     })
-    return returnValueA
+    return nonCachedValue
   } catch (error) {
     return handleOfflineError({ cachePath, serialization, cacheInfo, error })
   }
