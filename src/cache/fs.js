@@ -10,11 +10,11 @@ import { parse, serialize } from './serialization.js'
 // Cache the return value on the filesystem.
 export const readFsCache = async function ({
   cachePath,
-  forceRefresh,
+  invalidate,
   serialization,
   offline,
 }) {
-  if (forceRefresh) {
+  if (invalidate) {
     return {}
   }
 

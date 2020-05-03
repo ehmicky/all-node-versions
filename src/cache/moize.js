@@ -15,7 +15,7 @@ const kMoize = keepFuncProps(moize)
 // Also handles offline connections.
 const kMoizeFs = function (func, getCachePath, opts) {
   const {
-    shouldForceRefresh,
+    shouldInvalidate,
     maxAge,
     updateExpire,
     serialization,
@@ -35,7 +35,7 @@ const kMoizeFs = function (func, getCachePath, opts) {
       func,
       args,
       getCachePath,
-      shouldForceRefresh,
+      shouldInvalidate,
       maxAge,
       updateExpire,
       serialization,
@@ -52,7 +52,7 @@ const callMoizedFunc = async function ({
   func,
   args,
   getCachePath,
-  shouldForceRefresh,
+  shouldInvalidate,
   maxAge,
   updateExpire,
   serialization,
@@ -60,13 +60,13 @@ const callMoizedFunc = async function ({
   streams,
   cacheInfo,
 }) {
-  const forceRefresh = shouldForceRefresh(...args)
+  const invalidate = shouldInvalidate(...args)
   const cachePath = normalize(getCachePath(...args))
 
   // TODO: add value back if `kFileMoized` throws
   // TODO: maybe find a better way to make moize not read cache, but still write
   // it on success
-  if (forceRefresh) {
+  if (invalidate) {
     processMoized.remove([cachePath])
   }
 
@@ -74,7 +74,7 @@ const callMoizedFunc = async function ({
   const returnInfo = await processMoized(cachePath, {
     func,
     args,
-    forceRefresh,
+    invalidate,
     maxAge,
     serialization,
     strict,
@@ -97,13 +97,13 @@ const callMoizedFunc = async function ({
 
 const fsMoized = async function (
   cachePath,
-  { func, args, forceRefresh, maxAge, serialization, strict, streams, info },
+  { func, args, invalidate, maxAge, serialization, strict, streams, info },
 ) {
   const { state, ...returnInfo } = await getReturnInfo({
     cachePath,
     func,
     args,
-    forceRefresh,
+    invalidate,
     maxAge,
     serialization,
     strict,
@@ -120,7 +120,7 @@ const getReturnInfo = async function ({
   cachePath,
   func,
   args,
-  forceRefresh,
+  invalidate,
   maxAge,
   serialization,
   strict,
@@ -128,7 +128,7 @@ const getReturnInfo = async function ({
 }) {
   const returnInfo = await readFsCache({
     cachePath,
-    forceRefresh,
+    invalidate,
     serialization,
     offline: false,
   })

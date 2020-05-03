@@ -18,7 +18,7 @@ export const getOpts = function (getCachePath, opts = {}) {
 const DEFAULT_MAX_AGE_MS = 36e5
 
 const DEFAULT_OPTS = {
-  shouldForceRefresh() {
+  shouldInvalidate() {
     return false
   },
   maxAge: DEFAULT_MAX_AGE_MS,

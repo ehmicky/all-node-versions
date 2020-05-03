@@ -30,7 +30,7 @@ const MAX_AGE_MS = 36e5
 // If the `fetch` option is `true`, we do not read the cache (but still write
 // it)
 export const fetchIndex = moizeFs(mFetchIndex, getCachePath, {
-  shouldForceRefresh({ fetch }) {
+  shouldInvalidate({ fetch }) {
     return fetch
   },
   maxAge: MAX_AGE_MS,

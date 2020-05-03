@@ -14,7 +14,7 @@ export const handleOfflineError = async function ({
   const returnInfo = await readFsCache({
     cachePath,
     serialization,
-    forceRefresh: false,
+    invalidate: false,
     offline: true,
   })
 
