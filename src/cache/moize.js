@@ -80,6 +80,7 @@ const callMoizedFunc = function ({
     strict,
     streams,
     cacheInfo,
+    processMoized,
   })
 }
 
@@ -95,6 +96,7 @@ const fsMoized = async function (
     strict,
     streams,
     cacheInfo,
+    processMoized,
   },
 ) {
   const { returnValue, cached, expireAt } = await getReturnInfo({
@@ -107,6 +109,7 @@ const fsMoized = async function (
     serialization,
     strict,
     streams,
+    processMoized,
   })
 
   if (!cacheInfo) {
@@ -130,6 +133,7 @@ const getReturnInfo = async function ({
   serialization,
   strict,
   streams,
+  processMoized,
 }) {
   const returnInfo = await readFsCache({
     cachePath,
@@ -141,6 +145,12 @@ const getReturnInfo = async function ({
   })
 
   if (returnInfo.cached) {
+    updateProcessCacheTime({
+      processMoized,
+      cachePath,
+      updateAge,
+      expireAt: returnInfo.expireAt,
+    })
     return returnInfo
   }
 
@@ -155,5 +165,29 @@ const getReturnInfo = async function ({
     })
   } catch (error) {
     return handleOfflineError({ cachePath, serialization, error })
+  }
+}
+
+// When the function has been cached on file by a different process, the new
+// process will cache it in-process using the file-cached value. However, the
+// TTL of the process cache must match the one left in-file so that are in sync.
+// If `updateAge` is `true`, this is not needed since the TTL will === maxAge.
+const updateProcessCacheTime = function ({
+  processMoized,
+  cachePath,
+  updateAge,
+  expireAt,
+}) {
+  if (updateAge) {
+    return
+  }
+
+  const ttl = Number(expireAt) - Date.now()
+  const timeoutId = setTimeout(() => {
+    processMoized.remove([cachePath])
+  }, ttl)
+
+  if (timeoutId.unref !== undefined) {
+    timeoutId.unref()
   }
 }
