@@ -1,6 +1,6 @@
 import { promises as fs } from 'fs'
 import { dirname } from 'path'
-import { Stream } from 'stream'
+import { Readable } from 'stream'
 
 import pathExists from 'path-exists'
 
@@ -84,7 +84,7 @@ const createCacheDir = async function (cachePath) {
 const writeContent = async function ({ cachePath, cacheContent, returnValue }) {
   const returnValueA = await writeAtomic(cachePath, cacheContent)
 
-  if (cacheContent instanceof Stream) {
+  if (cacheContent instanceof Readable) {
     return returnValueA
   }
 

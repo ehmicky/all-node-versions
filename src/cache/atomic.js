@@ -1,5 +1,5 @@
 import { promises as fs, createWriteStream } from 'fs'
-import { Stream, pipeline, PassThrough } from 'stream'
+import { Readable, pipeline, PassThrough } from 'stream'
 import { promisify } from 'util'
 
 import pathExists from 'path-exists'
@@ -28,7 +28,7 @@ const getTmpFile = function (filePath) {
 }
 
 const writeContent = async function (tmpFile, content) {
-  if (!(content instanceof Stream)) {
+  if (!(content instanceof Readable)) {
     await fs.writeFile(tmpFile, content)
     return content
   }
