@@ -1,3 +1,4 @@
+import { Stream } from 'stream'
 import { serialize as v8Serialize, deserialize as v8Deserialize } from 'v8'
 
 // If the cache file is corrupted, ignore it
@@ -8,6 +9,10 @@ export const parse = function (cacheContent, { serialization }) {
 }
 
 export const serialize = function (returnValue, { serialization, strict }) {
+  if (returnValue instanceof Stream) {
+    return returnValue
+  }
+
   try {
     return SERIALIZATIONS[serialization].serialize(returnValue)
   } catch (error) {

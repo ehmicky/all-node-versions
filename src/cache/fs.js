@@ -1,9 +1,10 @@
 import { promises as fs } from 'fs'
 import { dirname } from 'path'
+import { Stream } from 'stream'
 
 import pathExists from 'path-exists'
-import writeFileAtomic from 'write-file-atomic'
 
+import { writeAtomic } from './atomic.js'
 import { parse, serialize } from './serialization.js'
 
 // Cache the return value on the filesystem.
@@ -58,21 +59,16 @@ export const writeFsCache = async function ({
   const cacheContent = serialize(returnValue, { serialization, strict })
 
   if (cacheContent === undefined) {
-    return
+    return returnValue
   }
 
   await createCacheDir(cachePath)
 
-  try {
-    await Promise.all([
-      writeFileAtomic(cachePath, cacheContent),
-      writeFileAtomic(`${cachePath}${TIMESTAMP_EXTENSION}`, timestamp),
-    ])
-    // If two different functions are calling `normalize-node-version` at the
-    // same time and there's no cache file, they will both try to persist the
-    // file and one might fail, especially on Windows (with EPERM lock file
-    // errors)
-  } catch {}
+  const [returnValueA] = await Promise.all([
+    writeContent({ cachePath, cacheContent, returnValue }),
+    writeAtomic(`${cachePath}${TIMESTAMP_EXTENSION}`, timestamp),
+  ])
+  return returnValueA
 }
 
 const createCacheDir = async function (cachePath) {
@@ -83,6 +79,16 @@ const createCacheDir = async function (cachePath) {
   }
 
   await fs.mkdir(cacheDir, { recursive: true })
+}
+
+const writeContent = async function ({ cachePath, cacheContent, returnValue }) {
+  await writeAtomic(cachePath, cacheContent)
+
+  if (cacheContent instanceof Stream) {
+    return fs.readFile(cachePath, 'utf8')
+  }
+
+  return returnValue
 }
 
 // We store the timestamp as a sibling file and use it to calculate cache age

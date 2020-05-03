@@ -87,8 +87,13 @@ const fsMoized = async function (
 
   try {
     const returnValue = await func(...args)
-    await writeFsCache({ cachePath, returnValue, serialization, strict })
-    return returnValue
+    const returnValueA = await writeFsCache({
+      cachePath,
+      returnValue,
+      serialization,
+      strict,
+    })
+    return returnValueA
   } catch (error) {
     return handleOfflineError({ cachePath, serialization, error })
   }

@@ -53,13 +53,11 @@
     "cachedir": "^2.3.0",
     "fetch-node-website": "^5.0.3",
     "filter-obj": "^2.0.1",
-    "get-stream": "^5.1.0",
     "jest-validate": "^25.5.0",
     "keep-func-props": "^3.0.0",
     "moize": "^5.4.5",
     "path-exists": "^4.0.0",
-    "semver": "^7.3.2",
-    "write-file-atomic": "^3.0.3"
+    "semver": "^7.3.2"
   },
   "devDependencies": {
     "@ehmicky/dev-tasks": "^0.31.43",
