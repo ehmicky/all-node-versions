@@ -36,4 +36,5 @@ export const fetchIndex = moizeFs(mFetchIndex, getCachePath, {
   maxAge: MAX_AGE_MS,
   serialization: 'none',
   streams: 'buffer',
+  strict: true,
 })

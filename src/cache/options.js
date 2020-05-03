@@ -20,7 +20,7 @@ const DEFAULT_OPTS = {
   maxAge: DEFAULT_MAX_AGE_MS,
   updateAge: false,
   serialization: 'v8',
-  strict: true,
+  strict: false,
   streams: 'error',
   cacheInfo: false,
 }
