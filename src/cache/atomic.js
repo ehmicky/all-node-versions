@@ -8,19 +8,11 @@ import { writeStream } from './streams.js'
 // Writing the cache file should be atomic, so we don't leave partially written
 // files. We cannot use libraries like `write-file-atomic` because they don't
 // support streams.
-export const writeAtomic = async function (
-  filePath,
-  content,
-  returnStreamContent,
-) {
+export const writeAtomic = async function (filePath, content, streams) {
   const tmpFile = getTmpFile(filePath)
 
   try {
-    const streamContent = await writeContent(
-      tmpFile,
-      content,
-      returnStreamContent,
-    )
+    const streamContent = await writeContent(tmpFile, content, streams)
     await fs.rename(tmpFile, filePath)
     return streamContent
   } finally {
@@ -34,9 +26,9 @@ const getTmpFile = function (filePath) {
   return `${filePath}.${uniqueId}`
 }
 
-const writeContent = async function (tmpFile, content, returnStreamContent) {
+const writeContent = async function (tmpFile, content, streams) {
   if (content instanceof Stream) {
-    return writeStream(tmpFile, content, returnStreamContent)
+    return writeStream(tmpFile, content, streams)
   }
 
   await fs.writeFile(tmpFile, content)

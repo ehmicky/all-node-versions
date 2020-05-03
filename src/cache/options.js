@@ -21,6 +21,7 @@ const DEFAULT_OPTS = {
   updateAge: false,
   serialization: 'v8',
   strict: true,
+  streams: 'error',
   returnCachePath: false,
 }
 

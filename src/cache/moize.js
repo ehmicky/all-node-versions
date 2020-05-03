@@ -20,6 +20,7 @@ const kMoizeFs = function (func, getCachePath, opts) {
     updateAge,
     serialization,
     strict,
+    streams,
     returnCachePath,
   } = getOpts(getCachePath, opts)
   const processMoized = kMoize(fsMoized, {
@@ -39,6 +40,7 @@ const kMoizeFs = function (func, getCachePath, opts) {
       updateAge,
       serialization,
       strict,
+      streams,
       returnCachePath,
     })
 }
@@ -55,6 +57,7 @@ const callMoizedFunc = function ({
   updateAge,
   serialization,
   strict,
+  streams,
   returnCachePath,
 }) {
   const shouldUseCache = useCache(...args)
@@ -75,6 +78,7 @@ const callMoizedFunc = function ({
     updateAge,
     serialization,
     strict,
+    streams,
     returnCachePath,
   })
 }
@@ -89,6 +93,7 @@ const fsMoized = async function (
     updateAge,
     serialization,
     strict,
+    streams,
     returnCachePath,
   },
 ) {
@@ -112,6 +117,7 @@ const fsMoized = async function (
       returnValue,
       serialization,
       strict,
+      streams,
       returnCachePath,
     })
     return returnValueA

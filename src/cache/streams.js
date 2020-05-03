@@ -5,10 +5,10 @@ import { promisify } from 'util'
 const pPipeline = promisify(pipeline)
 
 // Write a stream, optionally returning the buffered content
-export const writeStream = async function (tmpFile, stream, buffer) {
-  validateStream(stream)
+export const writeStream = async function (tmpFile, stream, streams) {
+  validateStream(stream, streams)
 
-  if (!buffer) {
+  if (streams === 'pipe') {
     await pPipeline(stream, createWriteStream(tmpFile))
     return
   }
@@ -18,7 +18,11 @@ export const writeStream = async function (tmpFile, stream, buffer) {
   return state.content
 }
 
-const validateStream = function (stream) {
+const validateStream = function (stream, streams) {
+  if (streams === 'error') {
+    throw new Error('Must not use streams')
+  }
+
   if (stream.readableObjectMode) {
     throw new Error('Stream must not be in object mode')
   }

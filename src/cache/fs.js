@@ -68,6 +68,7 @@ export const writeFsCache = async function ({
   returnValue,
   serialization,
   strict,
+  streams,
   returnCachePath,
 }) {
   const cacheContent = serialize(returnValue, { serialization, strict })
@@ -79,7 +80,7 @@ export const writeFsCache = async function ({
   await createCacheDir(cachePath)
 
   const [returnValueA] = await Promise.all([
-    writeContent({ cachePath, cacheContent, returnValue, returnCachePath }),
+    writeContent({ cachePath, cacheContent, returnValue, streams }),
     updateTimestamp(cachePath),
   ])
   return returnCachePath ? cachePath : returnValueA
@@ -99,13 +100,9 @@ const writeContent = async function ({
   cachePath,
   cacheContent,
   returnValue,
-  returnCachePath,
+  streams,
 }) {
-  const streamContent = await writeAtomic(
-    cachePath,
-    cacheContent,
-    !returnCachePath,
-  )
+  const streamContent = await writeAtomic(cachePath, cacheContent, streams)
 
   if (streamContent !== undefined) {
     return streamContent
