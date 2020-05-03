@@ -11,15 +11,15 @@ export const handleOfflineError = async function ({
     throw error
   }
 
-  const returnInfo = await readFsCache({
+  const { returnValue, state } = await readFsCache({
     cachePath,
     serialization,
     invalidate: false,
     offline: true,
   })
 
-  if (returnInfo.state !== undefined) {
-    return { ...returnInfo, state: 'offline' }
+  if (state === 'file') {
+    return { returnValue, state: 'offline' }
   }
 
   throw error

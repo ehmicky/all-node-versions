@@ -33,8 +33,7 @@ export const readFsCache = async function ({
     return {}
   }
 
-  const returnInfo = { returnValue, state: 'file' }
-  return addExpireAt(returnInfo, expireAt, offline)
+  return { returnValue, state: 'file', path: cachePath, expireAt }
 }
 
 const getExpireAt = async function (cachePath) {
@@ -69,15 +68,6 @@ const maybeReadFile = async function (path) {
   return fs.readFile(path)
 }
 
-// When offline, `expireAt` is outdated
-const addExpireAt = function (returnInfo, expireAt, offline) {
-  if (offline) {
-    return returnInfo
-  }
-
-  return { ...returnInfo, expireAt }
-}
-
 // Persist the file cache
 export const writeFsCache = async function ({
   cachePath,
@@ -99,7 +89,7 @@ export const writeFsCache = async function ({
     writeContent({ cachePath, cacheContent, returnValue, streams }),
     setExpireAt(cachePath, maxAge),
   ])
-  return { returnValue: returnValueA, state: 'new', expireAt }
+  return { returnValue: returnValueA, state: 'new', path: cachePath, expireAt }
 }
 
 const createCacheDir = async function (cachePath) {
