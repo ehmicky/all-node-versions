@@ -14,19 +14,20 @@ export const serialize = function (returnValue, { serialization, strict }) {
   }
 
   try {
-    return SERIALIZATIONS[serialization].serialize(returnValue)
+    const cacheContent = SERIALIZATIONS[serialization].serialize(returnValue)
+    return cacheContent
   } catch (error) {
-    handleSerializeError(error, strict)
+    handleSerializeError(error, { serialization, strict })
   }
 }
 
-const handleSerializeError = function (error, strict) {
+const handleSerializeError = function (error, { serialization, strict }) {
   if (!strict) {
     return
   }
 
   // eslint-disable-next-line no-param-reassign, fp/no-mutation
-  error.message = `Could not cache the return value: not serializable with the structured cloned algorithm\n${error.message}`
+  error.message = `Could not serialize the return value with "serialization": "${serialization}"\n${error.message}`
   throw error
 }
 
