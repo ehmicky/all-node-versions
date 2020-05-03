@@ -29,6 +29,12 @@ export const readFsCache = async function ({
     return {}
   }
 
+  const returnValue = parse(cacheContent, { serialization })
+
+  if (returnValue === undefined) {
+    return {}
+  }
+
   const expireAtA = await maybeUpdateExpireAt({
     cachePath,
     updateAge,
@@ -36,13 +42,6 @@ export const readFsCache = async function ({
     maxAge,
     useMaxAge,
   })
-
-  const returnValue = parse(cacheContent, { serialization })
-
-  if (returnValue === undefined) {
-    return {}
-  }
-
   return { returnValue, state: 'file', expireAt: expireAtA }
 }
 
