@@ -17,7 +17,7 @@ export const readFsCache = async function ({
   serialization,
 }) {
   if (forceRefresh) {
-    return { cached: false }
+    return {}
   }
 
   const [cacheContent, expireAt] = await Promise.all([
@@ -26,7 +26,7 @@ export const readFsCache = async function ({
   ])
 
   if (!canUseCache(cacheContent, useMaxAge, expireAt)) {
-    return { cached: false }
+    return {}
   }
 
   const expireAtA = await maybeUpdateExpireAt({
@@ -40,10 +40,10 @@ export const readFsCache = async function ({
   const returnValue = parse(cacheContent, { serialization })
 
   if (returnValue === undefined) {
-    return { cached: false }
+    return {}
   }
 
-  return { returnValue, cached: true, expireAt: expireAtA }
+  return { returnValue, state: 'file', expireAt: expireAtA }
 }
 
 const getExpireAt = async function (cachePath) {
@@ -90,7 +90,7 @@ export const writeFsCache = async function ({
   const cacheContent = serialize(returnValue, { serialization, strict })
 
   if (cacheContent === undefined) {
-    return { returnValue, cached: false }
+    return { returnValue, state: 'error' }
   }
 
   await createCacheDir(cachePath)
@@ -99,7 +99,7 @@ export const writeFsCache = async function ({
     writeContent({ cachePath, cacheContent, returnValue, streams }),
     updateExpireAt(cachePath, maxAge),
   ])
-  return { returnValue: returnValueA, cached: true, expireAt }
+  return { returnValue: returnValueA, state: 'new', expireAt }
 }
 
 const createCacheDir = async function (cachePath) {

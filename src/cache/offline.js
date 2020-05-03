@@ -19,8 +19,8 @@ export const handleOfflineError = async function ({
     serialization,
   })
 
-  if (returnInfo.cached) {
-    return returnInfo
+  if (returnInfo.state !== undefined) {
+    return { ...returnInfo, state: 'offline' }
   }
 
   throw error

@@ -47,7 +47,7 @@ const kMoizeFs = function (func, getCachePath, opts) {
 
 export const moizeFs = keepFuncProps(kMoizeFs)
 
-const callMoizedFunc = function ({
+const callMoizedFunc = async function ({
   processMoized,
   func,
   args,
@@ -70,7 +70,8 @@ const callMoizedFunc = function ({
     processMoized.remove([cachePath])
   }
 
-  return processMoized(cachePath, {
+  const info = { state: 'process' }
+  const returnValue = await processMoized(cachePath, {
     func,
     args,
     forceRefresh,
@@ -81,7 +82,14 @@ const callMoizedFunc = function ({
     streams,
     cacheInfo,
     processMoized,
+    info,
   })
+
+  if (!cacheInfo) {
+    return returnValue
+  }
+
+  return { ...returnValue, state: info.state }
 }
 
 const fsMoized = async function (
@@ -97,9 +105,10 @@ const fsMoized = async function (
     streams,
     cacheInfo,
     processMoized,
+    info,
   },
 ) {
-  const { returnValue, cached, expireAt } = await getReturnInfo({
+  const { returnValue, state, expireAt } = await getReturnInfo({
     cachePath,
     func,
     args,
@@ -116,7 +125,12 @@ const fsMoized = async function (
     return returnValue
   }
 
-  if (!cached) {
+  // This function is memoized in-memory. To distinguish between memoized calls
+  // or not, we need to do a side-effect like this.
+  // eslint-disable-next-line fp/no-mutation, no-param-reassign
+  info.state = state
+
+  if (state === 'error') {
     return { returnValue }
   }
 
@@ -144,7 +158,7 @@ const getReturnInfo = async function ({
     serialization,
   })
 
-  if (returnInfo.cached) {
+  if (returnInfo.state !== undefined) {
     updateProcessCacheTime({
       processMoized,
       cachePath,
