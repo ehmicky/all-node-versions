@@ -6,15 +6,10 @@ import pathExists from 'path-exists'
 import writeFileAtomic from 'write-file-atomic'
 
 // Cache the return value on the filesystem.
-export const readFsCache = async function ({
-  cachePath,
-  timestampPath,
-  useMaxAge,
-  maxAge,
-}) {
+export const readFsCache = async function ({ cachePath, useMaxAge, maxAge }) {
   const [cacheContent, isOldCache] = await Promise.all([
     maybeReadFile(cachePath),
-    checkTimestamp({ timestampPath, useMaxAge, maxAge }),
+    checkTimestamp({ cachePath, useMaxAge, maxAge }),
   ])
 
   if (cacheContent === undefined || isOldCache) {
@@ -25,12 +20,12 @@ export const readFsCache = async function ({
   return fileValue
 }
 
-const checkTimestamp = async function ({ timestampPath, useMaxAge, maxAge }) {
+const checkTimestamp = async function ({ cachePath, useMaxAge, maxAge }) {
   if (!useMaxAge) {
     return false
   }
 
-  const timestamp = await maybeReadFile(timestampPath)
+  const timestamp = await maybeReadFile(`${cachePath}${TIMESTAMP_EXTENSION}`)
 
   return (
     timestamp === undefined ||
@@ -56,7 +51,6 @@ const safeDeserialize = function (cacheContent) {
 // Persist the file cache
 export const writeFsCache = async function ({
   cachePath,
-  timestampPath,
   returnValue,
   strict,
 }) {
@@ -72,7 +66,7 @@ export const writeFsCache = async function ({
   try {
     await Promise.all([
       writeFileAtomic(cachePath, cacheContent),
-      writeFileAtomic(timestampPath, timestamp),
+      writeFileAtomic(`${cachePath}${TIMESTAMP_EXTENSION}`, timestamp),
     ])
     // If two different functions are calling `normalize-node-version` at the
     // same time and there's no cache file, they will both try to persist the
@@ -108,3 +102,6 @@ const createCacheDir = async function (cachePath) {
 
   await fs.mkdir(cacheDir, { recursive: true })
 }
+
+// We store the timestamp as a sibling file and use it to calculate cache age
+const TIMESTAMP_EXTENSION = '.timestamp.txt'

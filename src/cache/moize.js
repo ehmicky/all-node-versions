@@ -68,13 +68,7 @@ const fsMoized = async function (
   cachePath,
   { func, args, shouldUseCache, maxAge, strict },
 ) {
-  const timestampPath = `${cachePath}${TIMESTAMP_FILE_EXTENSION}`
-  const fileValue = await getFsCache({
-    cachePath,
-    timestampPath,
-    shouldUseCache,
-    maxAge,
-  })
+  const fileValue = await getFsCache({ cachePath, shouldUseCache, maxAge })
 
   if (fileValue !== undefined) {
     return fileValue
@@ -82,25 +76,17 @@ const fsMoized = async function (
 
   try {
     const returnValue = await func(...args)
-    await writeFsCache({ cachePath, timestampPath, returnValue, strict })
+    await writeFsCache({ cachePath, returnValue, strict })
     return returnValue
   } catch (error) {
-    return handleOfflineError({ cachePath, timestampPath, error })
+    return handleOfflineError({ cachePath, error })
   }
 }
 
-// We store the timestamp as a sibling file and use it to calculate cache age
-const TIMESTAMP_FILE_EXTENSION = '.timestamp.txt'
-
-const getFsCache = function ({
-  cachePath,
-  timestampPath,
-  shouldUseCache,
-  maxAge,
-}) {
+const getFsCache = function ({ cachePath, shouldUseCache, maxAge }) {
   if (!shouldUseCache) {
     return
   }
 
-  return readFsCache({ cachePath, timestampPath, useMaxAge: true, maxAge })
+  return readFsCache({ cachePath, useMaxAge: true, maxAge })
 }
