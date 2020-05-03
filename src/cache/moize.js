@@ -60,7 +60,7 @@ const callMoizedFunc = async function ({
   streams,
   cacheInfo,
 }) {
-  const invalidate = shouldInvalidate(...args)
+  const invalidate = shouldInvalidate(args)
   const cachePath = normalize(getCachePath(...args))
 
   // TODO: add value back if `kFileMoized` throws
