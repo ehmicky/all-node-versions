@@ -109,11 +109,15 @@ const fsMoized = async function (
     streams,
   })
 
-  if (cacheInfo) {
-    return cached ? cachePath : undefined
+  if (!cacheInfo) {
+    return returnValue
   }
 
-  return returnValue
+  if (!cached) {
+    return { returnValue }
+  }
+
+  return { returnValue, cachePath }
 }
 
 const getReturnInfo = async function ({
