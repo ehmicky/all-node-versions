@@ -59,7 +59,7 @@
     "moize": "^5.4.6",
     "path-exists": "^4.0.0",
     "semver": "^7.3.2",
-    "through2": "^4.0.1"
+    "through2": "^4.0.2"
   },
   "devDependencies": {
     "@ehmicky/dev-tasks": "^0.31.49",
