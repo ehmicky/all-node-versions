@@ -1,3 +1,4 @@
+/* eslint-disable max-lines  */
 import { createReadStream } from 'fs'
 import { normalize } from 'path'
 
@@ -258,3 +259,4 @@ const applyCacheInfo = function (returnInfo, cacheInfo) {
 
   return returnInfo
 }
+/* eslint-enable max-lines  */
