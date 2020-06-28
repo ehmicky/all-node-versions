@@ -1,3 +1,4 @@
+/* eslint-disable max-lines  */
 import { promises as fs, createReadStream } from 'fs'
 import { dirname } from 'path'
 import { Stream } from 'stream'
@@ -177,3 +178,4 @@ const setExpireAt = async function (cachePath, maxAge) {
 // We cannot use a real mtime since some partitions and OS do not reliably
 // store it.
 const EXPIRE_EXTENSION = '.expire.txt'
+/* eslint-enable max-lines  */

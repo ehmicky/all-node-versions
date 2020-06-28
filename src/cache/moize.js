@@ -30,6 +30,7 @@ const kMoizeFs = function (func, getCachePath, opts) {
     isPromise: true,
     maxAge,
     updateExpire: Boolean(updateExpire),
+    maxSize: Infinity,
   })
   const removeProcessPath = invalidateCachePath.bind(undefined, processMoized)
   return callMoizedFunc.bind(undefined, {
