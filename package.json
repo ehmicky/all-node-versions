@@ -62,7 +62,7 @@
     "through2": "^4.0.2"
   },
   "devDependencies": {
-    "@ehmicky/dev-tasks": "^0.31.62",
+    "@ehmicky/dev-tasks": "^0.31.63",
     "ava": "^3.12.1",
     "global-cache-dir": "^2.0.0",
     "gulp": "^4.0.2",
