@@ -1,8 +1,7 @@
+import allNodeVersions from 'all-node-versions'
 import test from 'ava'
 import isPlainObj from 'is-plain-obj'
-import { rcompare } from 'semver'
-
-import allNodeVersions from '../src/main.js'
+import semver from 'semver'
 
 const isVersion = function (version) {
   return typeof version === 'string' && VERSION_REGEXP.test(version)
@@ -20,7 +19,7 @@ test('"versions" are present', async (t) => {
 test('"versions" are sorted', async (t) => {
   const { versions } = await allNodeVersions({ fetch: true })
   // eslint-disable-next-line fp/no-mutating-methods
-  const sortedVersions = versions.slice().sort(rcompare)
+  const sortedVersions = [...versions].sort(semver.rcompare)
 
   t.deepEqual(versions, sortedVersions)
 })
@@ -45,7 +44,7 @@ const isValidMajor = function ({ major }) {
 test('"majors.major" are sorted', async (t) => {
   const { majors } = await allNodeVersions({ fetch: true })
   // eslint-disable-next-line fp/no-mutating-methods
-  const sortedMajors = majors.slice().sort(compareMajor)
+  const sortedMajors = [...majors].sort(compareMajor)
 
   t.deepEqual(majors, sortedMajors)
 })

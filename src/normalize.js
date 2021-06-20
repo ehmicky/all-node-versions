@@ -1,4 +1,4 @@
-import { major as getMajor } from 'semver'
+import semver from 'semver'
 
 import { groupBy } from './group.js'
 
@@ -13,7 +13,7 @@ export const normalizeIndex = function (index) {
 const normalizeVersion = function ({ version, lts }) {
   // Remove the leading `v`
   const versionA = version.slice(1)
-  const major = getMajor(versionA)
+  const major = semver.major(versionA)
   return { version: versionA, major, lts }
 }
 
