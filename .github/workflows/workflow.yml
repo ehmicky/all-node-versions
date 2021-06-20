@@ -11,12 +11,10 @@ jobs:
       # We do not run each possible combination to make CI faster.
       matrix:
         os: [ubuntu-latest, macOS-latest, windows-latest]
-        node: [10.17.0, 13]
-        exclude:
-          - os: macOS-latest
-            node: 10.17.0
-          - os: windows-latest
-            node: 10.17.0
+        node: [16]
+        include:
+          - os: ubuntu-latest
+            node: 12.20.0
       fail-fast: false
     runs-on: ${{ matrix.os }}
     # We do not use @actions/cache because restoring/saving cache currently
@@ -28,6 +26,12 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node }}
+      # TODO: remove after dropping support for Node <15.0.0, i.e. ensuring
+      # npm v7 is used. We need npm v7 due to peerDependencies automatic
+      # installation
+      - name: Install latest npm
+        run: npm install -g npm
+        if: "${{ matrix.node == '12.20.0' }}"
       - name: Install dependencies
         run: npm ci
       - name: Linting
@@ -39,30 +43,4 @@ jobs:
       - name: Upload test coverage
         run: npx gulp uploadCoverage
         env:
-          COVECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-  # Performed after each OS + Node.js version combination has succeeded
-  final:
-    needs: combinations
-    runs-on: ubuntu-latest
-    steps:
-      - name: Git checkout
-        uses: actions/checkout@v2
-      - name: Node.js 13
-        uses: actions/setup-node@v1
-        with:
-          node-version: 13
-      - name: Install dependencies
-        run: npm ci
-      # Test coverage check must happen after tests for the whole matrix have been
-      # performed, so we get the merged coverage map
-      - name: Check test coverage
-        run: npx gulp checkCoverage
-      - name: Build
-        run: npx gulp build
-      - name: Deploy
-        if:
-          startsWith(github.event.head_commit.message, 'Release ') &&
-          github.event_name != 'pull_request'
-        run: npx gulp publish
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
