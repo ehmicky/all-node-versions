@@ -7,6 +7,10 @@
   `import()` statement, not `require()`. See
   [this post for more information](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c).
 
+## Bug fixes
+
+- Fix offline mode
+
 # 8.0.0
 
 ## Breaking changes
