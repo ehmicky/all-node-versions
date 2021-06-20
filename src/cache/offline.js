@@ -20,7 +20,9 @@ export const handleOfflineError = async function (error) {
 // Since we cannot distinguish them, we also use offline cache when `mirror`
 // option is invalid.
 const isOfflineError = function ({ message }) {
-  return message.includes(OFFLINE_ERROR_MESSAGE)
+  return OFFLINE_ERROR_MESSAGES.some((offlineErrorMessage) =>
+    message.includes(offlineErrorMessage),
+  )
 }
 
-const OFFLINE_ERROR_MESSAGE = 'getaddrinfo'
+const OFFLINE_ERROR_MESSAGES = ['getaddrinfo', 'connect ECONNREFUSED']
