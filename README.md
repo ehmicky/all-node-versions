@@ -15,33 +15,42 @@ information.
 npm install all-node-versions
 ```
 
+This package is an ES module and must be loaded using
+[an `import` or `import()` statement](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c),
+not `require()`.
+
 # Usage
 
 <!-- Remove 'eslint-skip' once estree supports top-level await -->
 <!-- eslint-skip -->
 
 ```js
-const allNodeVersions = require('all-node-versions')
+import allNodeVersions from 'all-node-versions'
 
-const { versions, majors } = await allNodeVersions(options)
+const printNodeVersions = async function (options) {
+  const { versions, majors } = await allNodeVersions(options)
 
-console.log(versions)
-// ['13.13.0', '13.12.0', ..., '0.1.15', '0.1.14']
+  console.log(versions)
+  // ['16.3.0', '16.2.0', ..., '0.1.15', '0.1.14']
 
-console.log(majors)
-// [
-//   { major: 13, latest: '13.13.0' },
-//   { major: 12, latest: '12.16.2', lts: 'erbium' },
-//   { major: 11, latest: '11.15.0' },
-//   { major: 10, latest: '10.20.1', lts: 'dubnium' },
-//   { major: 9, latest: '9.11.2' },
-//   { major: 8, latest: '8.17.0', lts: 'carbon' },
-//   { major: 7, latest: '7.10.1' },
-//   { major: 6, latest: '6.17.1', lts: 'boron' },
-//   { major: 5, latest: '5.12.0' },
-//   { major: 4, latest: '4.9.1', lts: 'argon' },
-//   { major: 0, latest: '0.12.18' }
-// ]
+  console.log(majors)
+  // [
+  //   { major: 16, latest: '16.3.0' },
+  //   { major: 15, latest: '15.14.0' },
+  //   { major: 14, latest: '14.17.1', lts: 'fermium },
+  //   { major: 13, latest: '13.14.0' },
+  //   { major: 12, latest: '12.22.1', lts: 'erbium' },
+  //   { major: 11, latest: '11.15.0' },
+  //   { major: 10, latest: '10.24.1', lts: 'dubnium' },
+  //   { major: 9, latest: '9.11.2' },
+  //   { major: 8, latest: '8.17.0', lts: 'carbon' },
+  //   { major: 7, latest: '7.10.1' },
+  //   { major: 6, latest: '6.17.1', lts: 'boron' },
+  //   { major: 5, latest: '5.12.0' },
+  //   { major: 4, latest: '4.9.1', lts: 'argon' },
+  //   { major: 0, latest: '0.12.18' }
+  // ]
+}
 ```
 
 ## allNodeVersions(options?)
