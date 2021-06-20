@@ -10,11 +10,11 @@ const getMapper = function (group) {
   }
 
   if (typeof group === 'string') {
-    return getByProp.bind(null, group)
+    return getByProp.bind(undefined, group)
   }
 
   if (Array.isArray(group)) {
-    return getByProps.bind(null, group)
+    return getByProps.bind(undefined, group)
   }
 
   throw new Error(`Group must be a function, property or array of properties`)
@@ -29,14 +29,8 @@ const getByProps = function (propNames, object) {
   for (const propName of propNames) {
     const key = getByProp(propName, object)
 
-    // eslint-disable-next-line max-depth
-    if (keys === '') {
-      // eslint-disable-next-line fp/no-mutation
-      keys = key
-    } else {
-      // eslint-disable-next-line fp/no-mutation
-      keys = `${keys}.${key}`
-    }
+    // eslint-disable-next-line fp/no-mutation
+    keys = keys === '' ? key : `${keys}.${key}`
   }
 
   return keys
