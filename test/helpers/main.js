@@ -1,4 +1,4 @@
-import allNodeVersions from '../../src/main.js'
+import allNodeVersions from 'all-node-versions'
 
 // Retrieve latest Node.js version
 export const getLatestVersion = async function (opts) {

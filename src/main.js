@@ -8,7 +8,7 @@ import { getOpts } from './options.js'
 
 // Fetch all available Node versions by making a HTTP request to Node website.
 // Versions are already sorted from newest to oldest.
-const allNodeVersions = async function (opts) {
+export default async function allNodeVersions(opts) {
   const { fetch, ...fetchNodeOpts } = getOpts(opts)
   const versionsInfo = await getAllVersions(fetch, fetchNodeOpts)
   return versionsInfo
@@ -52,7 +52,3 @@ const getVersionsInfo = async function (fetch, fetchNodeOpts) {
     return handleOfflineError(error)
   }
 }
-
-// We do not use `export default` because Babel transpiles it in a way that
-// requires CommonJS users to `require(...).default` instead of `require(...)`.
-module.exports = allNodeVersions
