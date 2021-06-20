@@ -57,8 +57,6 @@
   },
   "devDependencies": {
     "@ehmicky/dev-tasks": "^1.0.34",
-    "ava": "^3.6.0",
-    "gulp": "^4.0.2",
     "is-plain-obj": "^4.0.0",
     "test-each": "^3.0.1"
   },
