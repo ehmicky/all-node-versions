@@ -115,6 +115,10 @@ The list of available Node.js versions is cached for one hour by default. If the
 - [`nvexeca`](https://github.com/ehmicky/nve): Run a specific Node.js version
   (programmatic)
 - [`get-node`](https://github.com/ehmicky/get-node): Download Node.js
+- [`preferred-node-version`](https://github.com/ehmicky/preferred-node-version):
+  Get the preferred Node.js version of a project or user
+- [`node-version-alias`](https://github.com/ehmicky/node-version-alias): Resolve
+  Node.js version aliases like `latest`, `lts` or `erbium`
 - [`normalize-node-version`](https://github.com/ehmicky/normalize-node-version):
   Normalize and validate Node.js versions
 - [`fetch-node-website`](https://github.com/ehmicky/fetch-node-website): Fetch
@@ -122,11 +126,7 @@ The list of available Node.js versions is cached for one hour by default. If the
 
 # Support
 
-If you found a bug or would like a new feature, _don't hesitate_ to
-[submit an issue on GitHub](../../issues).
-
-For other questions, feel free to
-[chat with us on Gitter](https://gitter.im/ehmicky/all-node-versions).
+For any question, _don't hesitate_ to [submit an issue on GitHub](../../issues).
 
 Everyone is welcome regardless of personal background. We enforce a
 [Code of conduct](CODE_OF_CONDUCT.md) in order to promote a positive and
