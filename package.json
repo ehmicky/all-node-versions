@@ -50,7 +50,7 @@
     "filter-obj": "^3.0.0",
     "get-stream": "^6.0.0",
     "global-cache-dir": "^3.0.1",
-    "jest-validate": "^27.0.6",
+    "jest-validate": "^27.1.1",
     "path-exists": "^5.0.0",
     "semver": "^7.3.5",
     "write-file-atomic": "^3.0.3"
