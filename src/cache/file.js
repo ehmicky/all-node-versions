@@ -16,7 +16,7 @@ const CACHE_FILENAME = 'versions.json'
 
 // Retrieve cache file's content
 export const getCacheFileContent = async function (cacheFile) {
-  const cacheFileContent = await fs.readFile(cacheFile, 'utf8')
+  const cacheFileContent = await fs.readFile(cacheFile)
   const { lastUpdate, ...versionsInfo } = JSON.parse(cacheFileContent)
   const age = Date.now() - lastUpdate
   return { versionsInfo, age }
