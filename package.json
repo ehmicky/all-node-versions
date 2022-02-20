@@ -53,7 +53,7 @@
     "jest-validate": "^27.5.1",
     "path-exists": "^5.0.0",
     "semver": "^7.3.5",
-    "write-file-atomic": "^3.0.3"
+    "write-file-atomic": "^4.0.1"
   },
   "devDependencies": {
     "@ehmicky/dev-tasks": "^1.0.66",
