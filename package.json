@@ -52,7 +52,7 @@
     "global-cache-dir": "^3.0.1",
     "jest-validate": "^27.5.1",
     "path-exists": "^5.0.0",
-    "semver": "^7.3.5",
+    "semver": "^7.3.6",
     "write-file-atomic": "^4.0.1"
   },
   "devDependencies": {
