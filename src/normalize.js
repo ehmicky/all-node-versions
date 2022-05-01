@@ -55,6 +55,8 @@ const getLtsField = function ({ lts }) {
   return typeof lts === 'string'
 }
 
+// `index.json` is already sorted, but we ensure it is, just in case
 const compareMajor = function ({ major: majorA }, { major: majorB }) {
+  /* c8-ignore-next */
   return majorA < majorB ? 1 : -1
 }
