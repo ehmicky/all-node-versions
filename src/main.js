@@ -38,11 +38,12 @@ let processCachedVersions
 // We also cache the HTTP request for one hour using a cache file.
 const getVersionsInfo = async function (fetch, fetchNodeOpts) {
   const cachedVersions = await readCachedVersions(fetch)
+  return cachedVersions === undefined
+    ? await getNewVersionsInfo(fetchNodeOpts)
+    : cachedVersions
+}
 
-  if (cachedVersions !== undefined) {
-    return cachedVersions
-  }
-
+const getNewVersionsInfo = async function (fetchNodeOpts) {
   try {
     const index = await fetchIndex(fetchNodeOpts)
     const versionsInfo = normalizeIndex(index)
