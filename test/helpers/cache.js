@@ -1,4 +1,4 @@
-import { promises as fs } from 'fs'
+import { writeFile, unlink } from 'fs/promises'
 import { env } from 'process'
 
 import globalCacheDir from 'global-cache-dir'
@@ -25,14 +25,14 @@ export const writeCacheFile = async function (oldCacheFile = false) {
   const cacheContent = { lastUpdate, ...versionsInfo }
   const cacheFileContent = JSON.stringify(cacheContent, undefined, 2)
 
-  await fs.writeFile(cacheFile, cacheFileContent)
+  await writeFile(cacheFile, cacheFileContent)
 
   return cacheFile
 }
 
 export const removeCacheFile = async function () {
   const cacheFile = await getCacheFile()
-  await fs.unlink(cacheFile)
+  await unlink(cacheFile)
 }
 
 const getCacheFile = async function () {
