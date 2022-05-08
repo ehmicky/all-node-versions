@@ -22,14 +22,14 @@ each(
     { result: false, oldCacheFile: true },
     { result: true, fetch: false, oldCacheFile: true },
   ],
-  ({ title }, { result, fetch, oldCacheFile }) => {
+  ({ title }, { result, fetch: fetchOpt, oldCacheFile }) => {
     test.serial(`Caching | ${title}`, async (t) => {
       setTestCache()
 
       try {
         await writeCacheFile(oldCacheFile)
 
-        const latestVersion = await getLatestVersion({ fetch })
+        const latestVersion = await getLatestVersion({ fetch: fetchOpt })
         t.is(latestVersion === 'cached', result)
       } finally {
         await removeCacheFile()
@@ -57,7 +57,7 @@ each(
     { result: true, fetch: false },
     { result: false, fetch: true },
   ],
-  ({ title }, { result, fetch }) => {
+  ({ title }, { result, fetch: fetchOpt }) => {
     test.serial(`Twice in same process | ${title}`, async (t) => {
       setTestCache()
 
@@ -70,7 +70,7 @@ each(
         unsetTestCache()
       }
 
-      const latestVersion = await getLatestVersion({ fetch })
+      const latestVersion = await getLatestVersion({ fetch: fetchOpt })
       t.is(latestVersion === 'cached', result)
     })
   },

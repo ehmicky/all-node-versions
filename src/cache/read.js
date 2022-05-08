@@ -14,8 +14,8 @@ import {
 //   - `false`: we use the cache even if it is old
 //   - `true`: we do not use the cache
 // In all three cases, we update the cache on any successful HTTP request.
-export const readCachedVersions = async function (fetch) {
-  if (fetch === true) {
+export const readCachedVersions = async function (fetchOpt) {
+  if (fetchOpt === true) {
     return
   }
 
@@ -27,15 +27,15 @@ export const readCachedVersions = async function (fetch) {
 
   const { versionsInfo, age } = await getCacheFileContent(cacheFile)
 
-  if (isOldCache(age, fetch)) {
+  if (isOldCache(age, fetchOpt)) {
     return
   }
 
   return versionsInfo
 }
 
-const isOldCache = function (age, fetch) {
-  return age > MAX_AGE_MS && fetch !== false
+const isOldCache = function (age, fetchOpt) {
+  return age > MAX_AGE_MS && fetchOpt !== false
 }
 
 // One hour

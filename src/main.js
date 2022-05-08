@@ -9,22 +9,22 @@ import { getOpts } from './options.js'
 // Fetch all available Node versions by making a HTTP request to Node website.
 // Versions are already sorted from newest to oldest.
 export default async function allNodeVersions(opts) {
-  const { fetch, ...fetchNodeOpts } = getOpts(opts)
-  const versionsInfo = await getAllVersions(fetch, fetchNodeOpts)
+  const { fetch: fetchOpt, ...fetchNodeOpts } = getOpts(opts)
+  const versionsInfo = await getAllVersions(fetchOpt, fetchNodeOpts)
   return versionsInfo
 }
 
 // We cache the HTTP request once per process.
-const getAllVersions = async function (fetch, fetchNodeOpts) {
+const getAllVersions = async function (fetchOpt, fetchNodeOpts) {
   if (
     processCachedVersions !== undefined &&
-    fetch !== true &&
+    fetchOpt !== true &&
     !env.TEST_CACHE_FILENAME
   ) {
     return processCachedVersions
   }
 
-  const versionsInfo = await getVersionsInfo(fetch, fetchNodeOpts)
+  const versionsInfo = await getVersionsInfo(fetchOpt, fetchNodeOpts)
 
   // eslint-disable-next-line fp/no-mutation, require-atomic-updates
   processCachedVersions = versionsInfo
@@ -36,8 +36,8 @@ const getAllVersions = async function (fetch, fetchNodeOpts) {
 let processCachedVersions
 
 // We also cache the HTTP request for one hour using a cache file.
-const getVersionsInfo = async function (fetch, fetchNodeOpts) {
-  const cachedVersions = await readCachedVersions(fetch)
+const getVersionsInfo = async function (fetchOpt, fetchNodeOpts) {
+  const cachedVersions = await readCachedVersions(fetchOpt)
   return cachedVersions === undefined
     ? await getNewVersionsInfo(fetchNodeOpts)
     : cachedVersions
