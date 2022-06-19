@@ -1,3 +1,5 @@
+import type { Options as FetchNodeWebsiteOptions } from 'fetch-node-website'
+
 /**
  * Semantic version
  */
@@ -43,7 +45,7 @@ export interface Options {
    *
    * @default 'https://nodejs.org/dist'
    */
-  mirror?: string
+  mirror?: FetchNodeWebsiteOptions['mirror']
 
   /**
    * The list of available Node.js versions is cached for one hour by default.
