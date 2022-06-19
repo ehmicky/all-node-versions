@@ -4,7 +4,7 @@ import { env } from 'process'
 import globalCacheDir from 'global-cache-dir'
 import writeFileAtomic from 'write-file-atomic'
 
-// The cache is persisted to `GLOBAL_CACHE_DIR/nve/versions.json`.
+// The cache is persisted to `GLOBAL_CACHE_DIR/nve/versions_${VERSION}.json`.
 export const getCacheFile = async function () {
   const cacheDir = await globalCacheDir(CACHE_DIR)
   const cacheFilename = env.TEST_CACHE_FILENAME || CACHE_FILENAME
@@ -12,7 +12,9 @@ export const getCacheFile = async function () {
 }
 
 const CACHE_DIR = 'nve'
-const CACHE_FILENAME = 'versions.json'
+// `VERSION` number should be incremented when `all-node-versions` return value
+// has breaking changes.
+const CACHE_FILENAME = 'versions_2.json'
 
 // Retrieve cache file's content
 export const getCacheFileContent = async function (cacheFile) {
