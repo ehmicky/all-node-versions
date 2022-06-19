@@ -7,13 +7,13 @@ export type SemverVersion = `${number}.${number}.${number}${string}`
 
 export interface NodeVersionInfo {
   /**
-   * Node.js version is a `major.minor.patch` string.
+   * Node.js version as a `major.minor.patch` string.
    */
   node: SemverVersion
 
   /**
-   * Default NPM version is a raw version value: can be `"6.5.0-next.0"`, for example.
-   * `undefined` for ancient node that didn't ship with npm.
+   * Default NPM version as a `major.minor.patch[-tags]` string.
+   * `undefined` if the `node` version is `0.6.2` or older.
    */
   npm?: SemverVersion
 }
@@ -37,7 +37,8 @@ export interface MajorNodeVersion {
 
 export interface AllNodeVersions {
   /**
-   * List of available Node.js versions and default NPM versions sorted from the most to the least recent Node.js version.
+   * List of available Node.js versions and related information.
+   * Sorted from the most to the least recent Node.js version.
    */
   versions: NodeVersionInfo[]
 

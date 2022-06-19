@@ -2,6 +2,7 @@ import allNodeVersions, {
   Options,
   AllNodeVersions,
   MajorNodeVersion,
+  NodeVersionInfo,
   SemverVersion,
 } from 'all-node-versions'
 import {
@@ -10,7 +11,6 @@ import {
   expectAssignable,
   expectNotAssignable,
 } from 'tsd'
-import { NodeVersionInfo } from './main'
 
 const nodeVersions = await allNodeVersions()
 
@@ -29,14 +29,14 @@ expectError(allNodeVersions({ fetch: 'true' }))
 
 expectType<AllNodeVersions>(nodeVersions)
 const {
-  versions: [version],
+  versions: [nodeVersion],
   majors: [majorNodeVersion],
 } = nodeVersions
 
-expectType<NodeVersionInfo>(version)
-const { node, npm } = version
+expectType<NodeVersionInfo>(nodeVersion)
+const { node, npm } = nodeVersion
 expectAssignable<SemverVersion>(node)
-expectType<SemverVersion | undefined>(npm)
+expectAssignable<SemverVersion | undefined>(npm)
 
 expectType<MajorNodeVersion>(majorNodeVersion)
 const { major, latest, lts } = majorNodeVersion

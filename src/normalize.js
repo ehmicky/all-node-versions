@@ -17,12 +17,13 @@ const normalizeVersion = function ({ version, lts, npm }) {
   return { version: versionA, major, lts, npm }
 }
 
-// Array with all {node: string, npm: string} version infos
+// Array with all `{ node: string, npm: string }` version infos
 const getAllVersions = function (indexItems) {
-  return indexItems.map(({ version, npm }) => ({
-    node: version,
-    npm,
-  }))
+  return indexItems.map(getVersionField)
+}
+
+const getVersionField = function ({ version, npm }) {
+  return { node: version, npm }
 }
 
 // Array with all major releases latest version, sorted from most to least
