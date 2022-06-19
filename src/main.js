@@ -1,5 +1,6 @@
 import { env } from 'process'
 
+import { cloneCachedVersions } from './cache/clone.js'
 import { handleOfflineError } from './cache/offline.js'
 import { readCachedVersions, writeCachedVersions } from './cache/read.js'
 import { fetchIndex } from './fetch.js'
@@ -11,7 +12,7 @@ import { getOpts } from './options.js'
 export default async function allNodeVersions(opts) {
   const { fetch: fetchOpt, ...fetchNodeOpts } = getOpts(opts)
   const versionsInfo = await getAllVersions(fetchOpt, fetchNodeOpts)
-  return versionsInfo
+  return cloneCachedVersions(versionsInfo)
 }
 
 // We cache the HTTP request once per process.

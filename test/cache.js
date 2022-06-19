@@ -1,3 +1,4 @@
+import allNodeVersions from 'all-node-versions'
 import test from 'ava'
 import { each } from 'test-each'
 
@@ -75,3 +76,12 @@ each(
     })
   },
 )
+
+test.serial(`Process cached files cannot be mutated`, async (t) => {
+  const { versions } = await allNodeVersions({ fetch: false })
+  const [firstVersion] = versions
+  // eslint-disable-next-line fp/no-mutating-methods
+  versions.reverse()
+  const { versions: versionsAgain } = await allNodeVersions({ fetch: false })
+  t.is(versionsAgain[0], firstVersion)
+})
