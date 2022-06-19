@@ -1,3 +1,9 @@
+# 11.0.1
+
+## Bug fixes
+
+- Fix some issues with file caching
+
 # 11.0.0
 
 ## Breaking changes
