@@ -1,3 +1,16 @@
+# 11.0.0
+
+## Breaking changes
+
+- The main return value is now [an array of objects](/README.md#version) instead
+  of an array of strings
+- Recently introduced TypeScript types [have been renamed](/src/main.d.ts)
+
+## Features
+
+- The default [NPM versions](/README.md#npm) of each Node.js release are now
+  returned
+
 # 10.1.1
 
 ## Bug fixes
