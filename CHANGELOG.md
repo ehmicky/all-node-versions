@@ -1,3 +1,9 @@
+# 10.1.1
+
+## Bug fixes
+
+- Prevent mutating cached return value
+
 # 10.1.0
 
 ## Features
