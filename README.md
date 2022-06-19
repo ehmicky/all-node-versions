@@ -26,19 +26,18 @@ not `require()`.
 ```js
 import allNodeVersions from 'all-node-versions'
 
-const printNodeVersions = async function (options) {
-  const { versions, majors } = await allNodeVersions(options)
-
-  console.log(versions)
-  // ['16.3.0', '16.2.0', ..., '0.1.15', '0.1.14']
-
-  console.log(majors)
+const {
+  versions,
+  // ['18.4.0', '18.3.0', ..., '0.1.15', '0.1.14']
+  majors,
   // [
-  //   { major: 16, latest: '16.3.0' },
+  //   { major: 18, latest: '18.4.0' },
+  //   { major: 17, latest: '17.9.1' },
+  //   { major: 16, latest: '16.15.1', lts: 'gallium' },
   //   { major: 15, latest: '15.14.0' },
-  //   { major: 14, latest: '14.17.1', lts: 'fermium },
+  //   { major: 14, latest: '14.19.3', lts: 'fermium },
   //   { major: 13, latest: '13.14.0' },
-  //   { major: 12, latest: '12.22.1', lts: 'erbium' },
+  //   { major: 12, latest: '12.22.12', lts: 'erbium' },
   //   { major: 11, latest: '11.15.0' },
   //   { major: 10, latest: '10.24.1', lts: 'dubnium' },
   //   { major: 9, latest: '9.11.2' },
@@ -49,7 +48,7 @@ const printNodeVersions = async function (options) {
   //   { major: 4, latest: '4.9.1', lts: 'argon' },
   //   { major: 0, latest: '0.12.18' }
   // ]
-}
+} = await allNodeVersions(options)
 ```
 
 ## allNodeVersions(options?)
