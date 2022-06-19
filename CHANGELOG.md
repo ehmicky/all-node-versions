@@ -1,3 +1,9 @@
+# 10.1.0
+
+## Features
+
+- Add TypeScript types
+
 # 10.0.0
 
 ## Breaking changes
