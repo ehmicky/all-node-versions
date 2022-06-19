@@ -2,8 +2,8 @@
 
 ## Breaking changes
 
-- The main return value is now [an array of objects](/README.md#version) instead
-  of an array of strings
+- The main return value is now [an array of objects](/README.md#versions)
+  instead of an array of strings
 - Recently introduced TypeScript types [have been renamed](/src/main.d.ts)
 
 ## Features
