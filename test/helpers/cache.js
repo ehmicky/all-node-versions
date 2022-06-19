@@ -19,7 +19,7 @@ export const writeCacheFile = async function (oldCacheFile = false) {
   const cacheFile = await getCacheFile()
   const lastUpdate = oldCacheFile ? 0 : Date.now()
   const versionsInfo = {
-    versions: ['cached'],
+    versions: [{ node: 'cached' }],
     majors: [{ major: 1, latest: 'cached' }],
   }
   const cacheContent = { lastUpdate, ...versionsInfo }
