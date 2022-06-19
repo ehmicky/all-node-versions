@@ -50,7 +50,7 @@
     "fetch-node-website": "^7.0.0",
     "filter-obj": "^3.0.0",
     "get-stream": "^6.0.0",
-    "global-cache-dir": "^4.0.0",
+    "global-cache-dir": "^4.1.0",
     "jest-validate": "^27.5.1",
     "path-exists": "^5.0.0",
     "semver": "^7.3.7",
