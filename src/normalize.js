@@ -7,14 +7,15 @@ export const normalizeIndex = function (index) {
   const indexItems = index.map(normalizeVersion)
   const versions = getAllVersions(indexItems)
   const majors = getMajors(indexItems)
-  return { versions, majors }
+  const nodeNpmVersions = getAllNodeNpmVersions(indexItems)
+  return { versions, majors, nodeNpmVersions }
 }
 
-const normalizeVersion = function ({ version, lts }) {
+const normalizeVersion = function ({ version, lts, npm }) {
   // Remove the leading `v`
   const versionA = version.slice(1)
   const major = semver.major(versionA)
-  return { version: versionA, major, lts }
+  return { version: versionA, major, lts, npm }
 }
 
 // Array with all version strings, sorted from most to least recent
@@ -24,6 +25,14 @@ const getAllVersions = function (indexItems) {
 
 const getVersionField = function ({ version }) {
   return version
+}
+
+// Array with all {node: ..., npm: ...} version pairs
+const getAllNodeNpmVersions = function (indexItems) {
+  return indexItems.map(({ version, npm }) => ({
+    node: version,
+    npm: npm || '0.0.0',
+  }))
 }
 
 // Array with all major releases latest version, sorted from most to least
