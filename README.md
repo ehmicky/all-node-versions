@@ -27,7 +27,7 @@ not `require()`.
 import allNodeVersions from 'all-node-versions'
 
 const printNodeVersions = async function (options) {
-  const { versions, majors } = await allNodeVersions(options)
+  const { versions, majors, nodeNpmVersion } = await allNodeVersions(options)
 
   console.log(versions)
   // ['16.3.0', '16.2.0', ..., '0.1.15', '0.1.14']
@@ -48,6 +48,23 @@ const printNodeVersions = async function (options) {
   //   { major: 5, latest: '5.12.0' },
   //   { major: 4, latest: '4.9.1', lts: 'argon' },
   //   { major: 0, latest: '0.12.18' }
+  // ]
+
+  console.log(nodeNpmVersion)
+  // [
+  //   { node: '18.4.0', npm: '8.12.1' },
+  //   { node: '18.3.0', npm: '8.11.0' },
+  //   { node: '18.2.0', npm: '8.9.0' },
+  //   { node: '18.1.0', npm: '8.8.0' },
+  //   { node: '18.0.0', npm: '8.6.0' },
+  //   { node: '17.9.1', npm: '8.11.0' },
+  //   { node: '17.9.0', npm: '8.5.5' },
+  //   { node: '17.8.0', npm: '8.5.5' },
+  //   { node: '17.7.2', npm: '8.5.2' },
+  //   { node: '17.7.1', npm: '8.5.2' },
+  //   { node: '17.7.0', npm: '8.5.2' },
+  //   { node: '17.6.0', npm: '8.5.1' },
+  //   ...
   // ]
 }
 ```
@@ -92,6 +109,25 @@ Latest version for that major release, as a `major.minor.patch` string.
 _Type_: `string?`
 
 LTS name, lowercased. `undefined` if the major release is not LTS.
+
+#### nodeNpmVersion
+
+_Type_: `object[]`
+
+List of available Node.js versions and default NPM versions sorted from the most
+to the least recent Node.js version.
+
+##### node
+
+_Type_: `string`
+
+Node.js version is a `major.minor.patch` string.
+
+##### npm
+
+_Type_: `string`
+
+NPM version is a raw version value: can be 6.5.0-next.0, for example.
 
 ### options
 
