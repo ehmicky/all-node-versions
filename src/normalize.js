@@ -7,8 +7,7 @@ export const normalizeIndex = function (index) {
   const indexItems = index.map(normalizeVersion)
   const versions = getAllVersions(indexItems)
   const majors = getMajors(indexItems)
-  const nodeNpmVersions = getAllNodeNpmVersions(indexItems)
-  return { versions, majors, nodeNpmVersions }
+  return { versions, majors }
 }
 
 const normalizeVersion = function ({ version, lts, npm }) {
@@ -18,20 +17,11 @@ const normalizeVersion = function ({ version, lts, npm }) {
   return { version: versionA, major, lts, npm }
 }
 
-// Array with all version strings, sorted from most to least recent
+// Array with all {node: string, npm: string} version infos
 const getAllVersions = function (indexItems) {
-  return indexItems.map(getVersionField)
-}
-
-const getVersionField = function ({ version }) {
-  return version
-}
-
-// Array with all {node: ..., npm: ...} version pairs
-const getAllNodeNpmVersions = function (indexItems) {
   return indexItems.map(({ version, npm }) => ({
     node: version,
-    npm: npm || '0.0.0',
+    npm,
   }))
 }
 

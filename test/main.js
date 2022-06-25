@@ -3,16 +3,18 @@ import test from 'ava'
 import isPlainObj from 'is-plain-obj'
 import semver from 'semver'
 
-const isVersion = function (version) {
-  return typeof version === 'string' && VERSION_REGEXP.test(version)
+const isNodeVersion = function (nodeVersion) {
+  return typeof nodeVersion === 'string' && VERSION_REGEXP.test(nodeVersion)
 }
 
-const isNodeNpmVersion = function (nodeNpmVersion) {
+const isNpmVersion = function (npmVersion) {
+  return typeof npmVersion === 'string' && NPM_VERSION_REGEXP.test(npmVersion)
+}
+
+const isVersion = function (version) {
   return (
-    typeof nodeNpmVersion.node === 'string' &&
-    VERSION_REGEXP.test(nodeNpmVersion.node) &&
-    typeof nodeNpmVersion.npm === 'string' &&
-    NPM_VERSION_REGEXP.test(nodeNpmVersion.npm)
+    isNodeVersion(version.node) &&
+    (version.npm === undefined || isNpmVersion(version.npm))
   )
 }
 
@@ -38,27 +40,12 @@ test('"versions" are present', async (t) => {
 
 test('"versions" are sorted', async (t) => {
   const { versions } = await allNodeVersions({ fetch: true })
-  // eslint-disable-next-line fp/no-mutating-methods
-  const sortedVersions = [...versions].sort(semver.rcompare)
-
-  t.deepEqual(versions, sortedVersions)
-})
-
-test('"nodeNpmVersions" are present', async (t) => {
-  const { nodeNpmVersions } = await allNodeVersions({ fetch: true })
-
-  t.true(Array.isArray(nodeNpmVersions))
-  t.true(nodeNpmVersions.every(isNodeNpmVersion))
-})
-
-test('"nodeNpmVersions" are sorted', async (t) => {
-  const { nodeNpmVersions } = await allNodeVersions({ fetch: true })
   // eslint-disable-next-line fp/no-mutating-methods, id-length
-  const sortedVersions = [...nodeNpmVersions].sort((a, b) =>
+  const sortedVersions = [...versions].sort((a, b) =>
     semver.rcompare(a.node, b.node),
   )
 
-  t.deepEqual(nodeNpmVersions, sortedVersions)
+  t.deepEqual(versions, sortedVersions)
 })
 
 test('"majors" are present', async (t) => {
@@ -97,7 +84,7 @@ test('"majors.latest" are present', async (t) => {
 })
 
 const isValidLatest = function ({ latest }) {
-  return isVersion(latest)
+  return isNodeVersion(latest)
 }
 
 test('"majors.lts" are present', async (t) => {
