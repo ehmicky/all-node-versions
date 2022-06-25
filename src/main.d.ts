@@ -5,7 +5,20 @@ import type { Options as FetchNodeWebsiteOptions } from 'fetch-node-website'
  */
 export type SemverVersion = `${number}.${number}.${number}${string}`
 
-export interface MajorNodeVersions {
+export interface NodeVersionInfo {
+  /**
+   * Node.js version is a `major.minor.patch` string.
+   */
+  node: SemverVersion
+
+  /**
+   * Default NPM version is a raw version value: can be `"6.5.0-next.0"`, for example.
+   * `undefined` for ancient node that didn't ship with npm.
+   */
+  npm?: SemverVersion
+}
+
+export interface MajorNodeVersion {
   /**
    * Major version number. `0` for old releases `0.*.*`.
    */
@@ -22,17 +35,16 @@ export interface MajorNodeVersions {
   lts?: string
 }
 
-export interface NodeVersions {
+export interface NodeVersion {
   /**
-   * List of available Node.js versions sorted from the most to the least
-   * recent. Each version is a `major.minor.patch` string.
+   * List of available Node.js versions and default NPM versions sorted from the most to the least recent Node.js version.
    */
-  versions: SemverVersion[]
+  versions: NodeVersionInfo[]
 
   /**
    * List of Node.js major releases sorted from the most to the least recent.
    */
-  majors: MajorNodeVersions[]
+  majors: MajorNodeVersion[]
 }
 
 export interface Options {
@@ -53,7 +65,7 @@ export interface Options {
    *  - `true`: the cache will not be used
    *  - `false`: the cache will be used even if it's older than one hour
    *
-   * @default `undefined``
+   * @default `undefined`
    */
   fetch?: boolean | undefined
 }
@@ -92,4 +104,4 @@ export interface Options {
  */
 export default function allNodeVersions(
   options?: Options,
-): Promise<NodeVersions>
+): Promise<NodeVersion>

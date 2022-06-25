@@ -91,8 +91,8 @@ Node.js version is a `major.minor.patch` string.
 
 _Type_: `string?`
 
-NPM version is a raw version value: can be `"6.5.0-next.0"`, for example.
-`undefined` for ancient node that didn't ship with npm.
+Default NPM version is a raw version value: can be `"6.5.0-next.0"`, for
+example. `undefined` for ancient node that didn't ship with npm.
 
 #### majors
 
