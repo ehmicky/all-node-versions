@@ -26,19 +26,18 @@ not `require()`.
 ```js
 import allNodeVersions from 'all-node-versions'
 
-const printNodeVersions = async function (options) {
-  const { versions, majors, nodeNpmVersion } = await allNodeVersions(options)
-
-  console.log(versions)
-  // ['16.3.0', '16.2.0', ..., '0.1.15', '0.1.14']
-
-  console.log(majors)
+const {
+  versions,
+  // ['18.4.0', '18.3.0', ..., '0.1.15', '0.1.14']
+  majors,
   // [
-  //   { major: 16, latest: '16.3.0' },
+  //   { major: 18, latest: '18.4.0' },
+  //   { major: 17, latest: '17.9.1' },
+  //   { major: 16, latest: '16.15.1', lts: 'gallium' },
   //   { major: 15, latest: '15.14.0' },
-  //   { major: 14, latest: '14.17.1', lts: 'fermium },
+  //   { major: 14, latest: '14.19.3', lts: 'fermium },
   //   { major: 13, latest: '13.14.0' },
-  //   { major: 12, latest: '12.22.1', lts: 'erbium' },
+  //   { major: 12, latest: '12.22.12', lts: 'erbium' },
   //   { major: 11, latest: '11.15.0' },
   //   { major: 10, latest: '10.24.1', lts: 'dubnium' },
   //   { major: 9, latest: '9.11.2' },
@@ -49,8 +48,7 @@ const printNodeVersions = async function (options) {
   //   { major: 4, latest: '4.9.1', lts: 'argon' },
   //   { major: 0, latest: '0.12.18' }
   // ]
-
-  console.log(nodeNpmVersion)
+  nodeNpmVersions,
   // [
   //   { node: '18.4.0', npm: '8.12.1' },
   //   { node: '18.3.0', npm: '8.11.0' },
@@ -66,7 +64,7 @@ const printNodeVersions = async function (options) {
   //   { node: '17.6.0', npm: '8.5.1' },
   //   ...
   // ]
-}
+} = await allNodeVersions(options)
 ```
 
 ## allNodeVersions(options?)
@@ -110,7 +108,7 @@ _Type_: `string?`
 
 LTS name, lowercased. `undefined` if the major release is not LTS.
 
-#### nodeNpmVersion
+#### nodeNpmVersions
 
 _Type_: `object[]`
 
@@ -191,7 +189,16 @@ If you would like to help us fix a bug or add a new feature, please check our
 <!-- Thanks go to our wonderful contributors: -->
 
 <!-- ALL-CONTRIBUTORS-LIST:START -->
-<!-- prettier-ignore -->
-<table><tr><td align="center"><a href="https://twitter.com/ehmicky"><img src="https://avatars2.githubusercontent.com/u/8136211?v=4" width="100px;" alt="ehmicky"/><br /><sub><b>ehmicky</b></sub></a><br /><a href="https://github.com/ehmicky/all-node-versions/commits?author=ehmicky" title="Code">💻</a> <a href="#design-ehmicky" title="Design">🎨</a> <a href="#ideas-ehmicky" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/ehmicky/all-node-versions/commits?author=ehmicky" title="Documentation">📖</a></td></tr></table>
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="https://twitter.com/ehmicky"><img src="https://avatars2.githubusercontent.com/u/8136211?v=4?s=100" width="100px;" alt=""/><br /><sub><b>ehmicky</b></sub></a><br /><a href="https://github.com/ehmicky/all-node-versions/commits?author=ehmicky" title="Code">💻</a> <a href="#design-ehmicky" title="Design">🎨</a> <a href="#ideas-ehmicky" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/ehmicky/all-node-versions/commits?author=ehmicky" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://maxim.mazurok.com"><img src="https://avatars.githubusercontent.com/u/7756211?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Maxim Mazurok</b></sub></a><br /><a href="#ideas-Maxim-Mazurok" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/ehmicky/all-node-versions/commits?author=Maxim-Mazurok" title="Code">💻</a> <a href="https://github.com/ehmicky/all-node-versions/commits?author=Maxim-Mazurok" title="Tests">⚠️</a> <a href="https://github.com/ehmicky/all-node-versions/commits?author=Maxim-Mazurok" title="Documentation">📖</a></td>
+  </tr>
+</table>
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->

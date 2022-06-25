@@ -20,7 +20,20 @@
         "ideas",
         "doc"
       ]
+    },
+    {
+      "login": "Maxim-Mazurok",
+      "name": "Maxim Mazurok",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7756211?v=4",
+      "profile": "https://maxim.mazurok.com",
+      "contributions": [
+        "ideas",
+        "code",
+        "test",
+        "doc"
+      ]
     }
   ],
-  "contributorsPerLine": 7
+  "contributorsPerLine": 7,
+  "skipCi": true
 }
