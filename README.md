@@ -28,7 +28,21 @@ import allNodeVersions from 'all-node-versions'
 
 const {
   versions,
-  // ['18.4.0', '18.3.0', ..., '0.1.15', '0.1.14']
+  // [
+  //   { node: '18.4.0', npm: '8.12.1' },
+  //   { node: '18.3.0', npm: '8.11.0' },
+  //   { node: '18.2.0', npm: '8.9.0' },
+  //   { node: '18.1.0', npm: '8.8.0' },
+  //   { node: '18.0.0', npm: '8.6.0' },
+  //   { node: '17.9.1', npm: '8.11.0' },
+  //   { node: '17.9.0', npm: '8.5.5' },
+  //   { node: '17.8.0', npm: '8.5.5' },
+  //   { node: '17.7.2', npm: '8.5.2' },
+  //   { node: '17.7.1', npm: '8.5.2' },
+  //   { node: '17.7.0', npm: '8.5.2' },
+  //   { node: '17.6.0', npm: '8.5.1' },
+  //   ...
+  // ]
   majors,
   // [
   //   { major: 18, latest: '18.4.0' },
@@ -62,10 +76,23 @@ The return value resolves to an object with the following properties.
 
 #### versions
 
-_Type_: `string[]`
+_Type_: `object[]`
 
-List of available Node.js versions sorted from the most to the least recent.
-Each version is a `major.minor.patch` string.
+List of available Node.js versions and default NPM versions sorted from the most
+to the least recent Node.js version.
+
+##### node
+
+_Type_: `string`
+
+Node.js version is a `major.minor.patch` string.
+
+##### npm
+
+_Type_: `string?`
+
+Default NPM version is a raw version value: can be `"6.5.0-next.0"`, for
+example. `undefined` for ancient node that didn't ship with npm.
 
 #### majors
 

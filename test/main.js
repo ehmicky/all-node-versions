@@ -3,11 +3,33 @@ import test from 'ava'
 import isPlainObj from 'is-plain-obj'
 import semver from 'semver'
 
+const isNodeVersion = function (nodeVersion) {
+  return typeof nodeVersion === 'string' && VERSION_REGEXP.test(nodeVersion)
+}
+
+const isNpmVersion = function (npmVersion) {
+  return typeof npmVersion === 'string' && NPM_VERSION_REGEXP.test(npmVersion)
+}
+
 const isVersion = function (version) {
-  return typeof version === 'string' && VERSION_REGEXP.test(version)
+  return (
+    isNodeVersion(version.node) &&
+    (version.npm === undefined || isNpmVersion(version.npm))
+  )
 }
 
 const VERSION_REGEXP = /^\d+\.\d+\.\d+$/u
+
+/**
+ * Real examples:
+ * 1.1.0-beta-4
+ * 1.1.0-alpha-6
+ * 1.1.18
+ * 6.5.0-next.0
+ * 1.1.0-3
+ */
+const NPM_VERSION_REGEXP =
+  /^\d+\.\d+\.\d+((-(alpha|beta)-\d+)|(-next\.\d+)|(-\d+))?$/u
 
 test('"versions" are present', async (t) => {
   const { versions } = await allNodeVersions({ fetch: true })
@@ -18,8 +40,10 @@ test('"versions" are present', async (t) => {
 
 test('"versions" are sorted', async (t) => {
   const { versions } = await allNodeVersions({ fetch: true })
-  // eslint-disable-next-line fp/no-mutating-methods
-  const sortedVersions = [...versions].sort(semver.rcompare)
+  // eslint-disable-next-line fp/no-mutating-methods, id-length
+  const sortedVersions = [...versions].sort((a, b) =>
+    semver.rcompare(a.node, b.node),
+  )
 
   t.deepEqual(versions, sortedVersions)
 })
@@ -60,7 +84,7 @@ test('"majors.latest" are present', async (t) => {
 })
 
 const isValidLatest = function ({ latest }) {
-  return isVersion(latest)
+  return isNodeVersion(latest)
 }
 
 test('"majors.lts" are present', async (t) => {
