@@ -21,9 +21,6 @@ not `require()`.
 
 # Usage
 
-<!-- Remove 'eslint-skip' once estree supports top-level await -->
-<!-- eslint-skip -->
-
 ```js
 import allNodeVersions from 'all-node-versions'
 
