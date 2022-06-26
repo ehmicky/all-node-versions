@@ -1,6 +1,6 @@
 import allNodeVersions, {
   Options,
-  NodeVersion,
+  AllNodeVersions,
   MajorNodeVersion,
   SemverVersion,
 } from 'all-node-versions'
@@ -27,7 +27,7 @@ allNodeVersions({ fetch: undefined })
 expectAssignable<Options>({ fetch: true })
 expectError(allNodeVersions({ fetch: 'true' }))
 
-expectType<NodeVersion>(nodeVersions)
+expectType<AllNodeVersions>(nodeVersions)
 const {
   versions: [version],
   majors: [majorNodeVersion],

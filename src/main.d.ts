@@ -35,7 +35,7 @@ export interface MajorNodeVersion {
   lts?: string
 }
 
-export interface NodeVersion {
+export interface AllNodeVersions {
   /**
    * List of available Node.js versions and default NPM versions sorted from the most to the least recent Node.js version.
    */
@@ -104,4 +104,4 @@ export interface Options {
  */
 export default function allNodeVersions(
   options?: Options,
-): Promise<NodeVersion>
+): Promise<AllNodeVersions>
