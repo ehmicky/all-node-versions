@@ -33,13 +33,13 @@ const {
   majors: [majorNodeVersion],
 } = nodeVersions
 
-expectType<NodeVersionInfo>(nodeVersion)
-const { node, npm } = nodeVersion
+expectType<NodeVersionInfo>(nodeVersion!)
+const { node, npm } = nodeVersion!
 expectAssignable<SemverVersion>(node)
 expectAssignable<SemverVersion | undefined>(npm)
 
-expectType<MajorNodeVersion>(majorNodeVersion)
-const { major, latest, lts } = majorNodeVersion
+expectType<MajorNodeVersion>(majorNodeVersion!)
+const { major, latest, lts } = majorNodeVersion!
 expectType<number>(major)
 expectAssignable<SemverVersion>(latest)
 expectType<string | undefined>(lts)
