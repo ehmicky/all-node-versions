@@ -57,7 +57,7 @@
     "write-file-atomic": "^4.0.1"
   },
   "devDependencies": {
-    "@ehmicky/dev-tasks": "^1.0.83",
+    "@ehmicky/dev-tasks": "^1.0.84",
     "is-plain-obj": "^4.1.0",
     "test-each": "^5.1.1"
   },
