@@ -10,7 +10,7 @@
     "examples/**/*.{js,d.ts,map,json,sh,md}"
   ],
   "scripts": {
-    "test": "gulp test && tsd"
+    "test": "gulp test"
   },
   "description": "List all available Node.js versions",
   "keywords": [
