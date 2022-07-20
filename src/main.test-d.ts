@@ -1,16 +1,17 @@
-import allNodeVersions, {
-  Options,
-  AllNodeVersions,
-  MajorNodeVersion,
-  NodeVersionInfo,
-  SemverVersion,
-} from 'all-node-versions'
 import {
   expectType,
   expectError,
   expectAssignable,
   expectNotAssignable,
 } from 'tsd'
+
+import allNodeVersions, {
+  Options,
+  AllNodeVersions,
+  MajorNodeVersion,
+  NodeVersionInfo,
+  SemverVersion,
+} from './main.js'
 
 const nodeVersions = await allNodeVersions()
 
