@@ -1,6 +1,6 @@
 [![Codecov](https://img.shields.io/codecov/c/github/ehmicky/all-node-versions.svg?label=tested&logo=codecov)](https://codecov.io/gh/ehmicky/all-node-versions)
 [![Node](https://img.shields.io/node/v/all-node-versions.svg?logo=node.js)](https://www.npmjs.com/package/all-node-versions)
-[![TypeScript](https://img.shields.io/badge/-typed-brightgreen?logo=typescript&colorA=gray)](/src/main.d.ts)
+[![TypeScript](https://img.shields.io/badge/-typed-brightgreen?logo=typescript&colorA=gray&logoColor=0096ff)](/src/main.d.ts)
 [![Twitter](https://img.shields.io/badge/%E2%80%8B-twitter-brightgreen.svg?logo=twitter)](https://twitter.com/intent/follow?screen_name=ehmicky)
 [![Medium](https://img.shields.io/badge/%E2%80%8B-medium-brightgreen.svg?logo=medium)](https://medium.com/@ehmicky)
 
