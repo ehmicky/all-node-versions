@@ -2,7 +2,7 @@
 
 ## Features
 
-- Reduce npm package size
+- Reduce npm package size by 70%
 
 # 11.1.0
 
