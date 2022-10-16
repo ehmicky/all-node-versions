@@ -10,7 +10,7 @@ import { getOpts } from './options.js'
 // Fetch all available Node versions by making a HTTP request to Node website.
 // Versions are already sorted from newest to oldest.
 export default async function allNodeVersions(opts) {
-  const { fetch: fetchOpt, ...fetchNodeOpts } = getOpts(opts)
+  const { fetchOpt, fetchNodeOpts } = getOpts(opts)
   const versionsInfo = await getAllVersions(fetchOpt, fetchNodeOpts)
   return cloneCachedVersions(versionsInfo)
 }
