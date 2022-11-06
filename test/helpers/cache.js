@@ -1,5 +1,5 @@
-import { writeFile, unlink } from 'fs/promises'
-import { env } from 'process'
+import { writeFile, unlink } from 'node:fs/promises'
+import { env } from 'node:process'
 
 import globalCacheDir from 'global-cache-dir'
 

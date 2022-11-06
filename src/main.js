@@ -1,4 +1,4 @@
-import { env } from 'process'
+import { env } from 'node:process'
 
 import { cloneCachedVersions } from './cache/clone.js'
 import { handleOfflineError } from './cache/offline.js'

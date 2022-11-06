@@ -1,5 +1,5 @@
-import { readFile } from 'fs/promises'
-import { env } from 'process'
+import { readFile } from 'node:fs/promises'
+import { env } from 'node:process'
 
 import globalCacheDir from 'global-cache-dir'
 import writeFileAtomic from 'write-file-atomic'
