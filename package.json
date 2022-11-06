@@ -60,7 +60,7 @@
     "write-file-atomic": "^4.0.1"
   },
   "devDependencies": {
-    "@ehmicky/dev-tasks": "^1.0.99",
+    "@ehmicky/dev-tasks": "^1.0.100",
     "test-each": "^5.5.0"
   },
   "engines": {
