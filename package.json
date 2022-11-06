@@ -50,7 +50,7 @@
     "test": "test"
   },
   "dependencies": {
-    "fetch-node-website": "^7.2.0",
+    "fetch-node-website": "^7.3.0",
     "filter-obj": "^5.1.0",
     "get-stream": "^6.0.0",
     "global-cache-dir": "^4.3.1",
