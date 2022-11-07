@@ -11,7 +11,7 @@ import allNodeVersions, {
   MajorNodeVersion,
   NodeVersionInfo,
   SemverVersion,
-} from './main.js'
+} from 'all-node-versions'
 
 const nodeVersions = await allNodeVersions()
 
