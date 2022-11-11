@@ -1,3 +1,9 @@
+# 11.3.0
+
+## Features
+
+- Improve tree-shaking support
+
 # 11.2.0
 
 ## Features
