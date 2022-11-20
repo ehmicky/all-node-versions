@@ -58,7 +58,7 @@
     "is-plain-obj": "^4.1.0",
     "path-exists": "^5.0.0",
     "semver": "^7.3.8",
-    "write-file-atomic": "^4.0.1"
+    "write-file-atomic": "^5.0.0"
   },
   "devDependencies": {
     "@ehmicky/dev-tasks": "^1.0.109",
