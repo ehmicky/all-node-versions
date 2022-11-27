@@ -7,8 +7,8 @@ import {
   unsetTestCache,
   writeCacheFile,
   removeCacheFile,
-} from './helpers/cache.test.js'
-import { getLatestVersion } from './helpers/main.test.js'
+} from '../helpers/cache.test.js'
+import { getLatestVersion } from '../helpers/main.test.js'
 
 // This uses a global environment variable to manipulate the cache file.
 // Since this is global we:
