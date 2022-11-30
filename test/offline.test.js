@@ -5,8 +5,8 @@ import {
   unsetTestCache,
   writeCacheFile,
   removeCacheFile,
-} from './helpers/cache.js'
-import { getLatestVersion } from './helpers/main.js'
+} from './helpers/cache.test.js'
+import { getLatestVersion } from './helpers/main.test.js'
 
 // Offline cache is used both when offline or when `mirror` is invalid.
 // We only test the later case since it's simpler to test.
