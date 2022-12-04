@@ -1,9 +1,4 @@
-import {
-  expectType,
-  expectError,
-  expectAssignable,
-  expectNotAssignable,
-} from 'tsd'
+import { expectType, expectAssignable, expectNotAssignable } from 'tsd'
 
 import allNodeVersions, {
   Options,
@@ -17,16 +12,19 @@ const nodeVersions = await allNodeVersions()
 
 allNodeVersions({})
 expectAssignable<Options>({})
-expectError(allNodeVersions(true))
+// @ts-expect-error
+allNodeVersions(true)
 
 allNodeVersions({ mirror: 'http://example.com' })
 expectAssignable<Options>({ mirror: 'http://example.com' })
-expectError(allNodeVersions({ mirror: true }))
+// @ts-expect-error
+allNodeVersions({ mirror: true })
 
 allNodeVersions({ fetch: true })
 allNodeVersions({ fetch: undefined })
 expectAssignable<Options>({ fetch: true })
-expectError(allNodeVersions({ fetch: 'true' }))
+// @ts-expect-error
+allNodeVersions({ fetch: 'true' })
 
 expectType<AllNodeVersions>(nodeVersions)
 const {
