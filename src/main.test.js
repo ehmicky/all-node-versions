@@ -3,13 +3,11 @@ import test from 'ava'
 import isPlainObj from 'is-plain-obj'
 import semver from 'semver'
 
-const isValidVersionInfo = function ({ node, npm }) {
-  return isSemverVersion(node) && (npm === undefined || isSemverVersion(npm))
-}
+const isValidVersionInfo = ({ node, npm }) =>
+  isSemverVersion(node) && (npm === undefined || isSemverVersion(npm))
 
-const isSemverVersion = function (nodeVersion) {
-  return typeof nodeVersion === 'string' && VERSION_REGEXP.test(nodeVersion)
-}
+const isSemverVersion = (nodeVersion) =>
+  typeof nodeVersion === 'string' && VERSION_REGEXP.test(nodeVersion)
 
 const VERSION_REGEXP = /^\d+\.\d+\.\d+/u
 
@@ -43,9 +41,7 @@ test('"majors.major" are present', async (t) => {
   t.true(majors.every(isValidMajor))
 })
 
-const isValidMajor = function ({ major }) {
-  return Number.isInteger(major)
-}
+const isValidMajor = ({ major }) => Number.isInteger(major)
 
 test('"majors.major" are sorted', async (t) => {
   const { majors } = await allNodeVersions({ fetch: true })
@@ -55,9 +51,8 @@ test('"majors.major" are sorted', async (t) => {
   t.deepEqual(majors, sortedMajors)
 })
 
-const compareMajor = function ({ major: majorA }, { major: majorB }) {
-  return majorA < majorB ? 1 : -1
-}
+const compareMajor = ({ major: majorA }, { major: majorB }) =>
+  majorA < majorB ? 1 : -1
 
 test('"majors.latest" are present', async (t) => {
   const { majors } = await allNodeVersions({ fetch: true })
@@ -65,9 +60,7 @@ test('"majors.latest" are present', async (t) => {
   t.true(majors.every(isValidLatest))
 })
 
-const isValidLatest = function ({ latest }) {
-  return isSemverVersion(latest)
-}
+const isValidLatest = ({ latest }) => isSemverVersion(latest)
 
 test('"majors.lts" are present', async (t) => {
   const { majors } = await allNodeVersions({ fetch: true })
@@ -76,13 +69,8 @@ test('"majors.lts" are present', async (t) => {
   t.false(majors.every(isLts))
 })
 
-const isValidLts = function ({ lts }) {
-  return (
-    lts === undefined ||
-    (typeof lts === 'string' && lts !== '' && lts.toLowerCase() === lts)
-  )
-}
+const isValidLts = ({ lts }) =>
+  lts === undefined ||
+  (typeof lts === 'string' && lts !== '' && lts.toLowerCase() === lts)
 
-const isLts = function ({ lts }) {
-  return lts !== undefined
-}
+const isLts = ({ lts }) => lts !== undefined

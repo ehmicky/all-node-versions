@@ -9,14 +9,16 @@ import { getOpts } from './options.js'
 
 // Fetch all available Node versions by making a HTTP request to Node website.
 // Versions are already sorted from newest to oldest.
-export default async function allNodeVersions(opts) {
+const allNodeVersions = async (opts) => {
   const { fetchOpt, fetchNodeOpts } = getOpts(opts)
   const versionsInfo = await getAllVersions(fetchOpt, fetchNodeOpts)
   return cloneCachedVersions(versionsInfo)
 }
 
+export default allNodeVersions
+
 // We cache the HTTP request once per process.
-const getAllVersions = async function (fetchOpt, fetchNodeOpts) {
+const getAllVersions = async (fetchOpt, fetchNodeOpts) => {
   if (
     processCachedVersions !== undefined &&
     fetchOpt !== true &&
@@ -37,14 +39,14 @@ const getAllVersions = async function (fetchOpt, fetchNodeOpts) {
 let processCachedVersions
 
 // We also cache the HTTP request for one hour using a cache file.
-const getVersionsInfo = async function (fetchOpt, fetchNodeOpts) {
+const getVersionsInfo = async (fetchOpt, fetchNodeOpts) => {
   const cachedVersions = await readCachedVersions(fetchOpt)
   return cachedVersions === undefined
     ? await getNewVersionsInfo(fetchNodeOpts)
     : cachedVersions
 }
 
-const getNewVersionsInfo = async function (fetchNodeOpts) {
+const getNewVersionsInfo = async (fetchNodeOpts) => {
   try {
     const index = await fetchIndex(fetchNodeOpts)
     const versionsInfo = normalizeIndex(index)

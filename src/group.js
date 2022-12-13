@@ -1,6 +1,6 @@
 // Group array into an object using a function, property or array of properties
 // Uses imperative code for performance
-export const groupBy = function (array, group) {
+export const groupBy = (array, group) => {
   const object = {}
 
   // eslint-disable-next-line fp/no-loops
