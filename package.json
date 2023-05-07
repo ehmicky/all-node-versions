@@ -53,7 +53,7 @@
   "dependencies": {
     "fetch-node-website": "^8.0.0",
     "filter-obj": "^5.1.0",
-    "global-cache-dir": "^4.4.0",
+    "global-cache-dir": "^5.0.0",
     "is-plain-obj": "^4.1.0",
     "path-exists": "^5.0.0",
     "semver": "^7.5.0",
