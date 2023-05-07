@@ -1,5 +1,6 @@
+import { json } from 'node:stream/consumers'
+
 import fetchNodeWebsite from 'fetch-node-website'
-import getStream from 'get-stream'
 
 // Do the actual HTTP request
 export const fetchIndex = async (fetchNodeOpts) => {
@@ -7,8 +8,7 @@ export const fetchIndex = async (fetchNodeOpts) => {
     ...fetchNodeOpts,
     progress: false,
   })
-  const content = await getStream(response)
-  const index = JSON.parse(content)
+  const index = await json(response)
   return index
 }
 
