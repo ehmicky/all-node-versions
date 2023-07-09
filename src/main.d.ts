@@ -61,7 +61,7 @@ export interface Options {
   mirror?: FetchNodeWebsiteOptions['mirror']
 
   /**
-   * Cancels the release download when the signal is aborted.
+   * Cancels when the signal is aborted.
    */
   signal?: FetchNodeWebsiteOptions['signal']
 

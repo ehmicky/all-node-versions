@@ -2,7 +2,7 @@
 
 ## Features
 
-- Add a [`signal` option](README.md#signal) to abort the release download
+- Add a [`signal` option](README.md#signal) to cancel
 
 # 12.0.0
 

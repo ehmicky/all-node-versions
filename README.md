@@ -141,7 +141,7 @@ The list of available Node.js versions is cached for one hour by default. If the
 _Type_:
 [`AbortSignal`](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal)
 
-Cancels the release download when the signal is aborted.
+Cancels when the signal is aborted.
 
 # See also
 
