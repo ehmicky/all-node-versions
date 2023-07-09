@@ -61,6 +61,11 @@ export interface Options {
   mirror?: FetchNodeWebsiteOptions['mirror']
 
   /**
+   * Cancels the release download when the signal is aborted.
+   */
+  signal?: FetchNodeWebsiteOptions['signal']
+
+  /**
    * The list of available Node.js versions is cached for one hour by default.
    * If the `fetch` option is:
    *  - `true`: the cache will not be used
