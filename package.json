@@ -42,7 +42,10 @@
   ],
   "license": "Apache-2.0",
   "homepage": "https://www.github.com/ehmicky/all-node-versions",
-  "repository": "ehmicky/all-node-versions",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ehmicky/all-node-versions.git"
+  },
   "bugs": {
     "url": "https://github.com/ehmicky/all-node-versions/issues"
   },
