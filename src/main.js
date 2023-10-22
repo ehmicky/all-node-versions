@@ -1,6 +1,5 @@
 import { env } from 'node:process'
 
-import { cloneCachedVersions } from './cache/clone.js'
 import { handleOfflineError } from './cache/offline.js'
 import { readCachedVersions, writeCachedVersions } from './cache/read.js'
 import { fetchIndex } from './fetch.js'
@@ -12,7 +11,7 @@ import { getOpts } from './options.js'
 const allNodeVersions = async (opts) => {
   const { fetchOpt, fetchNodeOpts } = getOpts(opts)
   const versionsInfo = await getAllVersions(fetchOpt, fetchNodeOpts)
-  return cloneCachedVersions(versionsInfo)
+  return structuredClone(versionsInfo)
 }
 
 export default allNodeVersions
