@@ -59,7 +59,7 @@
     "global-cache-dir": "^6.0.0",
     "is-plain-obj": "^4.1.0",
     "path-exists": "^5.0.0",
-    "semver": "^7.5.4",
+    "semver": "^7.6.2",
     "write-file-atomic": "^5.0.1"
   },
   "devDependencies": {
