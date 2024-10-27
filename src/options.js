@@ -7,10 +7,12 @@ export const getOpts = (opts = {}) => {
   }
 
   const { fetch: fetchOpt, ...fetchNodeOpts } = opts
+  validateFetch(fetchOpt)
+  return { fetchOpt, fetchNodeOpts }
+}
 
+const validateFetch = (fetchOpt) => {
   if (fetchOpt !== undefined && typeof fetchOpt !== 'boolean') {
     throw new TypeError(`Option "fetch" must be a boolean: ${fetchOpt}`)
   }
-
-  return { fetchOpt, fetchNodeOpts }
 }
