@@ -3,10 +3,10 @@ import test from 'ava'
 import { each } from 'test-each'
 
 import {
+  removeCacheFile,
   setTestCache,
   unsetTestCache,
   writeCacheFile,
-  removeCacheFile,
 } from '../helpers/cache.test.js'
 import { getLatestVersion } from '../helpers/main.test.js'
 
