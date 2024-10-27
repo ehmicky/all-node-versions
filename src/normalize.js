@@ -26,7 +26,6 @@ const getVersionField = ({ version, npm }) => ({ node: version, npm })
 // recent. Includes `lts` name if any.
 const getMajors = (indexItems) => {
   const groups = groupBy(indexItems, 'major')
-  // eslint-disable-next-line fp/no-mutating-methods
   return Object.values(groups).map(getMajorInfo).sort(compareMajor)
 }
 
