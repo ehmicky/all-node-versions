@@ -20,6 +20,7 @@ test('"versions" are present', async (t) => {
 
 test('"versions" are sorted', async (t) => {
   const { versions } = await allNodeVersions({ fetch: true })
+  // eslint-disable-next-line fp/no-mutating-methods
   const sortedVersions = [...versions].sort((versionInfoA, versionInfoB) =>
     semver.rcompare(versionInfoA.node, versionInfoB.node),
   )
@@ -44,6 +45,7 @@ const isValidMajor = ({ major }) => Number.isInteger(major)
 
 test('"majors.major" are sorted', async (t) => {
   const { majors } = await allNodeVersions({ fetch: true })
+  // eslint-disable-next-line fp/no-mutating-methods
   const sortedMajors = [...majors].sort(compareMajor)
 
   t.deepEqual(majors, sortedMajors)

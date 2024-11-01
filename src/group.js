@@ -12,6 +12,7 @@ export const groupBy = (array, group) => {
       // eslint-disable-next-line fp/no-mutation
       object[key] = [item]
     } else {
+      // eslint-disable-next-line fp/no-mutating-methods
       object[key].push(item)
     }
   }

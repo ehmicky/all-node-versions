@@ -82,6 +82,7 @@ test.serial(`Process cached files cannot be mutated`, async (t) => {
   const [{ node: firstVersion }] = versions
   // eslint-disable-next-line fp/no-mutation
   versions[0].node = 'test'
+  // eslint-disable-next-line fp/no-mutating-methods
   versions.reverse()
   const {
     versions: [{ node: firstVersionAgain }],
