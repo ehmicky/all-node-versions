@@ -183,10 +183,13 @@ If you would like to help us fix a bug or add a new feature, please check our
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
 <table>
-  <tr>
-    <td align="center"><a href="https://fosstodon.org/@ehmicky"><img src="https://avatars2.githubusercontent.com/u/8136211?v=4?s=100" width="100px;" alt=""/><br /><sub><b>ehmicky</b></sub></a><br /><a href="https://github.com/ehmicky/all-node-versions/commits?author=ehmicky" title="Code">💻</a> <a href="#design-ehmicky" title="Design">🎨</a> <a href="#ideas-ehmicky" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/ehmicky/all-node-versions/commits?author=ehmicky" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://maxim.mazurok.com"><img src="https://avatars.githubusercontent.com/u/7756211?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Maxim Mazurok</b></sub></a><br /><a href="#ideas-Maxim-Mazurok" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/ehmicky/all-node-versions/commits?author=Maxim-Mazurok" title="Code">💻</a> <a href="https://github.com/ehmicky/all-node-versions/commits?author=Maxim-Mazurok" title="Tests">⚠️</a> <a href="https://github.com/ehmicky/all-node-versions/commits?author=Maxim-Mazurok" title="Documentation">📖</a></td>
-  </tr>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://fosstodon.org/@ehmicky"><img src="https://avatars2.githubusercontent.com/u/8136211?v=4?s=100" width="100px;" alt="ehmicky"/><br /><sub><b>ehmicky</b></sub></a><br /><a href="https://github.com/ehmicky/all-node-versions/commits?author=ehmicky" title="Code">💻</a> <a href="#design-ehmicky" title="Design">🎨</a> <a href="#ideas-ehmicky" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/ehmicky/all-node-versions/commits?author=ehmicky" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://maxim.mazurok.com"><img src="https://avatars.githubusercontent.com/u/7756211?v=4?s=100" width="100px;" alt="Maxim Mazurok"/><br /><sub><b>Maxim Mazurok</b></sub></a><br /><a href="#ideas-Maxim-Mazurok" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/ehmicky/all-node-versions/commits?author=Maxim-Mazurok" title="Code">💻</a> <a href="https://github.com/ehmicky/all-node-versions/commits?author=Maxim-Mazurok" title="Tests">⚠️</a> <a href="https://github.com/ehmicky/all-node-versions/commits?author=Maxim-Mazurok" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/HeversonSilva-gif"><img src="https://avatars.githubusercontent.com/u/202877675?v=4?s=100" width="100px;" alt="Heverson Silva"/><br /><sub><b>Heverson Silva</b></sub></a><br /><a href="https://github.com/ehmicky/all-node-versions/commits?author=HeversonSilva-gif" title="Code">💻</a></td>
+    </tr>
+  </tbody>
 </table>
 
 <!-- markdownlint-restore -->
