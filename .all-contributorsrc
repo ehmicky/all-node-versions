@@ -33,9 +33,19 @@
         "test",
         "doc"
       ]
+    },
+    {
+      "login": "HeversonSilva-gif",
+      "name": "Heverson Silva",
+      "avatar_url": "https://avatars.githubusercontent.com/u/202877675?v=4",
+      "profile": "https://github.com/HeversonSilva-gif",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
   "skipCi": true,
-  "commitConvention": "none"
+  "commitConvention": "none",
+  "commitType": "docs"
 }
